@@ -1,0 +1,11 @@
+Artificial Intelligence II
+Search & Rescue MAV simulation project
+
+Developers:
+Anton Rebgun
+Dimitri Zarzhitsky
+
+
+Directory structure:
+/src - source code base directory
+/docs - documentation base directory
