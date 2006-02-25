@@ -13,7 +13,7 @@ public class BlackBoard
 
     }
 
-    public static BlackBoard getBlackBoard()
+    public static BlackBoard getInstance()
     {
         if ( blackBoardInstance == null )
         {

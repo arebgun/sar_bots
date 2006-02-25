@@ -17,9 +17,11 @@ public class Simulator
 {
     private static final String CONFIG_FILE_PATH = ClassLoader.getSystemClassLoader().getResource( "conf/base.conf" ).getPath();
 
-    private long time;
+    private static final int AGENT_NUMBER = 10;
 
     private static Simulator simulatorInstance;
+
+    private long time;
 
     private ArrayList<Agent> agents;
 
@@ -49,9 +51,9 @@ public class Simulator
     {
         time = 0;
 
-        gui = GUI.getGui();
+        gui = GUI.getInstance();
         env = Environment.getInstance();
-        blackBoard = BlackBoard.getBlackBoard();
+        blackBoard = BlackBoard.getInstance();
         config = new Configuration( CONFIG_FILE_PATH );
         log = Logger.getLogger( "simulator" );
         DeploymentStrategy strategy = null;
@@ -67,9 +69,9 @@ public class Simulator
         }
 
         Agent.setProperties( this, strategy );
-        agents = new ArrayList<Agent>( 10 );
+        agents = new ArrayList<Agent>( AGENT_NUMBER );
 
-        for ( int i = 0; i < agents.size(); i++ )
+        for ( int i = 0; i < AGENT_NUMBER; i++ )
         {
             agents.add( new Scout() );
         }

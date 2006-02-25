@@ -14,7 +14,7 @@ public class GUI
         // TODO: To change body of method.
     }
 
-    public static GUI getGui()
+    public static GUI getInstance()
     {
         if ( guiInstance == null )
         {
