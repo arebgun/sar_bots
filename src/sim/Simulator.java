@@ -1,87 +1,102 @@
+package sim;
+
 /**
  * @(#) Simulator.java
  */
 
-package sim;
-
 import agent.Agent;
-import java.util.logging;
+import agent.Scout;
+import config.Configuration;
+import env.Environment;
+import ui.GUI;
 
-public class Simulator 
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+public class Simulator
 {
-    private static final String CONFIG_FILE_PATH = ClassLoader.getSystemClassLoader().getResource("conf/base.conf").getPath();
+    private static final String CONFIG_FILE_PATH = ClassLoader.getSystemClassLoader().getResource( "conf/base.conf" ).getPath();
 
     private long time;
 
-        private static Simulator simulatorInstance;
-	
-	private GUI gui;
-	
-	private ArrayList<Agent> agents;
-		
-	private Environment env;
-	
-	public BlackBoard blackBoard;
-	
-	public Configuration config;
-	
-        public Logger log;
+    private static Simulator simulatorInstance;
 
+    private ArrayList<Agent> agents;
 
-	protected Simulator( )
-	{
-		
-	}
-	
-	public static Simulator getSimulator( )
-	{
-		return simulatorInstance;
-	}
-	
-	public void initialize( )
-	{
-	    time = 0;
+    private Environment env;
 
-	    gui        = new GUI( simulatorInstance );
-	    env        = new Environment( simulatorInstance );
-	    blackBoard = new BlackBoard( );
-	    config     = new Configuration( CONFIG_FILE_PATH );
-	    log        = Logger.getLogger("simulator");
+    public GUI gui;
 
-	    DeploymentStrategy strategy = Class.forName( config.getAgentDeploymentStrategy() ).newInstance();
-	    Agent.setProperties( simulatorInstance, strategy );
-	    agents = new ArrayList<Agent>( 10 );
-	    for (int i = 0; i < agents.length; i++) 
-		{
-		agents.add(new Agent( ) );
-		}
+    public BlackBoard blackBoard;
 
-	}
-	
-    public long getTime( ) 
+    public Configuration config;
+
+    public Logger log;
+
+    private Simulator() {}
+
+    public static Simulator getSimulator()
     {
-	return time;
+        if ( simulatorInstance == null )
+        {
+            simulatorInstance = new Simulator();
+        }
+
+        return simulatorInstance;
     }
 
-    public void step ( ) 
+    public void initialize()
     {
-	for (Agent agent : agents) 
-	    {
-	    agent.move( );
-	}
+        time = 0;
 
-	env.update( );
+        gui = GUI.getGui();
+        env = Environment.getInstance();
+        blackBoard = BlackBoard.getBlackBoard();
+        config = new Configuration( CONFIG_FILE_PATH );
+        log = Logger.getLogger( "simulator" );
+        DeploymentStrategy strategy = null;
 
-	gui.update( );
-	
-	t++;
+        try
+        {
+            strategy = (DeploymentStrategy) Class.forName( config.getAgentDeploymentStrategy() ).newInstance();
+        }
+        catch ( Exception e )
+        {
+            //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
+        }
+
+        Agent.setProperties( this, strategy );
+        agents = new ArrayList<Agent>( 10 );
+
+        for ( int i = 0; i < agents.size(); i++ )
+        {
+            agents.add( new Scout() );
+        }
+
     }
 
-	public static void main( String[] arg )
-	{
-	    simulatorInstance = this;
-	    initialize();
+    public long getTime()
+    {
+        return time;
+    }
 
-	    gui.show( );
-	}	
+    public void step()
+    {
+        for ( Agent agent : agents )
+        {
+            agent.move();
+        }
+
+        env.update();
+        gui.update();
+
+        time++;
+    }
+
+    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
+    public Object clone() throws CloneNotSupportedException
+    {
+        throw new CloneNotSupportedException();
+    }
 }

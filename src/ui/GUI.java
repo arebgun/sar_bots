@@ -1,33 +1,36 @@
-package env;
-
-/**
- * @(#) Environment.java
+package ui;/**
+ * @(#) GUI.java
  */
 
 import sim.Simulator;
 
-public class Environment
+public class GUI
 {
-    private static Environment environmentInstance;
+    private static GUI guiInstance;
     private static Simulator sim;
 
-    private Environment()
+    private GUI()
     {
-
+        // TODO: To change body of method.
     }
 
-    public static Environment getInstance()
+    public static GUI getGui()
     {
-        if ( environmentInstance == null )
+        if ( guiInstance == null )
         {
-            environmentInstance = new Environment();
+            guiInstance = new GUI();
             sim = Simulator.getSimulator();
         }
 
-        return environmentInstance;
+        return guiInstance;
     }
 
     public void update()
+    {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void show()
     {
         //To change body of created methods use File | Settings | File Templates.
     }
