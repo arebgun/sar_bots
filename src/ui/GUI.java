@@ -9,10 +9,7 @@ public class GUI
     private static GUI guiInstance;
     private static Simulator sim;
 
-    private GUI()
-    {
-        // TODO: To change body of method.
-    }
+    private GUI() {}
 
     public static GUI getInstance()
     {

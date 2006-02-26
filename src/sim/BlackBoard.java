@@ -8,10 +8,7 @@ public class BlackBoard
 {
     private static BlackBoard blackBoardInstance;
 
-    private BlackBoard()
-    {
-
-    }
+    private BlackBoard() {}
 
     public static BlackBoard getInstance()
     {
