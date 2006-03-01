@@ -1,6 +1,9 @@
-package agent;/**
+package agent.sensor;
+/**
  * @(#) SensorModule.java
  */
+
+import agent.AgentLocation;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

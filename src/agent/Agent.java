@@ -2,8 +2,12 @@ package agent;/**
  * @(#) Agent.java
  */
 
-import sim.DeploymentStrategy;
+import agent.sensor.SensorModule;
+import agent.plan.PlanModule;
+import agent.propulsion.PropulsionModule;
+import agent.comm.CommunicationModule;
 import sim.Simulator;
+import sim.BlackBoard;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,8 +16,6 @@ public abstract class Agent
 {
     private static int id = 0;
 
-    // final modifier does not work
-    private static Simulator sim;
     private static DeploymentStrategy deployStrategy;
 
     private AgentLocation loc;
@@ -28,8 +30,12 @@ public abstract class Agent
 
     private CommunicationModule communication;
 
-    private PlanningModule plan;
+    private PlanModule plan;
 
+    public static void setProperties() throws ClassNotFoundException, InstantiationException, IllegalAccessException
+    {
+	deployStrategy = ( DeploymentStrategy ) Class.forName( Simulator.config.getAgentDeploymentStrategy() ).newInstance();
+    }
 
     public Agent()
     {
@@ -48,11 +54,6 @@ public abstract class Agent
         return loc;
     }
 
-    public static void setProperties( Simulator simulator, DeploymentStrategy strategy )
-    {
-        sim = simulator;
-        deployStrategy = strategy;
-    }
 
     /**
      * Updates a position on the blacboard.
@@ -62,7 +63,7 @@ public abstract class Agent
         ArrayList<Shape> sensorView = sensor.getView( loc );
         AgentLocation goal = plan.getGoalLocation( sensorView );
         loc = propulsion.moveToward( goal );
-        sim.blackBoard.agentMoved( this );
+        BlackBoard.agentMoved( this );
     }
 }
 

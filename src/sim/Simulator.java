@@ -6,6 +6,8 @@ package sim;
 
 import agent.Agent;
 import agent.Scout;
+import agent.Worker;
+
 import config.Configuration;
 import env.Environment;
 import ui.GUI;
@@ -15,90 +17,62 @@ import java.util.logging.Logger;
 
 public class Simulator
 {
-    private static final String CONFIG_FILE_PATH = ClassLoader.getSystemClassLoader().getResource( "conf/base.conf" ).getPath();
+    public static Configuration config;
 
-    private static final int AGENT_NUMBER = 10;
+    private static long time;
 
-    private static Simulator simulatorInstance;
+    private static ArrayList<Agent> agents;
 
-    private long time;
+    //private static GUI gui;  // do we need this guy?
 
-    private ArrayList<Agent> agents;
-
-    private Environment env;
-
-    public GUI gui;
-
-    public BlackBoard blackBoard;
-
-    public Configuration config;
-
-    public Logger log;
-
-    private Simulator() {}
-
-    public static Simulator getSimulator()
+    public static void run(String configFilePath) throws InstantiationException, IllegalAccessException, ClassNotFoundException
     {
-        if ( simulatorInstance == null )
-        {
-            simulatorInstance = new Simulator();
-        }
+        config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
+	
+	Environment.load();
+	
+	time = 0;
 
-        return simulatorInstance;
-    }
-
-    public void initialize()
-    {
-        time = 0;
-
-        gui = GUI.getInstance();
-        env = Environment.getInstance();
-        blackBoard = BlackBoard.getInstance();
-        config = new Configuration( CONFIG_FILE_PATH );
-        log = Logger.getLogger( "simulator" );
-        DeploymentStrategy strategy = null;
-
-        try
-        {
-            strategy = (DeploymentStrategy) Class.forName( config.getAgentDeploymentStrategy() ).newInstance();
-        }
-        catch ( Exception e )
-        {
-            //To change body of catch statement use File | Settings | File Templates.
-            e.printStackTrace();
-        }
-
-        Agent.setProperties( this, strategy );
-        agents = new ArrayList<Agent>( AGENT_NUMBER );
-
-        for ( int i = 0; i < AGENT_NUMBER; i++ )
+	Agent.setProperties();
+        agents = new ArrayList<Agent>( config.numberOfScouts() + config.numberOfWorkers() );
+        for ( int i = 0; i < config.numberOfScouts(); i++ )
         {
             agents.add( new Scout() );
         }
+        for ( int i = 0; i < config.numberOfWorkers(); i++ )
+        {
+            agents.add( new Worker() );
+        }
 
+	GUI.show();
     }
 
-    public long getTime()
+    public static long getTime()
     {
         return time;
     }
 
-    public void step()
+    public static void step()
     {
         for ( Agent agent : agents )
         {
             agent.move();
         }
 
-        env.update();
-        gui.update();
+        Environment.update();
+        GUI.update();
 
         time++;
     }
 
-    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
-    public Object clone() throws CloneNotSupportedException
-    {
-        throw new CloneNotSupportedException();
+    public static void main( String[] arg ) {
+	try 
+	    {
+	    Simulator.run("conf/base.conf");
+	} 
+	catch (Exception e)
+	    {
+		e.printStackTrace();
+	    }
     }
 }

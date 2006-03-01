@@ -1,4 +1,4 @@
-package agent;
+package agent.comm;
 
 /**
  * @(#) CommunicationModule.java

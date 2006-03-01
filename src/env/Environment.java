@@ -13,6 +13,7 @@ public class Environment
 
     private Environment() {}
 
+    /*
     public static Environment getInstance()
     {
         if ( environmentInstance == null )
@@ -23,15 +24,20 @@ public class Environment
 
         return environmentInstance;
     }
-
-    public void update()
-    {
-        //To change body of created methods use File | Settings | File Templates.
-    }
-
     @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
     public Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
     }
+    */
+
+    public static void load() {
+
+    }
+
+    public static void update()
+    {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
 }

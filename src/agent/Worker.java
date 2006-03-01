@@ -7,5 +7,5 @@ package agent;
 public class Worker
         extends Agent
 {
-
+    public Worker() {}
 }

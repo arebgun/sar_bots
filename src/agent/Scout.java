@@ -7,5 +7,5 @@ package agent;
 public class Scout
         extends Agent
 {
-
+    public Scout() {}
 }

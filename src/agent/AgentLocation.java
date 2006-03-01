@@ -7,4 +7,13 @@ package agent;
  */
 public class AgentLocation
 {
+    double x;
+    double y;
+    double theta;
+
+    AgentLocation(double x, double y, double theta) {
+	this.x     = x;
+	this.y     = y;
+	this.theta = theta;
+    }
 }

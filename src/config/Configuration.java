@@ -16,4 +16,13 @@ public class Configuration
         //To change body of created methods use File | Settings | File Templates.
         return "DeploymentStrategy";
     }
+
+    public int numberOfScouts() {
+	return 0;
+    }
+
+    public int numberOfWorkers() {
+	return 0;
+    }
+
 }

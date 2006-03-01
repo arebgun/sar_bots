@@ -1,6 +1,4 @@
-package sim;
-
-import agent.AgentLocation;
+package agent;
 
 /**
  * Author: Anton Rebgun
@@ -9,9 +7,11 @@ import agent.AgentLocation;
  */
 public class DeploymentStrategy
 {
+    // put in a random gen in here (piggy back on Sim.config for the random seed)
+
     public AgentLocation getNextLocation( int id )
     {
         // TODO: Add logic here
-        return new AgentLocation();
+        return new AgentLocation(0, 0, 0);
     }
 }
