@@ -22,8 +22,6 @@ public class Simulator
 
     private static ArrayList<Agent> agents;
 
-    //private static GUI gui;  // do we need this guy?
-
     public static void run( String configFilePath ) throws InstantiationException, IllegalAccessException, ClassNotFoundException
     {
         time = 0;
@@ -41,7 +39,7 @@ public class Simulator
         }
 
         Environment.load();
-	GUI.getInstance().show();
+        GUI.getInstance().show();
     }
 
     public static long getTime()

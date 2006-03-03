@@ -1,4 +1,6 @@
-package agent;
+package agent.deployment;
+
+import agent.AgentLocation;
 
 /**
  * @author Anton Rebgun

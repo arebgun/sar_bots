@@ -4,13 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- */
-
-import javax.swing.SwingUtilities;
-
 public class GUI
 {
     private static final int DEFAULT_WIDTH = 800;
@@ -55,16 +48,17 @@ public class GUI
     }
 
 
-    public void show() {
+    public void show()
+    {
         SwingUtilities.invokeLater( new Runnable()
-	    {
-		public void run()
-		{
-		    build();
-		}
-	    } );
+        {
+            public void run()
+            {
+                build();
+            }
+        } );
     }
-    
+
     public void update()
     {
 
@@ -103,7 +97,7 @@ public class GUI
         c.weighty = wy;
     }
 
-    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
+    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
     public Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();

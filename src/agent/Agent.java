@@ -9,6 +9,7 @@ import agent.comm.CommunicationModule;
 import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
+import agent.deployment.DeploymentStrategy;
 import sim.BlackBoard;
 import sim.Simulator;
 
@@ -58,7 +59,7 @@ public abstract class Agent
         }
 
         location = deployStrategy.getNextLocation( id );
-	BlackBoard.agentMoved( this );
+        BlackBoard.agentMoved( this );
         id++;
     }
 
