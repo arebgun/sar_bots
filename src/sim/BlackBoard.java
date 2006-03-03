@@ -9,7 +9,9 @@ import agent.Agent;
 
 public class BlackBoard
 {
-    private BlackBoard() {}
+    private BlackBoard()
+    {
+    }
     /*
     public static BlackBoard getInstance()
     {

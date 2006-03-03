@@ -5,8 +5,9 @@ package agent;
  * @author Dimitri Zarzhitsky
  */
 
-public class Scout
-        extends Agent
+public class Scout extends Agent
 {
-    public Scout() {}
+    public Scout()
+    {
+    }
 }

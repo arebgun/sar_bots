@@ -2,6 +2,7 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * @author Anton Rebgun
@@ -10,24 +11,33 @@ import java.awt.*;
 
 public class GUI
 {
-    private static final int DEFAULT_HEIGHT = 600;
     private static final int DEFAULT_WIDTH = 800;
+    private static final int DEFAULT_HEIGHT = 600;
 
     private static GUI guiInstance;
     private static JFrame main;
 
     private RescueArea area;
-    private StatusPanel status;
+    private SidePanel side;
 
     private GUI()
     {
+        // Set window decorations (minimize, maximize, close, etc. buttons)
         JFrame.setDefaultLookAndFeelDecorated( true );
 
+        // Set application icon, if not found system default will be used
+        URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/bot_16.gif" );
+        Image icon = null;
+        if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
+
+        // Set main window location (center of the screen)
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int locX = (int) ( screenSize.getWidth() / 2 - DEFAULT_WIDTH / 2 );
         int locY = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
 
+        // Create main window, size and position it on the screen
         main = new JFrame( "Search and Rescue Bots" );
+        main.setIconImage( icon );
         main.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         main.setMinimumSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
         main.setPreferredSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
@@ -37,10 +47,7 @@ public class GUI
 
     public static GUI getInstance()
     {
-        if ( guiInstance == null )
-        {
-            guiInstance = new GUI();
-        }
+        if ( guiInstance == null ) { guiInstance = new GUI(); }
 
         return guiInstance;
     }
@@ -68,9 +75,9 @@ public class GUI
         setGrigBagConstraints( c, 0, 0, 1, 1, 1, 1 );
         main.add( area, c );
 
-        status = new StatusPanel();
+        side = new SidePanel();
         setGrigBagConstraints( c, 1, 0, 1, 1, 0, 0 );
-        main.add( status, c );
+        main.add( side, c );
     }
 
     private void setGrigBagConstraints( GridBagConstraints c, int x, int y, int w, int h, double wx, double wy )
@@ -83,7 +90,7 @@ public class GUI
         c.weighty = wy;
     }
 
-    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
+    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
     public Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
@@ -95,8 +102,7 @@ class RescueArea extends JPanel
     public RescueArea()
     {
         super();
-        this.setBackground( Color.WHITE );
-        this.setBorder( BorderFactory.createEmptyBorder( 30, 30, 30, 30 ) );
+        setBackground( Color.WHITE );
     }
 
     public void paint( Graphics g )
@@ -111,17 +117,17 @@ class RescueArea extends JPanel
     }
 }
 
-class StatusPanel extends JPanel
+class SidePanel extends JPanel
 {
 
     private final Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
     private final Dimension buttonSize = new Dimension( 80, 20 );
 
-    public StatusPanel()
+    public SidePanel()
     {
         super();
-        this.setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
-        this.setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ));
+        setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
+        setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ) );
 
         addNewButton( "Start" );
         addNewButton( "Step" );
@@ -138,11 +144,11 @@ class StatusPanel extends JPanel
         g.drawRect( 0, 0, dX - 1, dY - 1 );
     }
 
-    private void addNewButton(String text)
+    private void addNewButton( String text )
     {
         JButton button = new JButton( text );
         button.setPreferredSize( buttonSize );
-        this.add( buttonGlue );
-        this.add( button );
+        add( buttonGlue );
+        add( button );
     }
 }

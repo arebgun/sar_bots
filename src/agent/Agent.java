@@ -17,15 +17,26 @@ import java.util.ArrayList;
 
 public abstract class Agent
 {
+    /**
+     * Tells if the agent properties need to be set.
+     */
+    private static boolean init = false;
+
+    /**
+     * Agent unique Identification Number.
+     */
     private static int id = 0;
 
+    /**
+     * Agent deployment strategy. Determines initial position.
+     */
     private static DeploymentStrategy deployStrategy;
 
-    private AgentLocation loc;
+    private AgentLocation location;
 
-    private double speed;
+    private double velocity;
 
-    private double damage;
+    private double health;
 
     private PropulsionModule propulsion;
 
@@ -35,8 +46,10 @@ public abstract class Agent
 
     private PlanModule plan;
 
-    private boolean init = false;
-
+    /**
+     * Agent constructor. Creates a new agent and sets the initial location
+     * according to the deployment strategy.
+     */
     public Agent()
     {
         if ( !init )
@@ -44,28 +57,38 @@ public abstract class Agent
             setProperties();
         }
 
-        loc = deployStrategy.getNextLocation( id );
+        location = deployStrategy.getNextLocation( id );
         id++;
     }
 
+    /**
+     * Gets the Identification Number of the agent.
+     *
+     * @return unique agent ID
+     */
     public int getId()
     {
         return id;
     }
 
+    /**
+     * Gets the location of the agent.
+     *
+     * @return agent location on the map
+     */
     public AgentLocation getLocation()
     {
-        return loc;
+        return location;
     }
 
     /**
-     * Updates a position on the blacboard.
+     * Updates agent position on the blacboard.
      */
     public void move()
     {
-        ArrayList<Shape> sensorView = sensor.getView( loc );
+        ArrayList<Shape> sensorView = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( sensorView );
-        loc = propulsion.moveToward( goal );
+        location = propulsion.moveToward( goal );
         BlackBoard.agentMoved( this );
     }
 

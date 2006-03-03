@@ -5,8 +5,9 @@ package agent;
  * @author Dimitri Zarzhitsky
  */
 
-public class Worker
-        extends Agent
+public class Worker extends Agent
 {
-    public Worker() {}
+    public Worker()
+    {
+    }
 }

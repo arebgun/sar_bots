@@ -12,7 +12,9 @@ public class Environment
     private static Environment environmentInstance;
     private static Simulator sim;
 
-    private Environment() {}
+    private Environment()
+    {
+    }
 
     /*
     public static Environment getInstance()
