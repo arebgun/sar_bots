@@ -121,7 +121,7 @@ class SidePanel extends JPanel
 {
 
     private final Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
-    private final Dimension buttonSize = new Dimension( 80, 20 );
+    private final Dimension buttonSize = new Dimension( 75, 25 );
 
     public SidePanel()
     {
@@ -148,6 +148,7 @@ class SidePanel extends JPanel
     {
         JButton button = new JButton( text );
         button.setPreferredSize( buttonSize );
+        button.setMaximumSize( buttonSize );
         add( buttonGlue );
         add( button );
     }
