@@ -1,7 +1,8 @@
 package agent.propulsion;
 
 /**
- * @(#) PropulsionModule.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 import agent.AgentLocation;

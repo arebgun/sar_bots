@@ -1,5 +1,8 @@
-package sim;/**
- * @(#) BlackBoard.java
+package sim;
+
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 import agent.Agent;

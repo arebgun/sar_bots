@@ -1,7 +1,8 @@
 package agent.comm;
 
 /**
- * @(#) CommunicationModule.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 public class CommunicationModule

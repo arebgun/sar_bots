@@ -1,24 +1,86 @@
 package ui;
-/**
- * @(#) GUI.java
- */
 
-import sim.Simulator;
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ */
 
 public class GUI
 {
-    private GUI() {}
+    private static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 800;
 
-    /*
+    private static GUI guiInstance;
+    private static JFrame main;
+
+    private RescueArea area;
+    private StatusPanel status;
+
+    private GUI()
+    {
+        JFrame.setDefaultLookAndFeelDecorated( true );
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int locX = (int) ( screenSize.getWidth() / 2 - DEFAULT_WIDTH / 2 );
+        int locY = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
+
+        main = new JFrame( "Search and Rescue Bots" );
+        main.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        main.setMinimumSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
+        main.setPreferredSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
+        main.setLocation( locX, locY );
+        main.setLayout( new GridBagLayout() );
+    }
+
     public static GUI getInstance()
     {
         if ( guiInstance == null )
         {
             guiInstance = new GUI();
-            sim = Simulator.getSimulator();
         }
 
         return guiInstance;
+    }
+
+    public void show()
+    {
+        addComponents();
+
+        main.pack();
+        main.setVisible( true );
+    }
+
+    public void update()
+    {
+
+    }
+
+    private void addComponents()
+    {
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets( 2, 2, 2, 2 );
+
+        area = new RescueArea();
+        setGrigBagConstraints( c, 0, 0, 1, 1, 1, 1 );
+        main.add( area, c );
+
+        status = new StatusPanel();
+        setGrigBagConstraints( c, 1, 0, 1, 1, 0, 0 );
+        main.add( status, c );
+    }
+
+    private void setGrigBagConstraints( GridBagConstraints c, int x, int y, int w, int h, double wx, double wy )
+    {
+        c.gridx = x;
+        c.gridy = y;
+        c.gridwidth = w;
+        c.gridheight = h;
+        c.weightx = wx;
+        c.weighty = wy;
     }
 
     @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
@@ -26,15 +88,61 @@ public class GUI
     {
         throw new CloneNotSupportedException();
     }
-    */
+}
 
-    public static void show()
+class RescueArea extends JPanel
+{
+    public RescueArea()
     {
-        //To change body of created methods use File | Settings | File Templates.
+        super();
+        this.setBackground( Color.WHITE );
+        this.setBorder( BorderFactory.createEmptyBorder( 30, 30, 30, 30 ) );
     }
 
-    public static void update() {
+    public void paint( Graphics g )
+    {
+        super.paint( g );
 
+        int dY = getSize().height;
+        int dX = getSize().width;
+
+        g.setColor( Color.BLACK );
+        g.drawRect( 0, 0, dX - 1, dY - 1 );
+    }
+}
+
+class StatusPanel extends JPanel
+{
+
+    private final Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
+    private final Dimension buttonSize = new Dimension( 80, 20 );
+
+    public StatusPanel()
+    {
+        super();
+        this.setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
+        this.setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ));
+
+        addNewButton( "Start" );
+        addNewButton( "Step" );
     }
 
+    public void paint( Graphics g )
+    {
+        super.paint( g );
+
+        int dY = getSize().height;
+        int dX = getSize().width;
+
+        g.setColor( Color.BLACK );
+        g.drawRect( 0, 0, dX - 1, dY - 1 );
+    }
+
+    private void addNewButton(String text)
+    {
+        JButton button = new JButton( text );
+        button.setPreferredSize( buttonSize );
+        this.add( buttonGlue );
+        this.add( button );
+    }
 }

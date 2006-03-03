@@ -1,9 +1,12 @@
 package agent.plan;
+
 /**
- * @(#) PlanningModule.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 import agent.AgentLocation;
+
 import java.awt.*;
 import java.util.ArrayList;
 

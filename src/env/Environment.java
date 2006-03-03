@@ -1,7 +1,8 @@
 package env;
 
 /**
- * @(#) Environment.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 import sim.Simulator;
@@ -31,7 +32,8 @@ public class Environment
     }
     */
 
-    public static void load() {
+    public static void load()
+    {
 
     }
 

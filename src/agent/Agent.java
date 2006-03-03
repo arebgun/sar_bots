@@ -1,13 +1,16 @@
-package agent;/**
- * @(#) Agent.java
+package agent;
+
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
-import agent.sensor.SensorModule;
+import agent.comm.CommunicationModule;
 import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
-import agent.comm.CommunicationModule;
-import sim.Simulator;
+import agent.sensor.SensorModule;
 import sim.BlackBoard;
+import sim.Simulator;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,15 +35,16 @@ public abstract class Agent
 
     private PlanModule plan;
 
-    public static void setProperties() throws ClassNotFoundException, InstantiationException, IllegalAccessException
-    {
-	deployStrategy = ( DeploymentStrategy ) Class.forName( Simulator.config.getAgentDeploymentStrategy() ).newInstance();
-    }
+    private boolean init = false;
 
     public Agent()
     {
-        loc = deployStrategy.getNextLocation( id );
+        if ( !init )
+        {
+            setProperties();
+        }
 
+        loc = deployStrategy.getNextLocation( id );
         id++;
     }
 
@@ -54,7 +58,6 @@ public abstract class Agent
         return loc;
     }
 
-
     /**
      * Updates a position on the blacboard.
      */
@@ -65,19 +68,18 @@ public abstract class Agent
         loc = propulsion.moveToward( goal );
         BlackBoard.agentMoved( this );
     }
-}
 
-/*
-public void setLocation( final Point2D location )
-{
-    // do bounds checking on location
-    loc = location;
+    private void setProperties()
+    {
+        try
+        {
+            Class ds = Class.forName( Simulator.config.getAgentDeploymentStrategy(), true, this.getClass().getClassLoader() );
+            deployStrategy = (DeploymentStrategy) ds.newInstance();
+            init = true;
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
 }
-
-
-public void setOrientation( final double orientation )
-{
-    // normalize orient 0 <= orient < 360
-    orient = orientation;
-}
-*/

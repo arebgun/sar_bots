@@ -1,7 +1,8 @@
 package agent;
 
 /**
- * @(#) Worker.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 public class Worker

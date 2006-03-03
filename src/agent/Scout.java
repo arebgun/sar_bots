@@ -1,7 +1,8 @@
 package agent;
 
 /**
- * @(#) Scout.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
 
 public class Scout

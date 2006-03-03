@@ -1,14 +1,20 @@
 package agent.propulsion;
 
 /**
- * @(#) Thruster.java
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
  */
+
+import agent.AgentLocation;
 
 class Thruster extends PropulsionModule
 {
-    private static final MAX_SPEED = 1.0;
+    private static final double MAX_SPEED = 1.0;
 
-    public void setCurrentSpeed( final double speed );
+    public void setCurrentSpeed( final double speed ) {}
 
-    public abstract AgentLocation moveToward( AgentLocation goal );
+    public AgentLocation moveToward( AgentLocation goal )
+    {
+        return new AgentLocation( 0, 0, 0 );
+    }
 }
