@@ -72,7 +72,7 @@ public class Simulator
     {
         try
         {
-            Simulator.run( "conf/base.conf" );
+            Simulator.run( "config/base.conf" );
         }
         catch ( Exception e )
         {
