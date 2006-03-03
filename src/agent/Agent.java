@@ -58,6 +58,7 @@ public abstract class Agent
         }
 
         location = deployStrategy.getNextLocation( id );
+	BlackBoard.agentMoved( this );
         id++;
     }
 

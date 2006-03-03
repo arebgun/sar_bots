@@ -28,7 +28,6 @@ public class Simulator
     {
         time = 0;
         config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
-        Environment.load();
         agents = new ArrayList<Agent>( config.numberOfScouts() + config.numberOfWorkers() );
 
         for ( int i = 0; i < config.numberOfScouts(); i++ )
@@ -41,13 +40,8 @@ public class Simulator
             agents.add( new Worker() );
         }
 
-        javax.swing.SwingUtilities.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                GUI.getInstance().show();
-            }
-        } );
+        Environment.load();
+	GUI.getInstance().show();
     }
 
     public static long getTime()

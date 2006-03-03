@@ -9,6 +9,8 @@ import java.net.URL;
  * @author Dimitri Zarzhitsky
  */
 
+import javax.swing.SwingUtilities;
+
 public class GUI
 {
     private static final int DEFAULT_WIDTH = 800;
@@ -52,17 +54,28 @@ public class GUI
         return guiInstance;
     }
 
-    public void show()
+
+    public void show() {
+        SwingUtilities.invokeLater( new Runnable()
+	    {
+		public void run()
+		{
+		    build();
+		}
+	    } );
+    }
+    
+    public void update()
+    {
+
+    }
+
+    private void build()
     {
         addComponents();
 
         main.pack();
         main.setVisible( true );
-    }
-
-    public void update()
-    {
-
     }
 
     private void addComponents()
