@@ -5,12 +5,11 @@ package env;
  * @author Dimitri Zarzhitsky
  */
 
-import agent.Agent;
-import agent.AgentLocation;
 import sim.Simulator;
 
-import java.awt.Polygon;
-import java.awt.geom.*;
+import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,15 +31,18 @@ public class Environment
     }
 
 
-    public static Area occupiedArea() 
+    public static Area occupiedArea()
     {
-	Area occupied = new Area();
-	for (Polygon building : buildings) 
-	    {
-		occupied.add( new Area( building ) );
-	    }
-	occupied.add( Simulator.agentSpace() );
-	return occupied;
+        Area occupied = new Area();
+
+        for ( Polygon building : buildings )
+        {
+            occupied.add( new Area( building ) );
+        }
+
+        occupied.add( Simulator.agentSpace() );
+        
+        return occupied;
     }
 
 

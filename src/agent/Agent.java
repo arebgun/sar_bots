@@ -6,15 +6,14 @@ package agent;
  */
 
 import agent.comm.CommunicationModule;
+import agent.deployment.DeploymentStrategy;
 import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
-import agent.deployment.DeploymentStrategy;
 import sim.BlackBoard;
 import sim.Simulator;
 
 import java.awt.geom.Area;
-import java.util.ArrayList;
 
 public abstract class Agent
 {
@@ -91,22 +90,22 @@ public abstract class Agent
      */
     public void move()
     {
-	Area sensorView = sensor.getView( location );
+        Area sensorView = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( sensorView );
-	location = propulsion.move( location, goal );
+        location = propulsion.move( location, goal );
     }
 
 
-    public Area getBodyArea() 
+    public Area getBodyArea()
     {
-	return body;
+        return body;
     }
 
 
     private void setProperties() throws InstantiationException, IllegalAccessException, ClassNotFoundException
     {
-	Class ds = Class.forName( Simulator.config.agentDeploymentStrategy(), true, this.getClass().getClassLoader() );
-	deployStrategy = (DeploymentStrategy) ds.newInstance();
-	init = true;
+        Class ds = Class.forName( Simulator.config.agentDeploymentStrategy(), true, this.getClass().getClassLoader() );
+        deployStrategy = (DeploymentStrategy) ds.newInstance();
+        init = true;
     }
 }

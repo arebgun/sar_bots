@@ -28,23 +28,27 @@ public class Configuration
     }
 
 
-    public String scoutSensor() {
+    public String scoutSensor()
+    {
 
-	return null;
+        return null;
     }
 
-    public String workerSensor() {
+    public String workerSensor()
+    {
 
-	return null;
+        return null;
     }
 
-    public double scoutSensorRange() {
+    public double scoutSensorRange()
+    {
 
-	return 0;
+        return 0;
     }
 
-    public double workerSensorRange() {
+    public double workerSensorRange()
+    {
 
-	return 0;
+        return 0;
     }
 }

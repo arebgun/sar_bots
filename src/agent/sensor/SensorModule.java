@@ -6,7 +6,6 @@ package agent.sensor;
 import agent.AgentLocation;
 
 import java.awt.geom.Area;
-import java.util.ArrayList;
 
 public interface SensorModule
 {

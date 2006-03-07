@@ -7,8 +7,7 @@ package agent.plan;
 
 import agent.AgentLocation;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.Area;
 
 public interface PlanModule
 {

@@ -5,7 +5,9 @@ package sim;
  * @author Dimitri Zarzhitsky
  */
 
-import agent.*;
+import agent.Agent;
+import agent.Scout;
+import agent.Worker;
 import config.Configuration;
 import env.Environment;
 import ui.GUI;
@@ -59,13 +61,16 @@ public class Simulator
         time++;
     }
 
-    public static Area agentSpace( ) {
-	Area space = new Area();
-	for (Agent agent : agents) 
-	    {
-		space.add( agent.getBodyArea() );
-	    }
-	return space;
+    public static Area agentSpace()
+    {
+        Area space = new Area();
+
+        for ( Agent agent : agents )
+        {
+            space.add( agent.getBodyArea() );
+        }
+        
+        return space;
     }
 
     public static void main( String[] arg )
