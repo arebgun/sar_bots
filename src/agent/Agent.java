@@ -13,7 +13,7 @@ import agent.deployment.DeploymentStrategy;
 import sim.BlackBoard;
 import sim.Simulator;
 
-import java.awt.*;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 
 public abstract class Agent
@@ -21,37 +21,40 @@ public abstract class Agent
     /**
      * Tells if the agent properties need to be set.
      */
-    private static boolean init = false;
+    protected static boolean init = false;
 
     /**
      * Agent unique Identification Number.
      */
-    private static int id = 0;
+    protected static int id = 0;
 
     /**
      * Agent deployment strategy. Determines initial position.
      */
-    private static DeploymentStrategy deployStrategy;
+    protected static DeploymentStrategy deployStrategy;
 
-    private AgentLocation location;
 
-    private double velocity;
+    protected Area body;
 
-    private double health;
+    protected AgentLocation location;
 
-    private PropulsionModule propulsion;
+    protected double velocity;
 
-    private SensorModule sensor;
+    protected double health;
 
-    private CommunicationModule communication;
+    protected PropulsionModule propulsion;
 
-    private PlanModule plan;
+    protected SensorModule sensor;
+
+    protected CommunicationModule communication;
+
+    protected PlanModule plan;
 
     /**
      * Agent constructor. Creates a new agent and sets the initial location
      * according to the deployment strategy.
      */
-    public Agent()
+    public Agent() throws Exception
     {
         if ( !init )
         {
@@ -88,23 +91,22 @@ public abstract class Agent
      */
     public void move()
     {
-        ArrayList<Shape> sensorView = sensor.getView( location );
+	Area sensorView = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( sensorView );
-        location = propulsion.moveToward( goal );
-        BlackBoard.agentMoved( this );
+	location = propulsion.move( location, goal );
     }
 
-    private void setProperties()
+
+    public Area getBodyArea() 
     {
-        try
-        {
-            Class ds = Class.forName( Simulator.config.getAgentDeploymentStrategy(), true, this.getClass().getClassLoader() );
-            deployStrategy = (DeploymentStrategy) ds.newInstance();
-            init = true;
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+	return body;
+    }
+
+
+    private void setProperties() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    {
+	Class ds = Class.forName( Simulator.config.agentDeploymentStrategy(), true, this.getClass().getClassLoader() );
+	deployStrategy = (DeploymentStrategy) ds.newInstance();
+	init = true;
     }
 }

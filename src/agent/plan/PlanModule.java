@@ -8,14 +8,9 @@ package agent.plan;
 import agent.AgentLocation;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.geom.*;
 
-public class PlanModule
+public interface PlanModule
 {
-
-    public AgentLocation getGoalLocation( ArrayList<Shape> sensorView )
-    {
-        // TODO: To change body of method.
-        return null;
-    }
+    public AgentLocation getGoalLocation( Area sensorView );
 }

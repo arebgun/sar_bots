@@ -6,6 +6,8 @@ package agent.propulsion;
  */
 
 import agent.AgentLocation;
+import agent.sensor.SensorModule;
+import agent.plan.PlanModule;
 
 public abstract class PropulsionModule
 {
@@ -20,7 +22,5 @@ public abstract class PropulsionModule
         return currentSpeed;
     }
 
-    public abstract void setCurrentSpeed( final double speed );
-
-    public abstract AgentLocation moveToward( AgentLocation goal );
+    public abstract AgentLocation move( AgentLocation location, AgentLocation goal ); 
 }

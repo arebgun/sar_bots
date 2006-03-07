@@ -12,7 +12,7 @@ public class Configuration
 
     }
 
-    public String getAgentDeploymentStrategy()
+    public String agentDeploymentStrategy()
     {
         return "DeploymentStrategy";
     }
@@ -27,4 +27,24 @@ public class Configuration
         return 0;
     }
 
+
+    public String scoutSensor() {
+
+	return null;
+    }
+
+    public String workerSensor() {
+
+	return null;
+    }
+
+    public double scoutSensorRange() {
+
+	return 0;
+    }
+
+    public double workerSensorRange() {
+
+	return 0;
+    }
 }

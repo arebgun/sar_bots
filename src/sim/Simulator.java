@@ -5,13 +5,12 @@ package sim;
  * @author Dimitri Zarzhitsky
  */
 
-import agent.Agent;
-import agent.Scout;
-import agent.Worker;
+import agent.*;
 import config.Configuration;
 import env.Environment;
 import ui.GUI;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 
 public class Simulator
@@ -22,7 +21,7 @@ public class Simulator
 
     private static ArrayList<Agent> agents;
 
-    public static void run( String configFilePath ) throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    public static void run( String configFilePath ) throws Exception
     {
         time = 0;
         config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
@@ -58,6 +57,15 @@ public class Simulator
         GUI.getInstance().update();
 
         time++;
+    }
+
+    public static Area agentSpace( ) {
+	Area space = new Area();
+	for (Agent agent : agents) 
+	    {
+		space.add( agent.getBodyArea() );
+	    }
+	return space;
     }
 
     public static void main( String[] arg )

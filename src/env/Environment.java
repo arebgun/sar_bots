@@ -5,40 +5,23 @@ package env;
  * @author Dimitri Zarzhitsky
  */
 
+import agent.Agent;
 import agent.AgentLocation;
+import sim.Simulator;
 
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
+import java.awt.Polygon;
+import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Environment
 {
-    private ArrayList<Polygon> buidings;
-    private HashMap<Integer, ArrayList<Ellipse2D.Double>> fires;
-    private ArrayList<AgentLocation> agents;
+    private static ArrayList<Polygon> buildings;
+    private static HashMap<Integer, ArrayList<Ellipse2D.Double>> fires;
 
     private Environment()
     {
     }
-
-    /*
-    public static Environment getInstance()
-    {
-        if ( environmentInstance == null )
-        {
-            environmentInstance = new Environment();
-            sim = Simulator.getSimulator();
-        }
-
-        return environmentInstance;
-    }
-    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
-    public Object clone() throws CloneNotSupportedException
-    {
-        throw new CloneNotSupportedException();
-    }
-    */
 
     public static void load()
     {
@@ -47,6 +30,19 @@ public class Environment
         // populate the fires hashmap using the EnvFireParser object (dimzar)
         // process the BlackBoard agent movement queue to build the agents ArrrayList
     }
+
+
+    public static Area occupiedArea() 
+    {
+	Area occupied = new Area();
+	for (Polygon building : buildings) 
+	    {
+		occupied.add( new Area( building ) );
+	    }
+	occupied.add( Simulator.agentSpace() );
+	return occupied;
+    }
+
 
     public static void update()
     {
