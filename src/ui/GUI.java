@@ -121,6 +121,15 @@ class RescueArea extends JPanel
 
         g.setColor( Color.BLACK );
         g.drawRect( 0, 0, dX - 1, dY - 1 );
+
+        g.setColor( Color.GRAY );
+        g.fillRect( 50, 50, 60, 60 );
+
+        g.setColor( new Color( 255, 204, 102, 125 ) );
+        g.fillOval( 98, 98, 50, 50 );
+
+        g.setColor( Color.RED );
+        g.fillOval( 120, 120, 6, 6 );
     }
 }
 
