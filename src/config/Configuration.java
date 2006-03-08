@@ -12,43 +12,47 @@ public class Configuration
 
     }
 
-    public String agentDeploymentStrategy()
+    public String getAgentDeploymentStrategy()
     {
         return "DeploymentStrategy";
     }
 
-    public int numberOfScouts()
+    public int getNumberOfScouts()
     {
         return 0;
     }
 
-    public int numberOfWorkers()
+    public int getNumberOfWorkers()
     {
         return 0;
     }
 
 
-    public String scoutSensor()
+    public String getScoutSensor()
     {
 
         return null;
     }
 
-    public String workerSensor()
+    public String getWorkerSensor()
     {
 
         return null;
     }
 
-    public double scoutSensorRange()
+    public double getScoutSensorRange()
     {
 
         return 0;
     }
 
-    public double workerSensorRange()
+    public double getWorkerSensorRange()
     {
 
         return 0;
+    }
+
+    public long getPlanModuleSeed() {
+	return 0;
     }
 }

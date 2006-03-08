@@ -9,10 +9,14 @@ import agent.AgentLocation;
 
 class Thruster extends PropulsionModule
 {
-    private static final double MAX_SPEED = 1.0;  // extract from config file
-
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
-        return new AgentLocation( 0, 0, 0 );
+	double goalX = goal.getX(), goalY = goal.getY(), goalDist = hypot( goalX - location.getX(), goalY - location.getY() );
+	if ( goalDist > maxSpeed ) 
+	    {
+		goalX *= maxSpeed/goalDist;
+		goalY *= maxSpeed/goalDist;
+	    }
+        return new AgentLocation( goalX, goalY, goal.getTheta() );
     }
 }

@@ -25,15 +25,12 @@ public abstract class Agent
     /**
      * Agent unique Identification Number.
      */
-    protected static int id = 0;
+    protected static int id = -1;
 
     /**
      * Agent deployment strategy. Determines initial position.
      */
     protected static DeploymentStrategy deployStrategy;
-
-
-    protected Area body;
 
     protected AgentLocation location;
 
@@ -41,13 +38,14 @@ public abstract class Agent
 
     protected double health;
 
-    protected PropulsionModule propulsion;
-
     protected SensorModule sensor;
 
+    protected PlanModule plan;
+    
     protected CommunicationModule communication;
 
-    protected PlanModule plan;
+    protected PropulsionModule propulsion;
+
 
     /**
      * Agent constructor. Creates a new agent and sets the initial location
@@ -59,9 +57,6 @@ public abstract class Agent
         {
             setProperties();
         }
-
-        location = deployStrategy.getNextLocation( id );
-        BlackBoard.agentMoved( this );
         id++;
     }
 
@@ -90,22 +85,12 @@ public abstract class Agent
      */
     public void move()
     {
-        Area sensorView = sensor.getView( location );
-        AgentLocation goal = plan.getGoalLocation( sensorView );
-        location = propulsion.move( location, goal );
+        Area sensorView    = sensor.getView( location );
+        AgentLocation goal = plan.getGoalLocation( location, sensorView );
+        location           = propulsion.move( location, goal );
     }
 
+    public abstract Area getBodyArea();
 
-    public Area getBodyArea()
-    {
-        return body;
-    }
-
-
-    private void setProperties() throws InstantiationException, IllegalAccessException, ClassNotFoundException
-    {
-        Class ds = Class.forName( Simulator.config.agentDeploymentStrategy(), true, this.getClass().getClassLoader() );
-        deployStrategy = (DeploymentStrategy) ds.newInstance();
-        init = true;
-    }
+    private static abstract void setProperties() throws Exception;
 }

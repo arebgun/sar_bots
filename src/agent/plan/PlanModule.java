@@ -11,5 +11,5 @@ import java.awt.geom.Area;
 
 public interface PlanModule
 {
-    public AgentLocation getGoalLocation( Area sensorView );
+    public AgentLocation getGoalLocation( AgentLocation location, Area sensorView );
 }
