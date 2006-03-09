@@ -8,7 +8,6 @@ package agent.plan;
 import agent.AgentLocation;
 import sim.Simulator;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -30,7 +29,7 @@ public class Stochastic implements PlanModule
     // dimzar: include a diagram and documentation for what you're doing here
     public AgentLocation getGoalLocation( AgentLocation location, Area sensorView )
     {
-        Rectangle bounds = sensorView.getBounds();
+        Rectangle2D bounds = sensorView.getBounds();
         double x = -1, y = -1;
         double newTheta = location.getTheta();
         double wingSpan = Simulator.config.getWingSpan();
