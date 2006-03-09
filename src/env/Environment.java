@@ -41,7 +41,7 @@ public class Environment
         }
 
         occupied.add( Simulator.agentSpace() );
-        
+
         return occupied;
     }
 

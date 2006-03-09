@@ -27,14 +27,14 @@ public class Simulator
     {
         time = 0;
         config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
-        agents = new ArrayList<Agent>( config.numberOfScouts() + config.numberOfWorkers() );
+        agents = new ArrayList<Agent>( config.getNumberOfScouts() + config.getNumberOfWorkers() );
 
-        for ( int i = 0; i < config.numberOfScouts(); i++ )
+        for ( int i = 0; i < config.getNumberOfScouts(); i++ )
         {
             agents.add( new Scout() );
         }
 
-        for ( int i = 0; i < config.numberOfWorkers(); i++ )
+        for ( int i = 0; i < config.getNumberOfWorkers(); i++ )
         {
             agents.add( new Worker() );
         }
@@ -69,7 +69,7 @@ public class Simulator
         {
             space.add( agent.getBodyArea() );
         }
-        
+
         return space;
     }
 
