@@ -12,13 +12,12 @@ public class Configuration
 
     }
 
-    // ----------- ENVIRONMENT CONFIGURATION ----------- //
-    public int getWorldWidth()
+    public String getAgentClassName() 
     {
-        return 0;
+	return null;
     }
 
-    public int getWorldHeight()
+    public int getNumberOfAgents()
     {
         return 0;
     }
@@ -38,14 +37,7 @@ public class Configuration
         return 0;
     }
 
-
-    // ----------- AGENT CONFIGURATION ----------- //
     public double getWingSpan()
-    {
-        return 0;
-    }
-
-    public int getNumberOfAgents()
     {
         return 0;
     }
