@@ -5,9 +5,9 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-public class Configuration
+public class ConfigEnv
 {
-    public Configuration( String configFilePath )
+    public ConfigEnv( String configFilePath )
     {
 
     }

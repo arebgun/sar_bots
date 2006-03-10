@@ -5,6 +5,7 @@ package env;
  * @author Dimitri Zarzhitsky
  */
 
+import config.ConfigEnv;
 import sim.Simulator;
 
 import java.awt.*;
@@ -17,19 +18,26 @@ public class Environment
 {
     private static ArrayList<Polygon> buildings;
     private static HashMap<Integer, ArrayList<Ellipse2D.Double>> fires;
+    private static ConfigEnv config;
 
     private Environment()
     {
     }
 
-    public static void load()
+    public static void load( String envConfigFileName ) throws Exception
     {
+        config = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
+
         // parse the map file through addtion of a EnvMapParser object (dimzar)
         // populate the buildings list based on stuff in the map file, through exception if a vertex is out of bounds or x/y lists are different in length
         // populate the fires hashmap using the EnvFireParser object (dimzar)
         // process the BlackBoard agent movement queue to build the agents ArrrayList
     }
 
+    public static ConfigEnv getConfig()
+    {
+        return config;
+    }
 
     public static Area occupiedArea()
     {

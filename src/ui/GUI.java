@@ -15,14 +15,12 @@ public class GUI
     private RescueArea area;
     private SidePanel side;
 
-
     // properties specific to the GUI (dumped as a serialized object)
     /* zoom
        refresh rate
        window size
        position
     */
-
 
     private GUI()
     {

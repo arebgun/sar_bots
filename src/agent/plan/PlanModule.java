@@ -6,10 +6,18 @@ package agent.plan;
  */
 
 import agent.AgentLocation;
+import config.ConfigAgent;
 
 import java.awt.geom.Area;
 
-public interface PlanModule
+public abstract class PlanModule
 {
-    public AgentLocation getGoalLocation( AgentLocation location, Area sensorView );
+    protected ConfigAgent agentConfig;
+
+    public PlanModule( ConfigAgent config )
+    {
+        agentConfig = config;
+    }
+
+    public abstract AgentLocation getGoalLocation( AgentLocation location, Area sensorView );
 }

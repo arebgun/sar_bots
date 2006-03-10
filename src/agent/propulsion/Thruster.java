@@ -6,11 +6,17 @@ package agent.propulsion;
  */
 
 import agent.AgentLocation;
+import config.ConfigAgent;
 
 import static java.lang.Math.hypot;
 
 class Thruster extends PropulsionModule
 {
+    public Thruster( ConfigAgent config )
+    {
+        super( config );
+    }
+
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
         double goalX = goal.getX(), goalY = goal.getY(), goalDist = hypot( goalX - location.getX(), goalY - location.getY() );

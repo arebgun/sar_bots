@@ -6,9 +6,8 @@ package sim;
  */
 
 import agent.Agent;
-import agent.Scout;
-import agent.Worker;
-import config.ConfigEnv;
+import config.ConfigAgent;
+import config.ConfigSim;
 import env.Environment;
 import ui.GUI;
 
@@ -18,33 +17,28 @@ import java.util.logging.Logger;
 
 public class Simulator
 {
-    private static ConfigEnv config;
-
+    private static ConfigSim config;
     private static long time;
-
     private static Logger logger;
-
     private static ArrayList<Agent> agents;
 
     public static void run( String configFilePath ) throws Exception
     {
-        time   = 0;
-        config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
-	logger = Logger.getLogger("search & rescue bots simulator");
-        agents = new ArrayList<Agent>( config.getNumberOfScouts() + config.getNumberOfWorkers() );
+        time = 0;
+        config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
+        agents = new ArrayList<Agent>();
+        ArrayList<String> agentConfigFiles = config.getAgentConfigFileNames();
 
-	ArrayList<String> agentConfigFiles = config.getAgentConfigFileNames();
-	for ( String aConfig : agentConfigFiles )
-	    {
-		ConfigAgent agentConfig = new ConfigAgent( aConfig );
+        for ( String aConfig : agentConfigFiles )
+        {
+            ConfigAgent agentConfig = new ConfigAgent( aConfig );
+            Class loader = Class.forName( agentConfig.getAgentClassName() );
 
-		Class loader = Class.forName( agentConfig.getAgentClassName() ); //, true, this.getClass().getClassLoader() );
-
-		for ( int i = 0; i < agentConfig.getNumberOfAgents(); i++ )
-		    {
-			agents.add( (Agent) loader.newInstance();  );
-		    }
-	    }
+            for ( int i = 0; i < agentConfig.getNumberOfAgents(); i++ )
+            {
+                agents.add( (Agent) loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
+            }
+        }
 
         Environment.load( config.getEnvConfigFileName() );
         GUI.getInstance().show();
@@ -84,13 +78,18 @@ public class Simulator
     {
         try
         {
-	    if ( args.length < 1 ) {
-		logger.config("using the default simulator configuration file 'config/default.ConfigSim'");
-		Simulator.run( "config/default.ConfigSim" );
-	    } else {
-		logger.config("using the '" + args[0] + "' simulator configuration file");
-		Simulator.run( "config/" + args[0] );
-	    }		
+            logger = Logger.getLogger( "search & rescue bots simulator" );
+
+            if ( args.length < 1 )
+            {
+                logger.config( "using the default simulator configuration file 'config/default.ConfigSim'" );
+                Simulator.run( "config/default.ConfigSim" );
+            }
+            else
+            {
+                logger.config( "using the '" + args[0] + "' simulator configuration file" );
+                Simulator.run( "config/" + args[0] );
+            }
         }
         catch ( Exception e )
         {

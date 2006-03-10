@@ -5,16 +5,16 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-public class Configuration
+public class ConfigAgent
 {
-    public Configuration( String configFilePath )
+    public ConfigAgent( String configFilePath )
     {
 
     }
 
-    public String getAgentClassName() 
+    public String getAgentClassName()
     {
-	return null;
+        return "agent.Scout";
     }
 
     public int getNumberOfAgents()

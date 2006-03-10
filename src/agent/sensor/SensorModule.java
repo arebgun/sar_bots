@@ -4,10 +4,18 @@ package agent.sensor;
  */
 
 import agent.AgentLocation;
+import config.ConfigAgent;
 
 import java.awt.geom.Area;
 
-public interface SensorModule
+public abstract class SensorModule
 {
-    public Area getView( AgentLocation loc );
+    protected ConfigAgent agentConfig;
+
+    public SensorModule( ConfigAgent config )
+    {
+        agentConfig = config;
+    }
+
+    public abstract Area getView( AgentLocation loc );
 }

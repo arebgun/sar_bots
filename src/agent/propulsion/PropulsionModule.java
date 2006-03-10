@@ -6,23 +6,22 @@ package agent.propulsion;
  */
 
 import agent.AgentLocation;
-import sim.Simulator;
+import config.ConfigAgent;
 
 public abstract class PropulsionModule
 {
     protected double currentSpeed;
-
     protected double maxSpeed;
-
     protected double energyAmount;
+    protected ConfigAgent agentConfig;
 
-    public PropulsionModule()
+    public PropulsionModule( ConfigAgent config )
     {
+        agentConfig = config;
         currentSpeed = 0;
-        maxSpeed = Simulator.config.getPropulsionMaxSpeed();
-        energyAmount = Simulator.config.getPropulsionEnergyAmount();
+        maxSpeed = agentConfig.getPropulsionMaxSpeed();
+        energyAmount = agentConfig.getPropulsionEnergyAmount();
     }
-
 
     public double getCurrentSpeed()
     {

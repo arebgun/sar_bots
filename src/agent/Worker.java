@@ -5,30 +5,21 @@ package agent;
  * @author Dimitri Zarzhitsky
  */
 
-import sim.Simulator;
+import config.ConfigAgent;
 
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 
 public class Worker extends Agent
 {
-    public Worker() throws Exception
+    public Worker( ConfigAgent config ) throws Exception
     {
-        String deployClass = Simulator.config.getWorkerDeploymentStrategy();
-        String sensorClass = Simulator.config.getWorkerSensor();
-        String commClass = Simulator.config.getWorkerComm();
-        String planClass = Simulator.config.getWorkerPlan();
-        String propulsionClass = Simulator.config.getWorkerPropulsion();
-
-        double sensorRange = Simulator.config.getWorkerCommRange();
-        double commRange = Simulator.config.getWorkerSensorRange();
-
-        initialize( deployClass, sensorClass, sensorRange, planClass, commClass, commRange, propulsionClass );
+        super( config );
     }
 
     public Area getBodyArea()
     {
-        double wingSpan = Simulator.config.getWingSpan(), dimUnit = wingSpan / 3;
+        double wingSpan = config.getWingSpan(), dimUnit = wingSpan / 3;
         double wingWidth = dimUnit, bodyLength = 5 * dimUnit, bodyWidth = dimUnit;
 
         Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth, wingSpan ) );

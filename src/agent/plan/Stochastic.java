@@ -6,7 +6,7 @@ package agent.plan;
  */
 
 import agent.AgentLocation;
-import sim.Simulator;
+import config.ConfigAgent;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -14,15 +14,17 @@ import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
 import java.util.Random;
 
-public class Stochastic implements PlanModule
+public class Stochastic extends PlanModule
 {
     private static Random rand = null;
 
-    public Stochastic()
+    public Stochastic( ConfigAgent config )
     {
+        super( config );
+
         if ( rand == null )
         {
-            rand = new Random( Simulator.config.getPlanModuleSeed() );
+            rand = new Random( agentConfig.getPlanModuleSeed() );
         }
     }
 
@@ -32,7 +34,7 @@ public class Stochastic implements PlanModule
         Rectangle2D bounds = sensorView.getBounds();
         double x = -1, y = -1;
         double newTheta = location.getTheta();
-        double wingSpan = Simulator.config.getWingSpan();
+        double wingSpan = agentConfig.getWingSpan();
 
 
         boolean placed = false;

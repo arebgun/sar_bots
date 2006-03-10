@@ -1,6 +1,7 @@
 package agent;
 
-import sim.Simulator;
+import config.ConfigEnv;
+import env.Environment;
 
 /**
  * @author Anton Rebgun
@@ -14,12 +15,15 @@ public class AgentLocation
     private double x;
     private double y;
     private double theta;
+    private ConfigEnv configEnv;
 
     public AgentLocation( double x, double y, double theta )
     {
         setX( x );
         setY( y );
         setTheta( theta );
+
+        configEnv = Environment.getConfig();
     }
 
     public double getX()
@@ -40,7 +44,7 @@ public class AgentLocation
 
     public void setX( double newX )
     {
-        if ( newX < 0 || newX > Simulator.config.getWorldWidth() )
+        if ( newX < 0 || newX > configEnv.getWorldWidth() )
         {
             throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds" );
         }
@@ -49,7 +53,7 @@ public class AgentLocation
 
     public void setY( double newY )
     {
-        if ( newY < 0 || newY > Simulator.config.getWorldHeight() )
+        if ( newY < 0 || newY > configEnv.getWorldHeight() )
         {
             throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
         }

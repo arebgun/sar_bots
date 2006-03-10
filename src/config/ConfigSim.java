@@ -7,19 +7,25 @@ package config;
 
 import java.util.ArrayList;
 
-public class Configuration
+public class ConfigSim
 {
-    public Configuration( String configFilePath )
+    public ConfigSim( String configFilePath )
     {
 
     }
 
-    public String getEnvConfigFileName() {
-	return null;
+    public String getEnvConfigFileName()
+    {
+        return "config/default.ConfigEnv";
     }
 
-    public ArrayList<String> getAgentConfigFileNames() {
-	return null;
+    public ArrayList<String> getAgentConfigFileNames()
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add( "config/scout.ConfigAgent" );
+        list.add( "config/worker.ConfigAgent" );
+
+        return list;
     }
-    
+
 }
