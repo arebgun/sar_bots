@@ -8,38 +8,45 @@ package sim;
 import agent.Agent;
 import agent.Scout;
 import agent.Worker;
-import config.Configuration;
+import config.ConfigEnv;
 import env.Environment;
 import ui.GUI;
 
 import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Simulator
 {
-    public static Configuration config;
+    private static ConfigEnv config;
 
     private static long time;
+
+    private static Logger logger;
 
     private static ArrayList<Agent> agents;
 
     public static void run( String configFilePath ) throws Exception
     {
-        time = 0;
+        time   = 0;
         config = new Configuration( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
+	logger = Logger.getLogger("search & rescue bots simulator");
         agents = new ArrayList<Agent>( config.getNumberOfScouts() + config.getNumberOfWorkers() );
 
-        for ( int i = 0; i < config.getNumberOfScouts(); i++ )
-        {
-            agents.add( new Scout() );
-        }
+	ArrayList<String> agentConfigFiles = config.getAgentConfigFileNames();
+	for ( String aConfig : agentConfigFiles )
+	    {
+		ConfigAgent agentConfig = new ConfigAgent( aConfig );
 
-        for ( int i = 0; i < config.getNumberOfWorkers(); i++ )
-        {
-            agents.add( new Worker() );
-        }
+		Class loader = Class.forName( agentConfig.getAgentClassName() ); //, true, this.getClass().getClassLoader() );
 
-        Environment.load();
+		for ( int i = 0; i < agentConfig.getNumberOfAgents(); i++ )
+		    {
+			agents.add( (Agent) loader.newInstance();  );
+		    }
+	    }
+
+        Environment.load( config.getEnvConfigFileName() );
         GUI.getInstance().show();
     }
 
@@ -73,11 +80,17 @@ public class Simulator
         return space;
     }
 
-    public static void main( String[] arg )
+    public static void main( String[] args )
     {
         try
         {
-            Simulator.run( "config/base.conf" );
+	    if ( args.length < 1 ) {
+		logger.config("using the default simulator configuration file 'config/default.ConfigSim'");
+		Simulator.run( "config/default.ConfigSim" );
+	    } else {
+		logger.config("using the '" + args[0] + "' simulator configuration file");
+		Simulator.run( "config/" + args[0] );
+	    }		
         }
         catch ( Exception e )
         {

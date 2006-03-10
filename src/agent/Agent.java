@@ -98,28 +98,30 @@ public abstract class Agent
      * @param propulsionClass class to use for propulsion module (class must implement PropulsionModule interface)
      * @throws Exception
      */
-    public void initialize( String deployClass, String sensorClass, double sensorRange, String planClass, String commClass, double commRange, String propulsionClass ) throws Exception
+    protected void initialize( String deployClass, String sensorClass, String planClass, String commClass, String propulsionClass ) throws Exception
     {
-        if ( init ) { return; }
+        if ( !init ) 
+	    {
 
-        Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
-        deployStrategy = (DeploymentStrategy) loader.newInstance();
+		Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
+		deployStrategy = (DeploymentStrategy) loader.newInstance();
 
-        loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
-        sensor = (SensorModule) loader.getConstructor( Class.forName( "Double" ) ).newInstance( sensorRange );
+		loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
+		sensor = (SensorModule) loader.newInstance( );
 
-        loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
-        plan = (PlanModule) loader.newInstance();
+		loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
+		plan = (PlanModule) loader.newInstance();
 
-        loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
-        communication = (CommunicationModule) loader.getConstructor( Class.forName( "Double" ) ).newInstance( commRange );
+		loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
+		communication = (CommunicationModule) loader.newInstance( );
 
-        loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
-        propulsion = (PropulsionModule) loader.newInstance();
+		loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
+		propulsion = (PropulsionModule) loader.newInstance();
 
-        location = deployStrategy.getNextLocation( id );
+		location = deployStrategy.getNextLocation( id );
 
-        init = true;
+		init = true;
+	    }
     }
 
     public abstract Area getBodyArea();
