@@ -16,14 +16,14 @@ public class ConfigSim
 
     public String getEnvConfigFileName()
     {
-        return "config/default.ConfigEnv";
+        return "usr/conf/default.ConfigEnv";
     }
 
     public ArrayList<String> getAgentConfigFileNames()
     {
         ArrayList<String> list = new ArrayList<String>();
-        list.add( "config/scout.ConfigAgent" );
-        list.add( "config/worker.ConfigAgent" );
+        list.add( "usr/conf/scout.ConfigAgent" );
+        list.add( "usr/conf/worker.ConfigAgent" );
 
         return list;
     }

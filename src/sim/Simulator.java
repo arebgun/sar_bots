@@ -83,12 +83,12 @@ public class Simulator
             if ( args.length < 1 )
             {
                 logger.config( "using the default simulator configuration file 'config/default.ConfigSim'" );
-                Simulator.run( "config/default.ConfigSim" );
+                Simulator.run( "usr/conf/default.ConfigSim" );
             }
             else
             {
                 logger.config( "using the '" + args[0] + "' simulator configuration file" );
-                Simulator.run( "config/" + args[0] );
+                Simulator.run( "usr/conf/" + args[0] );
             }
         }
         catch ( Exception e )
