@@ -6,12 +6,11 @@ import config.ConfigAgent;
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
  */
-
-public abstract class CommunicationModule
+public abstract class CommModule
 {
     protected ConfigAgent agentConfig;
 
-    public CommunicationModule( ConfigAgent config )
+    protected CommModule( ConfigAgent config )
     {
         agentConfig = config;
     }
