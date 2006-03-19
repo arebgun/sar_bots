@@ -1,19 +1,18 @@
 package agent.plan;
 
+import agent.AgentLocation;
+import config.ConfigAgent;
+
+import java.awt.*;
+import java.awt.geom.*;
+import java.util.*;
+
+import static java.lang.Math.*;
+
 /**
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
  */
-
-import agent.AgentLocation;
-import config.ConfigAgent;
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import static java.lang.Math.*;
-import java.util.Random;
-
 public class Stochastic extends PlanModule
 {
     private static Random rand = null;
@@ -24,7 +23,7 @@ public class Stochastic extends PlanModule
 
         if ( rand == null )
         {
-            rand = new Random( agentConfig.getPlanModuleSeed() );
+            rand = new Random( agentConfig.getPlanSeed() );
         }
     }
 

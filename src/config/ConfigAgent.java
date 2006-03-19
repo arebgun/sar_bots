@@ -5,79 +5,83 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-public class ConfigAgent
+import java.io.IOException;
+
+public class ConfigAgent extends Config
 {
-    public ConfigAgent( String configFilePath )
+    public ConfigAgent( String configFileName ) throws IOException
     {
-
+	super( configFileName );
     }
 
-    public String getAgentClassName()
+    public String getClassName()
     {
-        return "agent.Scout";
+        return pTable.get( "className" );
     }
 
-    public int getNumberOfAgents()
+    public int getSwarmSize()
     {
-        return 0;
-    }
-
-    public long getPlanModuleSeed()
-    {
-        return 0;
-    }
-
-    public double getPropulsionMaxSpeed()
-    {
-        return 0;
-    }
-
-    public double getPropulsionEnergyAmount()
-    {
-        return 0;
+        return Double.valueOf( pTable.get( "swarmSize" ) ).intValue();
     }
 
     public double getWingSpan()
     {
-        return 0;
+        return Double.parseDouble( pTable.get( "wingSpan" ) );
     }
 
-    public String getAgentDeploymentStrategy()
+
+    public String getCommName()
     {
-        return "DeploymentStrategy";
+	return pTable.get( "commName" );
     }
 
-    public String getAgentSensor()
+    public double getCommRange()
     {
-
-        return null;
+        return Double.parseDouble( pTable.get( "commRange" ) );
     }
 
-    public double getAgentSensorRange()
+    public String getDeploymentName()
     {
-
-        return 0;
+        return pTable.get( "deploymentName" );
     }
 
-    public String getAgentPlan()
+    public long getDeploymentSeed()
     {
-        return null;
+        return Long.parseLong( pTable.get( "deploymentSeed" ) );
     }
 
-    public String getAgentComm()
+    public String getPlanName()
     {
-        return null;
+        return pTable.get( "planName" );
     }
 
-    public double getAgentCommRange()
+    public long getPlanSeed()
     {
-        return 0;
+        return Long.parseLong( pTable.get( "planSeed" ) );
     }
 
-    public String getAgentPropulsion()
+    public String getPropulsionName()
     {
-        return null;
+        return pTable.get( "propulsionName" );
     }
 
+    public double getPropulsionMaxSpeed()
+    {
+        return Double.parseDouble( pTable.get( "propulsionMaxSpeed" ) );
+    }
 
+    public double getPropulsionEnergyAmount()
+    {
+        return Double.parseDouble( pTable.get( "propulsionEnergyAmount" ) );
+    }
+
+    public String getSensorName()
+    {
+        return pTable.get( "sensorName" );
+    }
+
+    public double getSensorRange()
+    {
+        return Double.parseDouble( pTable.get( "sensorRange" ) );
+    }
 }

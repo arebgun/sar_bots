@@ -1,6 +1,7 @@
 package agent.deployment;
 
 import agent.AgentLocation;
+import config.ConfigAgent;
 
 /**
  * @author Anton Rebgun
@@ -9,17 +10,14 @@ import agent.AgentLocation;
  *         Time:   8:51:45 PM
  */
 
-public class DeploymentStrategy
+public abstract class DeploymentStrategy
 {
-    public DeploymentStrategy()
-    {
+    protected ConfigAgent agentConfig;
 
-    }
-    // put in a random gen in here (piggy back on Sim.config for the random seed)
-
-    public AgentLocation getNextLocation( int id )
+    protected DeploymentStrategy( ConfigAgent config )
     {
-        // TODO: Add logic here
-        return new AgentLocation( 0, 0, 0 );
+	agentConfig = config;
     }
+
+    public abstract AgentLocation getNextLocation( int id );
 }

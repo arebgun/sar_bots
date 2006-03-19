@@ -1,0 +1,30 @@
+# default S&R Bots Sim agent configuration file: WORKER
+
+# general parameters
+className=agent.Worker
+swarmSize=5
+wingSpan=5.0
+
+# communication module parameters
+commName=agent.comm.None
+commRange=0.0
+
+# deployment module parameters
+deploymentName=agent.deployment.Stochastic
+deploymentSeed=1
+
+# planning module parameters
+planName=agent.plan.Stochastic
+planSeed=1
+
+# propulsion module parameters
+propulsionName=agent.propulsion.Thruster
+propulsionMaxSpeed=10.0
+propulsionEnergyAmount=9999.9
+
+# sensor module parameters
+sensorName=agent.sensor.Circle
+sensorRange=7.0
+
+ 
+ 

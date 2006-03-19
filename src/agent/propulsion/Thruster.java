@@ -10,7 +10,7 @@ import config.ConfigAgent;
 
 import static java.lang.Math.hypot;
 
-class Thruster extends PropulsionModule
+public class Thruster extends PropulsionModule
 {
     public Thruster( ConfigAgent config )
     {

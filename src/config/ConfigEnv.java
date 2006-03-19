@@ -5,21 +5,32 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-public class ConfigEnv
+import java.io.IOException;
+
+public class ConfigEnv extends Config
 {
-    public ConfigEnv( String configFilePath )
+    public ConfigEnv( String configFileName ) throws IOException
     {
-
+	super( configFileName );
     }
 
-    // ----------- ENVIRONMENT CONFIGURATION ----------- //
-    public int getWorldWidth()
+    public double getWorldWidth()
     {
-        return 0;
+        return Double.parseDouble( pTable.get( "worldWidth" ) );
     }
 
-    public int getWorldHeight()
+    public double getWorldHeight()
     {
-        return 0;
+        return Double.parseDouble( pTable.get( "worldHeight" ) );
+    }
+
+    public String getBuildingsFileName()
+    {
+	return pTable.get( "buildingsFileName" );
+    }
+
+    public String getFiresFileName()
+    {
+	return pTable.get( "firesFileName" );
     }
 }

@@ -1,9 +1,9 @@
-# first try at a rectangular shape
+# two simple rectangular shapes
 
 # x points followed by y points (building 1)
-0 10 10 0
-5 5 15 15
+0,10,10,0
+5,5,15,15
 
 # x points followed by y points (building 2)
-20 30 30 20
-25 25 45 45
+20,30,30,20
+25,25,45,45

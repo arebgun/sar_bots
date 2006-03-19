@@ -1,16 +1,9 @@
-# world parameters
-world.width=100
-world.height=100
-world.map=base.map
-world.fire=base.fire
+# S&R Bots Simulator default configuration
 
-# agent parameters
-agent.num.scout=10
-agent.num.worker=10
-agent.deployment=Agent.DeploymentStrategy.Random
-agent.sensor=Agent.Sensor.Circle
-agent.plan=Agent.Plan.None
-agent.comm=Agent.Comm.None
-agent.propulsion=Agent.Propulsion.Thruster
+# configuration file for the simulated environment (path relative to top package directory)
+envConfigFileName=usr/conf/default.ConfigEnv
 
-# sim params (if any)
+# comma-separated list of agent configuration files (path relative to top package directory)
+agentConfigFileNames=usr/conf/scout.ConfigAgent,usr/conf/worker.ConfigAgent
+
+

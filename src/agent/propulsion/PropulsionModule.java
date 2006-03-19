@@ -15,11 +15,11 @@ public abstract class PropulsionModule
     protected double energyAmount;
     protected ConfigAgent agentConfig;
 
-    public PropulsionModule( ConfigAgent config )
+    protected PropulsionModule( ConfigAgent config )
     {
-        agentConfig = config;
+        agentConfig  = config;
         currentSpeed = 0;
-        maxSpeed = agentConfig.getPropulsionMaxSpeed();
+        maxSpeed     = agentConfig.getPropulsionMaxSpeed();
         energyAmount = agentConfig.getPropulsionEnergyAmount();
     }
 

@@ -9,21 +9,15 @@ import env.Environment;
  *         Date:   Feb 24, 2006
  *         Time:   8:52:15 PM
  */
-
 public class AgentLocation
 {
-    private double x;
-    private double y;
-    private double theta;
-    private ConfigEnv configEnv;
+    private double x = 0, y = 0, theta = 0;
 
     public AgentLocation( double x, double y, double theta )
     {
         setX( x );
         setY( y );
         setTheta( theta );
-
-        configEnv = Environment.getConfig();
     }
 
     public double getX()
@@ -44,20 +38,21 @@ public class AgentLocation
 
     public void setX( double newX )
     {
-        if ( newX < 0 || newX > configEnv.getWorldWidth() )
+        if ( !Environment.contains( newX, y ) )
         {
-            throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds" );
+	    throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds");
+    
         }
-        x = newX;
+	x = newX;
     }
 
     public void setY( double newY )
     {
-        if ( newY < 0 || newY > configEnv.getWorldHeight() )
+        if ( !Environment.contains( x, newY ) )
         {
-            throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
+	    throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
         }
-        y = newY;
+	y = newY;
     }
 
     public void setTheta( double newTheta )

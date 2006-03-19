@@ -9,10 +9,10 @@ import config.ConfigEnv;
 import sim.Simulator;
 
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.geom.*;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 
 public class Environment
 {
@@ -24,19 +24,18 @@ public class Environment
     {
     }
 
+    public static boolean contains(double x, double y) 
+    {
+	return ( x>=0 && x<=config.getWorldWidth() && y>=0 && y<=config.getWorldHeight() );
+    }
+
     public static void load( String envConfigFileName ) throws Exception
     {
         config = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
 
-        // parse the map file through addtion of a EnvMapParser object (dimzar)
-        // populate the buildings list based on stuff in the map file, through exception if a vertex is out of bounds or x/y lists are different in length
-        // populate the fires hashmap using the EnvFireParser object (dimzar)
-        // process the BlackBoard agent movement queue to build the agents ArrrayList
-    }
+	loadBuildings( config.getBuildingsFileName() );
 
-    public static ConfigEnv getConfig()
-    {
-        return config;
+        // populate the fires hashmap (dimzar)
     }
 
     public static Area occupiedArea()
@@ -53,10 +52,48 @@ public class Environment
         return occupied;
     }
 
+    public static Area unoccupiedArea()
+    {
+	Area world = new Area( new Rectangle2D.Double( 0, 0, config.getWorldWidth(), config.getWorldHeight() ) );
+	world.subtract( occupiedArea() );
+	return world;
+    }
 
     public static void update()
     {
-        //To change body of created methods use File | Settings | File Templates.
+        
+    }
+
+
+    private static void loadBuildings( String buildingsFileName ) throws Exception 
+    {
+	StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( buildingsFileName ) ) );
+	st.ordinaryChars('+', '9');
+	st.wordChars(' ', '~');
+	st.commentChar('#');
+
+	buildings = new ArrayList<Polygon>();
+	while ( st.nextToken() != StreamTokenizer.TT_EOF ) 
+	    {
+		String xPoints[] = st.sval.split("\\,");
+		
+		st.nextToken();
+		String yPoints[] = st.sval.split("\\,");
+
+		int n = xPoints.length;
+		if ( n != yPoints.length ) 
+		    {
+			throw new ParseException( "building vertex X/Y list length mismatch", n);
+		    }
+
+		int x[] = new int[n], y[] = new int[n];
+		for (int i = 0; i < n; i++)
+		    {
+			x[i] = Double.valueOf( xPoints[i] ).intValue();
+			y[i] = Double.valueOf( yPoints[i] ).intValue();
+		    }
+		buildings.add( new Polygon( x, y, n ) );
+	    }
     }
 
     // provide a buch of Iterator-based query methods for the GUI to get info on where the Buildings, Fire, and Agents are.

@@ -14,9 +14,9 @@ public abstract class PlanModule
 {
     protected ConfigAgent agentConfig;
 
-    public PlanModule( ConfigAgent config )
+    protected PlanModule( ConfigAgent config )
     {
-        agentConfig = config;
+	agentConfig = config;
     }
 
     public abstract AgentLocation getGoalLocation( AgentLocation location, Area sensorView );

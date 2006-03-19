@@ -5,27 +5,23 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-import java.util.ArrayList;
+import java.io.IOException;
 
-public class ConfigSim
-{
-    public ConfigSim( String configFilePath )
+public class ConfigSim extends Config
+{   
+    public ConfigSim( String configFileName ) throws IOException
     {
-
+	super( configFileName );
     }
 
     public String getEnvConfigFileName()
     {
-        return "usr/conf/default.ConfigEnv";
+        return pTable.get("envConfigFileName");
     }
 
-    public ArrayList<String> getAgentConfigFileNames()
+    public String[] getAgentConfigFileNames()
     {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add( "usr/conf/scout.ConfigAgent" );
-        list.add( "usr/conf/worker.ConfigAgent" );
-
-        return list;
+        return pTable.get("agentConfigFileNames").split("\\,");
     }
 
 }

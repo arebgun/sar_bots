@@ -1,19 +1,19 @@
 package agent;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- */
-
-import agent.comm.CommunicationModule;
+import agent.comm.CommModule;
 import agent.deployment.DeploymentStrategy;
 import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
 import config.ConfigAgent;
 
-import java.awt.geom.Area;
+import java.awt.*;
+import java.awt.geom.*;
 
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ */
 public abstract class Agent
 {
     /**
@@ -37,7 +37,7 @@ public abstract class Agent
     protected DeploymentStrategy deployStrategy;
     protected SensorModule sensor;
     protected PlanModule plan;
-    protected CommunicationModule communication;
+    protected CommModule communication;
     protected PropulsionModule propulsion;
 
     /**
@@ -47,11 +47,11 @@ public abstract class Agent
     {
         this.config = config;
 
-        String deployClass = config.getAgentDeploymentStrategy();
-        String sensorClass = config.getAgentSensor();
-        String commClass = config.getAgentComm();
-        String planClass = config.getAgentPlan();
-        String propulsionClass = config.getAgentPropulsion();
+        String deployClass = config.getDeploymentName();
+        String sensorClass = config.getSensorName();
+        String commClass = config.getCommName();
+        String planClass = config.getPlanName();
+        String propulsionClass = config.getPropulsionName();
 
         initialize( deployClass, sensorClass, planClass, commClass, propulsionClass );
 
@@ -111,19 +111,19 @@ public abstract class Agent
 
         if ( !init )
         {
-            Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
-            deployStrategy = (DeploymentStrategy) loader.newInstance();
+            Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
+            deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );;
 
             loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
             sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
 
             loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
-            plan = (PlanModule) loader.getConstructor( aC ).newInstance( config );
+            plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
 
-            loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
-            communication = (CommunicationModule) loader.getConstructor( aC ).newInstance( config );
+            loader        = Class.forName( commClass, true, this.getClass().getClassLoader() );
+            communication = (CommModule) loader.getConstructor( aC ).newInstance( config );
 
-            loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
+            loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
             propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
             location = deployStrategy.getNextLocation( id );

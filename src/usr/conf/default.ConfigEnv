@@ -1,0 +1,11 @@
+# default S&R Bots Sim Environment configuration file
+
+# general parameters
+worldWidth=100.0
+worldHeight=100.0
+
+# map configuration
+buildingsFileName=usr/maps/default.buildings
+
+# script configuration
+firesFileName=usr/scripts/default.fires
