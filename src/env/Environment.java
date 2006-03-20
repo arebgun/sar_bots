@@ -64,7 +64,6 @@ public class Environment
         
     }
 
-
     private static void loadBuildings( String buildingsFileName ) throws Exception 
     {
 	StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( buildingsFileName ) ) );
@@ -96,6 +95,14 @@ public class Environment
 	    }
     }
 
-    // provide a buch of Iterator-based query methods for the GUI to get info on where the Buildings, Fire, and Agents are.
+    public static void scaleGraphics( Graphics2D g2, int pixelWidth, int pixelHeight )
+    {
+	g2.scale( pixelWidth/config.getWorldWidth(), pixelHeight/config.getWorldHeight() );
+    }
 
+    // provide a buch of Iterator-based query methods for the GUI to get info on where the Buildings, Fire, and Agents are.
+    public static Iterator<Polygon> buildingsIterator() 
+    {
+	return buildings.iterator();
+    }
 }

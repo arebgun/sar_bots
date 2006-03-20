@@ -17,14 +17,9 @@ import java.awt.geom.*;
 public abstract class Agent
 {
     /**
-     * Tells if the agent properties need to be set.
-     */
-    protected static boolean init = false;
-
-    /**
      * Agent unique Identification Number.
      */
-    protected static int id = -1;
+    protected static int id = 0;
 
     /**
      * Agent deployment strategy. Determines initial position.
@@ -33,7 +28,9 @@ public abstract class Agent
 
     protected double velocity;
     protected double health;
+
     protected ConfigAgent config;
+
     protected DeploymentStrategy deployStrategy;
     protected SensorModule sensor;
     protected PlanModule plan;
@@ -84,14 +81,20 @@ public abstract class Agent
     }
 
     /**
-     * Updates agent position on the blacboard.
+     * Updates agent's location.
      */
     public void move()
     {
-        Area sensorView = sensor.getView( location );
+        Area sensorView    = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( location, sensorView );
-        location = propulsion.move( location, goal );
+        location           = propulsion.move( location, goal );
     }
+
+    public Area getSensorView()
+    {
+	return sensor.getView( location );
+    }
+
 
     /**
      * Initializes agent deployment strategy and all subsystems:
@@ -109,28 +112,35 @@ public abstract class Agent
     {
         Class aC = ConfigAgent.class;
 
-        if ( !init )
-        {
-            Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
-            deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );;
-
-            loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
-            sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
-
-            loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
-            plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
-
-            loader        = Class.forName( commClass, true, this.getClass().getClassLoader() );
-            communication = (CommModule) loader.getConstructor( aC ).newInstance( config );
-
-            loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
-            propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
-
-            location = deployStrategy.getNextLocation( id );
-
-            init = true;
-        }
+	Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
+	deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );;
+	
+	loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
+	sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
+	
+	loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
+	plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
+	
+	loader        = Class.forName( commClass, true, this.getClass().getClassLoader() );
+	communication = (CommModule) loader.getConstructor( aC ).newInstance( config );
+	
+	loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
+	propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
+	
+	location = deployStrategy.getNextLocation( id );
     }
 
-    public abstract Area getBodyArea();
+    public Area getBodyArea()
+    {
+        double wingSpan = config.getWingSpan(), dimUnit = wingSpan / 3;
+        double wingWidth = dimUnit, bodyLength = 5 * dimUnit, bodyWidth = dimUnit;
+
+        Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth, wingSpan ) );
+        Area body = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
+
+        wings.add( body );
+	//BUG-DIMZAR-20060320: is this the right point to rotate about?  Do we care?
+	wings.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
+        return wings;
+    }
 }

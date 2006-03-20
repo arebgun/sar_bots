@@ -1,26 +1,20 @@
 package sim;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- */
-
 import agent.Agent;
 import config.ConfigAgent;
 import config.ConfigSim;
 import env.Environment;
 import ui.GUI;
 
-import java.awt.geom.Area;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
+import java.awt.*;
+import java.awt.geom.*;
+import java.util.*;
+import java.util.logging.*;
 
-
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ */
 public class Simulator
 {
     private static ConfigSim config;
@@ -33,8 +27,10 @@ public class Simulator
         time   = 0;
         config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
 
+	logger.info("loading ENVIRONMENT data ...");
         Environment.load( config.getEnvConfigFileName() );
 
+	logger.info("loading AGENT data ...");
         agents = new ArrayList<Agent>();
         String agentConfigFiles[] = config.getAgentConfigFileNames();
 
@@ -49,6 +45,7 @@ public class Simulator
             }
         }
 
+	logger.info("displaying the GUI ...");
         GUI.getInstance().show();
     }
 
@@ -82,8 +79,15 @@ public class Simulator
         return space;
     }
 
+    public static Iterator<Agent> agentsIterator()
+    {
+	return agents.iterator();
+    }
+
     public static void main( String[] args )
     {
+	final String DEFAULT_CONF_FILE = "usr/conf/default.ConfigSim";
+
         try
         {
 	    StreamHandler handler = new ConsoleHandler();
@@ -91,13 +95,14 @@ public class Simulator
 	    handler.setLevel( Level.ALL );
 
             logger = Logger.getLogger( "sim.Simulator" );
+	    logger.setUseParentHandlers( false );
 	    logger.setLevel( Level.ALL );
 	    logger.addHandler( handler );
 
             if ( args.length < 1 )
             {
-                logger.config( "using the default simulator configuration file 'usr/conf/default.ConfigSim'" );
-                Simulator.run( "usr/conf/default.ConfigSim" );
+                logger.config( "using the default simulator configuration file '" + DEFAULT_CONF_FILE + "'" );
+                Simulator.run( DEFAULT_CONF_FILE );
             }
             else
             {

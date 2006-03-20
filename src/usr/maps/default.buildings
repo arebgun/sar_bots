@@ -1,9 +1,17 @@
-# two simple rectangular shapes
+# simple polygon shapes
 
 # x points followed by y points (building 1)
 0,10,10,0
 5,5,15,15
 
-# x points followed by y points (building 2)
+# building 2
 20,30,30,20
 25,25,45,45
+
+# building 3
+80,85,90
+85,95,85
+
+# building 3
+20,25,37,40,47,50,43,33,22
+90,93,80,82,79,75,70,64,72

@@ -2,6 +2,7 @@ package agent.plan;
 
 import agent.AgentLocation;
 import config.ConfigAgent;
+import env.Environment;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -31,30 +32,33 @@ public class Stochastic extends PlanModule
     public AgentLocation getGoalLocation( AgentLocation location, Area sensorView )
     {
         Rectangle2D bounds = sensorView.getBounds();
-        double x = -1, y = -1;
-        double newTheta = location.getTheta();
+        double curX = location.getX(), curY = location.getY();
+        double newX = -1, newY = -1, newTheta = location.getTheta();
         double wingSpan = agentConfig.getWingSpan();
 
-
+	int limit = 1000;
         boolean placed = false;
-        while ( !placed )
+        while ( !placed && --limit > 0 )
         {
-            x = bounds.getX() + bounds.getWidth() * rand.nextDouble();
-            y = bounds.getY() + bounds.getHeight() * rand.nextDouble();
-            newTheta = atan2( y - location.getY(), x - location.getX() );
-
-            double pathX = wingSpan / 2 * cos( newTheta ), pathY = wingSpan / 2 * sin( newTheta );
-
-            Area path = new Area( new Rectangle2D.Double( pathX, pathY, wingSpan, hypot( x - location.getX(), y - location.getY() ) ) );
-            path.transform( AffineTransform.getRotateInstance( newTheta ) );
-            Area pathSensorIntersect = (Area) sensorView.clone();
-            pathSensorIntersect.intersect( path );
-
-            if ( pathSensorIntersect.equals( path ) )
-            {
-                placed = true;
-            }
-        }
-        return new AgentLocation( x, y, newTheta );
+            newX = bounds.getX() + bounds.getWidth()  * rand.nextDouble();
+            newY = bounds.getY() + bounds.getHeight() * rand.nextDouble();
+	    
+	    if ( sensorView.contains( newX, newY ) )
+		{
+		    newTheta  = atan2( newY - curY, newX - curX );
+		    Area path = new Area( new Rectangle2D.Double( curX, curY, hypot( newX-curX, newY-curY ), wingSpan/2 ) );
+		    path.transform( AffineTransform.getRotateInstance( newTheta, curX, curY ) );
+		    path.intersect( sensorView );
+		    if ( !path.isEmpty() && path.isSingular() )
+			{
+			    placed = true;
+			}
+		}
+	}
+	if ( !placed )
+	    {
+		throw new IllegalStateException( "unable to find agent next goal location" );
+	    }
+	return new AgentLocation( newX, newY, newTheta );
     }
 }

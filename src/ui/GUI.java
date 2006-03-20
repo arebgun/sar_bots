@@ -1,19 +1,27 @@
 package ui;
 
+import agent.Agent;
+import env.Environment;
+import sim.Simulator;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
 import java.net.URL;
+import java.util.*;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH = 800;
-    private static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 640;
+    private static final int DEFAULT_HEIGHT = 480;
 
     private static GUI guiInstance;
     private static JFrame main;
 
     private RescueArea area;
     private SidePanel side;
+
 
     // properties specific to the GUI (dumped as a serialized object)
     /* zoom
@@ -28,7 +36,7 @@ public class GUI
         JFrame.setDefaultLookAndFeelDecorated( true );
 
         // Set application icon, if not found system default will be used
-        URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/bot_16.gif" );
+        URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/bot_16.gif" ); 
         Image icon = null;
         if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
 
@@ -68,7 +76,13 @@ public class GUI
 
     public void update()
     {
-
+	SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                main.repaint();
+            }
+        } );
     }
 
     private void build()
@@ -113,6 +127,8 @@ public class GUI
 
 class RescueArea extends JPanel
 {
+    private static final Color clrAgentSensor = new Color( 0, 255, 170, 255 );
+
     public RescueArea()
     {
         super();
@@ -123,12 +139,20 @@ class RescueArea extends JPanel
     {
         super.paint( g );
 
-        int dY = getSize().height;
         int dX = getSize().width;
+        int dY = getSize().height;
 
-        g.setColor( Color.BLACK );
-        g.drawRect( 0, 0, dX - 1, dY - 1 );
+	Graphics2D g2 = (Graphics2D) g;
 
+	// decorative border
+        g2.setColor( Color.BLACK );
+        g2.drawRect( 0, 0, dX - 1, dY - 1 );
+
+	Environment.scaleGraphics( g2, dX, dY );
+	paintEnvironment( g2 );
+	paintAgents( g2 );
+
+	/*
         g.setColor( Color.GRAY );
         g.fillRect( 50, 50, 60, 60 );
 
@@ -137,6 +161,32 @@ class RescueArea extends JPanel
 
         g.setColor( Color.RED );
         g.fillOval( 120, 120, 6, 6 );
+	*/
+    }
+
+    private void paintEnvironment( Graphics2D g2 )
+    {
+        g2.setColor( Color.BLACK );
+
+	Iterator<Polygon> iter = Environment.buildingsIterator();
+	while ( iter.hasNext() )
+	    {
+		g2.fillPolygon( iter.next() );
+	    }
+    }
+
+
+    private void paintAgents( Graphics2D g2 )
+    {
+	Iterator<Agent> iter = Simulator.agentsIterator();
+	while ( iter.hasNext() )
+	    {
+		Agent agent = iter.next();
+		g2.setColor( clrAgentSensor );
+		g2.fill( agent.getSensorView() );
+		g2.setColor( Color.BLUE );
+		g2.fill( agent.getBodyArea() );
+	    }
     }
 }
 
@@ -144,7 +194,7 @@ class SidePanel extends JPanel
 {
 
     private final Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
-    private final Dimension buttonSize = new Dimension( 75, 25 );
+    private final Dimension buttonSize = new Dimension( 105, 25 );
 
     public SidePanel()
     {
@@ -152,8 +202,26 @@ class SidePanel extends JPanel
         setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
         setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ) );
 
-        addNewButton( "Start" );
+
+	// TODO-DIMZAR-20060320: need to decide how the GUI events will be implemented
+        addNewButton( new AbstractAction( "Start" )
+	    {
+		public void actionPerformed( ActionEvent e ) 
+		{
+		    new javax.swing.Timer( 100, new ActionListener() 
+			{
+			public void actionPerformed( ActionEvent e ) 
+			    {
+				Simulator.step();
+			    }
+			} ).start(); 
+		}
+	    } );
+	/*
         addNewButton( "Step" );
+        addNewButton( "Save" );
+        addNewButton( "Pict" );
+	*/
     }
 
     public void paint( Graphics g )
@@ -167,9 +235,9 @@ class SidePanel extends JPanel
         g.drawRect( 0, 0, dX - 1, dY - 1 );
     }
 
-    private void addNewButton( String text )
+    private void addNewButton( Action action )
     {
-        JButton button = new JButton( text );
+        JButton button = new JButton( action );
         button.setPreferredSize( buttonSize );
         button.setMaximumSize( buttonSize );
         add( buttonGlue );

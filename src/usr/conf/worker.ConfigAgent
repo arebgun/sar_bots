@@ -19,7 +19,7 @@ planSeed=1
 
 # propulsion module parameters
 propulsionName=agent.propulsion.Thruster
-propulsionMaxSpeed=10.0
+propulsionMaxSpeed=3.0
 propulsionEnergyAmount=9999.9
 
 # sensor module parameters

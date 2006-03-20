@@ -8,7 +8,7 @@ package agent.propulsion;
 import agent.AgentLocation;
 import config.ConfigAgent;
 
-import static java.lang.Math.hypot;
+import static java.lang.Math.*;
 
 public class Thruster extends PropulsionModule
 {
@@ -19,11 +19,13 @@ public class Thruster extends PropulsionModule
 
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
-        double goalX = goal.getX(), goalY = goal.getY(), goalDist = hypot( goalX - location.getX(), goalY - location.getY() );
+        double curX = location.getX(), curY = location.getY(), goalX = goal.getX(), goalY = goal.getY();
+	double goalDist = hypot( goalX-curX, goalY-curY );
         if ( goalDist > maxSpeed )
         {
-            goalX *= maxSpeed / goalDist;
-            goalY *= maxSpeed / goalDist;
+	    double theta = atan2(goalY-curY, goalX-curX);
+            goalX = curX + maxSpeed*cos(theta);
+            goalY = curY + maxSpeed*sin(theta);
         }
         return new AgentLocation( goalX, goalY, goal.getTheta() );
     }
