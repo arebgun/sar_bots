@@ -1,6 +1,5 @@
 package agent;
 
-import config.ConfigEnv;
 import env.Environment;
 
 /**
@@ -40,19 +39,19 @@ public class AgentLocation
     {
         if ( !Environment.contains( newX, y ) )
         {
-	    throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds");
-    
+            throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds" );
+
         }
-	x = newX;
+        x = newX;
     }
 
     public void setY( double newY )
     {
         if ( !Environment.contains( x, newY ) )
         {
-	    throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
+            throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
         }
-	y = newY;
+        y = newY;
     }
 
     public void setTheta( double newTheta )

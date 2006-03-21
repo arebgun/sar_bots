@@ -11,7 +11,7 @@ public class ConfigAgent extends Config
 {
     public ConfigAgent( String configFileName ) throws IOException
     {
-	super( configFileName );
+        super( configFileName );
     }
 
     public String getClassName()
@@ -32,7 +32,7 @@ public class ConfigAgent extends Config
 
     public String getCommName()
     {
-	return pTable.get( "commName" );
+        return pTable.get( "commName" );
     }
 
     public double getCommRange()

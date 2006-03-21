@@ -6,10 +6,13 @@ import config.ConfigSim;
 import env.Environment;
 import ui.GUI;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.util.*;
-import java.util.logging.*;
+import java.awt.geom.Area;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 /**
  * @author Anton Rebgun
@@ -24,20 +27,20 @@ public class Simulator
 
     public static void run( String configFilePath ) throws Exception
     {
-        time   = 0;
+        time = 0;
         config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
 
-	logger.info("loading ENVIRONMENT data ...");
+        logger.info( "loading ENVIRONMENT data ..." );
         Environment.load( config.getEnvConfigFileName() );
 
-	logger.info("loading AGENT data ...");
+        logger.info( "loading AGENT data ..." );
         agents = new ArrayList<Agent>();
         String agentConfigFiles[] = config.getAgentConfigFileNames();
 
-	for (String aFile : agentConfigFiles)
+        for ( String aFile : agentConfigFiles )
         {
             ConfigAgent agentConfig = new ConfigAgent( aFile );
-            Class loader            = Class.forName( agentConfig.getClassName() );
+            Class loader = Class.forName( agentConfig.getClassName(), true, agentConfig.getClass().getClassLoader() );
 
             for ( int i = 0; i < agentConfig.getSwarmSize(); i++ )
             {
@@ -45,7 +48,7 @@ public class Simulator
             }
         }
 
-	logger.info("displaying the GUI ...");
+        logger.info( "displaying the GUI ..." );
         GUI.getInstance().show();
     }
 
@@ -81,23 +84,23 @@ public class Simulator
 
     public static Iterator<Agent> agentsIterator()
     {
-	return agents.iterator();
+        return agents.iterator();
     }
 
     public static void main( String[] args )
     {
-	final String DEFAULT_CONF_FILE = "usr/conf/default.ConfigSim";
+        final String DEFAULT_CONF_FILE = "usr/conf/default.ConfigSim";
 
         try
         {
-	    StreamHandler handler = new ConsoleHandler();
-	    //StreamHandler handler = new FileHandler( "some-log-filename-for-srbots-project.xml" );
-	    handler.setLevel( Level.ALL );
+            StreamHandler handler = new ConsoleHandler();
+            //StreamHandler handler = new FileHandler( "some-log-filename-for-srbots-project.xml" );
+            handler.setLevel( Level.ALL );
 
             logger = Logger.getLogger( "sim.Simulator" );
-	    logger.setUseParentHandlers( false );
-	    logger.setLevel( Level.ALL );
-	    logger.addHandler( handler );
+            logger.setUseParentHandlers( false );
+            logger.setLevel( Level.ALL );
+            logger.addHandler( handler );
 
             if ( args.length < 1 )
             {

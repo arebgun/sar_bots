@@ -5,28 +5,31 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.util.Hashtable;
 
 public abstract class Config
-{   
+{
     protected final Hashtable<String, String> pTable;
 
     protected Config( String configFileName ) throws IOException
     {
-	pTable = new Hashtable<String, String>();
+        pTable = new Hashtable<String, String>();
 
-	StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( configFileName ) ) );
-	st.ordinaryChars('+', '9');
-	st.wordChars(' ', '~');
-	st.commentChar('#');
-	st.whitespaceChars('=', '=');
+        StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( configFileName ) ) );
+        st.ordinaryChars( '+', '9' );
+        st.wordChars( ' ', '~' );
+        st.commentChar( '#' );
+        st.whitespaceChars( '=', '=' );
 
-	while ( st.nextToken() != StreamTokenizer.TT_EOF ) 
-	    {
-		String property = st.sval;
-		st.nextToken();
-		pTable.put(property, st.sval);
-	    }
+        while ( st.nextToken() != StreamTokenizer.TT_EOF )
+        {
+            String property = st.sval;
+            st.nextToken();
+            pTable.put( property, st.sval );
+        }
     }
 }

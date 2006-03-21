@@ -7,8 +7,9 @@ import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
 import config.ConfigAgent;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 
 /**
  * @author Anton Rebgun
@@ -85,14 +86,14 @@ public abstract class Agent
      */
     public void move()
     {
-        Area sensorView    = sensor.getView( location );
+        Area sensorView = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( location, sensorView );
-        location           = propulsion.move( location, goal );
+        location = propulsion.move( location, goal );
     }
 
     public Area getSensorView()
     {
-	return sensor.getView( location );
+        return sensor.getView( location );
     }
 
 
@@ -112,22 +113,23 @@ public abstract class Agent
     {
         Class aC = ConfigAgent.class;
 
-	Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
-	deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );;
-	
-	loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
-	sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
-	
-	loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
-	plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
-	
-	loader        = Class.forName( commClass, true, this.getClass().getClassLoader() );
-	communication = (CommModule) loader.getConstructor( aC ).newInstance( config );
-	
-	loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
-	propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
-	
-	location = deployStrategy.getNextLocation( id );
+        Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
+        deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );
+        ;
+
+        loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
+        sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
+
+        loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
+        plan = (PlanModule) loader.getConstructor( aC ).newInstance( config );
+
+        loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
+        communication = (CommModule) loader.getConstructor( aC ).newInstance( config );
+
+        loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
+        propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
+
+        location = deployStrategy.getNextLocation( id );
     }
 
     public Area getBodyArea()
@@ -139,8 +141,8 @@ public abstract class Agent
         Area body = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
 
         wings.add( body );
-	//BUG-DIMZAR-20060320: is this the right point to rotate about?  Do we care?
-	wings.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
+        //BUG-DIMZAR-20060320: is this the right point to rotate about?  Do we care?
+        wings.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
         return wings;
     }
 }

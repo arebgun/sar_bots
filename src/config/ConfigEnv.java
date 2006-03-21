@@ -11,7 +11,7 @@ public class ConfigEnv extends Config
 {
     public ConfigEnv( String configFileName ) throws IOException
     {
-	super( configFileName );
+        super( configFileName );
     }
 
     public double getWorldWidth()
@@ -26,11 +26,11 @@ public class ConfigEnv extends Config
 
     public String getBuildingsFileName()
     {
-	return pTable.get( "buildingsFileName" );
+        return pTable.get( "buildingsFileName" );
     }
 
     public String getFiresFileName()
     {
-	return pTable.get( "firesFileName" );
+        return pTable.get( "firesFileName" );
     }
 }

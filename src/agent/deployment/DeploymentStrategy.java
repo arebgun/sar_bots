@@ -16,7 +16,7 @@ public abstract class DeploymentStrategy
 
     protected DeploymentStrategy( ConfigAgent config )
     {
-	agentConfig = config;
+        agentConfig = config;
     }
 
     public abstract AgentLocation getNextLocation( int id );

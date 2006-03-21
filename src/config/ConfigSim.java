@@ -8,20 +8,20 @@ package config;
 import java.io.IOException;
 
 public class ConfigSim extends Config
-{   
+{
     public ConfigSim( String configFileName ) throws IOException
     {
-	super( configFileName );
+        super( configFileName );
     }
 
     public String getEnvConfigFileName()
     {
-        return pTable.get("envConfigFileName");
+        return pTable.get( "envConfigFileName" );
     }
 
     public String[] getAgentConfigFileNames()
     {
-        return pTable.get("agentConfigFileNames").split("\\,");
+        return pTable.get( "agentConfigFileNames" ).split( "\\," );
     }
 
 }

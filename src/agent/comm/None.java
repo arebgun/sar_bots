@@ -11,6 +11,6 @@ public class None extends CommModule
 
     public None( ConfigAgent config )
     {
-	super( config );
+        super( config );
     }
 }
