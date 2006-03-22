@@ -2,23 +2,28 @@ package agent.sensor;
 
 import agent.AgentLocation;
 import config.ConfigAgent;
+import env.Environment;
 
-import java.awt.geom.Area;
+import java.awt.*;
+import java.awt.geom.*;
 
 /**
- * Author: Anton Rebgun
- * Date:   Mar 20, 2006
- * Time:   7:52:27 PM
+ * @(#) Circle.java
  */
 public class Circle extends SensorModule
 {
-    public Circle( ConfigAgent config )
+    private double radius;
+
+    public Circle( ConfigAgent config ) 
     {
-        super( config );
+	super( config );
+	radius = agentConfig.getSensorRange();
     }
 
-    public Area getView( AgentLocation loc )
+    public Area getView( AgentLocation loc ) 
     {
-        return null;
+	Area footprint = new Area( new Ellipse2D.Double(loc.getX() - radius, loc.getY() - radius, 2*radius, 2*radius) );
+	footprint.intersect( Environment.unoccupiedArea() );
+	return footprint;
     }
 }
