@@ -2,7 +2,7 @@
 
 # general parameters
 className=agent.Scout
-swarmSize=10
+swarmSize=4
 wingSpan=3.0
 
 # communication module parameters
@@ -19,7 +19,7 @@ planSeed=1
 
 # propulsion module parameters
 propulsionName=agent.propulsion.Thruster
-propulsionMaxSpeed=1.5
+propulsionMaxSpeed=21.5
 propulsionEnergyAmount=9999.9
 
 # sensor module parameters

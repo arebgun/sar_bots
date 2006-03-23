@@ -59,6 +59,7 @@ public class Simulator
 
     public static void step()
     {
+	logger.info("step " + time);
         for ( Agent agent : agents )
         {
             agent.move();

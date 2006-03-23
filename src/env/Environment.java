@@ -9,16 +9,12 @@ import config.ConfigEnv;
 import sim.Simulator;
 
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.StreamTokenizer;
+import java.awt.geom.*;
+import java.io.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+import javax.swing.JPanel;
+import static java.lang.Math.*;
 
 public class Environment
 {
@@ -53,6 +49,7 @@ public class Environment
             occupied.add( new Area( building ) );
         }
 
+	// dimzar: speed up line right here :)
         occupied.add( Simulator.agentSpace() );
 
         return occupied;
@@ -103,7 +100,23 @@ public class Environment
 
     public static void scaleGraphics( Graphics2D g2, int pixelWidth, int pixelHeight )
     {
-        g2.scale( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
+        g2.scale( pixelWidth/config.getWorldWidth(), pixelHeight/config.getWorldHeight() );
+    }
+
+    public static void scaleRescueArea( JPanel rescueArea, int zoom )
+    {
+	rescueArea.setPreferredSize(new Dimension(zoom*config.getWorldWidth(), zoom*config.getWorldHeight()));
+    }
+
+    public static double aspectRatio()
+    {
+	return config.getWorldWidth()/config.getWorldHeight();
+    }
+
+    public static int optimalZoom( int pixelWidth, int pixelHeight )
+    {
+	return max( pixelWidth/config.getWorldWidth(), 
+		    pixelHeight/config.getWorldHeight() );
     }
 
     // provide a buch of Iterator-based query methods for the GUI to get info on where the Buildings, Fire, and Agents are.

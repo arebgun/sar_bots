@@ -2,7 +2,7 @@
 
 # general parameters
 className=agent.Worker
-swarmSize=5
+swarmSize=3
 wingSpan=5.0
 
 # communication module parameters

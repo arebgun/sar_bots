@@ -36,7 +36,7 @@ public class Stochastic extends PlanModule
         double newX = -1, newY = -1, newTheta = location.getTheta();
         double wingSpan = agentConfig.getWingSpan();
 
-        int limit = 1000;
+        int limit      = 1000;
         boolean placed = false;
         while ( !placed && --limit > 0 )
         {

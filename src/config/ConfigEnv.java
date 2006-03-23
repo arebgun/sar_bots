@@ -14,14 +14,14 @@ public class ConfigEnv extends Config
         super( configFileName );
     }
 
-    public double getWorldWidth()
+    public int getWorldWidth()
     {
-        return Double.parseDouble( pTable.get( "worldWidth" ) );
+        return Integer.parseInt( pTable.get( "worldWidth" ) );
     }
 
-    public double getWorldHeight()
+    public int getWorldHeight()
     {
-        return Double.parseDouble( pTable.get( "worldHeight" ) );
+        return Integer.parseInt( pTable.get( "worldHeight" ) );
     }
 
     public String getBuildingsFileName()
