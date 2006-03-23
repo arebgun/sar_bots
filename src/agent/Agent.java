@@ -115,7 +115,6 @@ public abstract class Agent
 
         Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
         deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );
-        ;
 
         loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
         sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );

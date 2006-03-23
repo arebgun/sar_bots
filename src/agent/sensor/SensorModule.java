@@ -1,13 +1,15 @@
 package agent.sensor;
 
+/**
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ */
+
 import agent.AgentLocation;
 import config.ConfigAgent;
 
 import java.awt.geom.Area;
 
-/**
- * @(#) SensorModule.java
- */
 public abstract class SensorModule
 {
     protected ConfigAgent agentConfig;

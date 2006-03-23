@@ -8,13 +8,19 @@ package env;
 import config.ConfigEnv;
 import sim.Simulator;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
-import java.io.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StreamTokenizer;
+import static java.lang.Math.max;
 import java.text.ParseException;
-import java.util.*;
-import javax.swing.JPanel;
-import static java.lang.Math.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Environment
 {
@@ -49,7 +55,7 @@ public class Environment
             occupied.add( new Area( building ) );
         }
 
-	// dimzar: speed up line right here :)
+        // dimzar: speed up line right here :)
         occupied.add( Simulator.agentSpace() );
 
         return occupied;
@@ -75,51 +81,52 @@ public class Environment
         st.commentChar( '#' );
 
         buildings = new ArrayList<Polygon>();
+
         while ( st.nextToken() != StreamTokenizer.TT_EOF )
         {
             String xPoints[] = st.sval.split( "\\," );
-
             st.nextToken();
             String yPoints[] = st.sval.split( "\\," );
 
             int n = xPoints.length;
+
             if ( n != yPoints.length )
             {
                 throw new ParseException( "building vertex X/Y list length mismatch", n );
             }
 
             int x[] = new int[n], y[] = new int[n];
+
             for ( int i = 0; i < n; i++ )
             {
                 x[i] = Double.valueOf( xPoints[i] ).intValue();
                 y[i] = Double.valueOf( yPoints[i] ).intValue();
             }
+
             buildings.add( new Polygon( x, y, n ) );
         }
     }
 
     public static void scaleGraphics( Graphics2D g2, int pixelWidth, int pixelHeight )
     {
-        g2.scale( pixelWidth/config.getWorldWidth(), pixelHeight/config.getWorldHeight() );
+        g2.scale( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
     }
 
     public static void scaleRescueArea( JPanel rescueArea, int zoom )
     {
-	rescueArea.setPreferredSize(new Dimension(zoom*config.getWorldWidth(), zoom*config.getWorldHeight()));
+        rescueArea.setPreferredSize( new Dimension( zoom * config.getWorldWidth(), zoom * config.getWorldHeight() ) );
     }
 
     public static double aspectRatio()
     {
-	return config.getWorldWidth()/config.getWorldHeight();
+        return config.getWorldWidth() / config.getWorldHeight();
     }
 
     public static int optimalZoom( int pixelWidth, int pixelHeight )
     {
-	return max( pixelWidth/config.getWorldWidth(), 
-		    pixelHeight/config.getWorldHeight() );
+        return max( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
     }
 
-    // provide a buch of Iterator-based query methods for the GUI to get info on where the Buildings, Fire, and Agents are.
     public static Iterator<Polygon> buildingsIterator()
     {
         return buildings.iterator();

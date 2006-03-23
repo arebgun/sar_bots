@@ -4,20 +4,23 @@ import agent.Agent;
 import env.Environment;
 import sim.Simulator;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Hashtable;
 import javax.swing.*;
-import javax.swing.event.*;
-import static java.lang.Math.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import static java.lang.Math.max;
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH  = 640;
+    private static final int DEFAULT_WIDTH = 640;
     private static final int DEFAULT_HEIGHT = 480;
-    private static final int DEFAULT_ZOOM   = 5;
 
     private static GUI guiInstance;
     private static JFrame main;
@@ -28,13 +31,13 @@ public class GUI
     private BottomPanel bottom;
 
 
-    private final Timer tmrSim = new javax.swing.Timer(0, new ActionListener()
-	{
-	    public void actionPerformed( ActionEvent e )
-	    {
-		Simulator.step();
-	    }
-	} );
+    private final Timer tmrSim = new javax.swing.Timer( 0, new ActionListener()
+    {
+        public void actionPerformed( ActionEvent e )
+        {
+            Simulator.step();
+        }
+    } );
 
     // properties specific to the GUI (dumped as a serialized object)
     /* zoom
@@ -68,18 +71,20 @@ public class GUI
         main.setLayout( new GridBagLayout() );
 
 
-	main.addComponentListener(new ComponentAdapter() {
-		public void componentResized(ComponentEvent e) {
-		    Dimension dim = jtViewSwitcher.getSize();
-		    //Environment.scaleRescueArea(this, Environment.optimalZoom( dim.width, dim.height ) );
-		    int zoom = (int)max(dim.width/100., dim.height/100.);
-		    
-		    area.setPreferredSize(new Dimension(zoom*100, zoom*100));
-		}
-	    });
+        main.addComponentListener( new ComponentAdapter()
+        {
+            public void componentResized( ComponentEvent e )
+            {
+                Dimension dim = jtViewSwitcher.getSize();
+                //Environment.scaleRescueArea(this, Environment.optimalZoom( dim.width, dim.height ) );
+                int zoom = (int) max( dim.width / 100., dim.height / 100. );
+
+                area.setPreferredSize( new Dimension( zoom * 100, zoom * 100 ) );
+            }
+        } );
 
     }
-    
+
     public static GUI getInstance()
     {
         if ( guiInstance == null ) { guiInstance = new GUI(); }
@@ -121,35 +126,36 @@ public class GUI
     private void addComponents()
     {
         GridBagConstraints c = new GridBagConstraints();
-        c.fill               = GridBagConstraints.BOTH;
-        c.insets             = new Insets( 2, 2, 2, 2 );
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets( 2, 2, 2, 2 );
 
         area = new RescueArea( tmrSim );
-	//Environment.scaleRescueArea(area, DEFAULT_ZOOM);
+        //Environment.scaleRescueArea(area, DEFAULT_ZOOM);
 
-	JScrollPane scrlPane = new JScrollPane( area );
-	/*
-	scrlPane.setMinimumSize(area.getSize());
-	scrlPane.setSize(area.getSize());
-	scrlPane.setPreferredSize(area.getSize());
-	*/
-	jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
-	jtViewSwitcher.addTab("Environment", scrlPane);
-	jtViewSwitcher.addTab("Sensor Coverage", null);
+        JScrollPane scrlPane = new JScrollPane( area );
+        /*
+            scrlPane.setMinimumSize(area.getSize());
+            scrlPane.setSize(area.getSize());
+            scrlPane.setPreferredSize(area.getSize());
+        */
 
-	//jtViewSwitcher.setMinimumSize(area.getSize());
-	//jtViewSwitcher.setSize(area.getSize());
-	//jtViewSwitcher.setPreferredSize(area.getSize());
+        jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
+        jtViewSwitcher.addTab( "Environment", scrlPane );
+        jtViewSwitcher.addTab( "Sensor Coverage", null );
+
+        //jtViewSwitcher.setMinimumSize(area.getSize());
+        //jtViewSwitcher.setSize(area.getSize());
+        //jtViewSwitcher.setPreferredSize(area.getSize());
 
         setGrigBagConstraints( c, 0, 0, 1, 1, 1, 1 );
         main.add( jtViewSwitcher, c );
 
-        side   = new SidePanel( tmrSim );
+        side = new SidePanel( tmrSim );
         c.fill = GridBagConstraints.VERTICAL;
         setGrigBagConstraints( c, 1, 0, 1, 1, 0, 0 );
         main.add( side, c );
 
-	bottom = new BottomPanel( tmrSim );
+        bottom = new BottomPanel( tmrSim );
         c.fill = GridBagConstraints.HORIZONTAL;
         setGrigBagConstraints( c, 0, 1, 2, 1, 0, 0 );
         main.add( bottom, c );
@@ -179,26 +185,24 @@ class RescueArea extends JPanel
 
     public RescueArea( Timer tmr )
     {
+        tmrSim = tmr;
         setBackground( Color.WHITE );
-
-	tmrSim = tmr;
     }
 
     public void paint( Graphics g )
     {
         super.paint( g );
-	int dX = getSize().width, dY = getSize().height;
-	Graphics2D g2 = (Graphics2D) g;
+        int dX = getSize().width, dY = getSize().height;
+        Graphics2D g2 = (Graphics2D) g;
 
-	
-	// decorative border
-	g2.setColor( Color.RED );
-	g2.drawRect( 0, 0, dX-1, dY-1 );
+        // decorative border
+        g2.setColor( Color.RED );
+        g2.drawRect( 0, 0, dX - 1, dY - 1 );
 
-	Environment.scaleGraphics( g2, dX, dY );
-	paintEnvironment( g2 );
-	paintAgents( g2 );
-	
+        Environment.scaleGraphics( g2, dX, dY );
+        paintEnvironment( g2 );
+        paintAgents( g2 );
+
     }
 
     private void paintEnvironment( Graphics2D g2 )
@@ -217,7 +221,7 @@ class RescueArea extends JPanel
     private void paintAgents( Graphics2D g2 )
     {
         Iterator<Agent> iter = Simulator.agentsIterator();
-        
+
         while ( iter.hasNext() )
         {
             Agent agent = iter.next();
@@ -231,49 +235,48 @@ class RescueArea extends JPanel
 
 class SidePanel extends JPanel
 {
-    private final JButton btnStartStop     = new JButton( "Start" );
-    private final JButton btnStep          = new JButton( "Step" );
-    private final JButton btnScreenshot    = new JButton( "Screenshot" );
-    private final JButton btnSave          = new JButton( "Save" );
+    private final JButton btnStartStop = new JButton( "Start" );
+    private final JButton btnStep = new JButton( "Step" );
+    private final JButton btnScreenshot = new JButton( "Screenshot" );
+    private final JButton btnSave = new JButton( "Save" );
 
     private final Timer tmrSim;
 
     public SidePanel( Timer tmr )
     {
+        tmrSim = tmr;
         setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
         setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ) );
 
-	tmrSim = tmr;
-	addConfiguredButton( btnStartStop, new ActionListener()
-	    {
-		public void actionPerformed( ActionEvent e )
-		{
-		    if ( tmrSim.isRunning() )
-			{
-			    tmrSim.stop();
-			    btnStartStop.setText( "Start" );
-			    btnStep.setEnabled(true);
-			}
-		    else
-			{
-			    btnStep.setEnabled(false);
-			    btnStartStop.setText( "Stop" );
-			    tmrSim.start();
-			}
-		}
-	    } );
-
+        addConfiguredButton( btnStartStop, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                if ( tmrSim.isRunning() )
+                {
+                    tmrSim.stop();
+                    btnStartStop.setText( "Start" );
+                    btnStep.setEnabled( true );
+                }
+                else
+                {
+                    btnStep.setEnabled( false );
+                    btnStartStop.setText( "Stop" );
+                    tmrSim.start();
+                }
+            }
+        } );
 
         addConfiguredButton( btnStep, new ActionListener()
-	    {
-		public void actionPerformed( ActionEvent e )
-		{
-		    Simulator.step();
-		}
-	    } );
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                Simulator.step();
+            }
+        } );
 
-	addConfiguredButton( btnScreenshot, null );
-	addConfiguredButton( btnSave, null);
+        addConfiguredButton( btnScreenshot, null );
+        addConfiguredButton( btnSave, null );
     }
 
     public void paint( Graphics g )
@@ -287,12 +290,12 @@ class SidePanel extends JPanel
         g.drawRect( 0, 0, dX - 1, dY - 1 );
     }
 
-    private void addConfiguredButton( JButton button, ActionListener action)
+    private void addConfiguredButton( JButton button, ActionListener action )
     {
-        button.addActionListener( action );
+        Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
+        Dimension buttonSize = new Dimension( 105, 25 );
 
-	Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
-	Dimension buttonSize = new Dimension( 105, 25 );
+        button.addActionListener( action );
         button.setPreferredSize( buttonSize );
         button.setMaximumSize( buttonSize );
         add( buttonGlue );
@@ -300,52 +303,49 @@ class SidePanel extends JPanel
     }
 }
 
-
 class BottomPanel extends JPanel
 {
-    private final JSlider sldSpeed = new JSlider(100, 5100, 100);
+    private final JSlider sldSpeed = new JSlider( 100, 5100, 100 );
     private final Timer tmrSim;
 
     public BottomPanel( Timer tmr )
     {
-	tmrSim = tmr;
+        tmrSim = tmr;
+        sldSpeed.setMajorTickSpacing( 1000 );
+        sldSpeed.setPaintTicks( true );
 
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put( 100, new JLabel( "Fast" ) );
+        labelTable.put( 2500, new JLabel( "Medium" ) );
+        labelTable.put( 5000, new JLabel( "Slow" ) );
 
-	sldSpeed.setMajorTickSpacing(1000);
-	sldSpeed.setPaintTicks(true);
+        sldSpeed.setLabelTable( labelTable );
+        sldSpeed.setPaintLabels( true );
+        sldSpeed.setInverted( true );
 
+        sldSpeed.addChangeListener( new ChangeListener()
+        {
+            public void stateChanged( ChangeEvent e )
+            {
+                if ( !sldSpeed.getValueIsAdjusting() )
+                {
+                    tmrSim.setDelay( sldSpeed.getValue() );
+                }
+            }
+        } );
 
-	Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-	labelTable.put( new Integer( 100 ),  new JLabel("Fast") );
-	labelTable.put( new Integer( 2500 ), new JLabel("Medium") );
-	labelTable.put( new Integer( 5000 ), new JLabel("Slow") );
-	sldSpeed.setLabelTable( labelTable );
-	sldSpeed.setPaintLabels(true);
-	sldSpeed.setInverted( true );
-	
-	sldSpeed.addChangeListener( new ChangeListener()
-	    {
-		public void stateChanged(ChangeEvent e) 
-		{
-		    if (!sldSpeed.getValueIsAdjusting()) 
-			{
-			    tmrSim.setDelay( (int)sldSpeed.getValue() );
-			}
-		}
-	    } );
-
-	add( sldSpeed );
+        add( sldSpeed );
     }
 
     public void paint( Graphics g )
     {
         super.paint( g );
-	int dX = getSize().width, dY = getSize().height;
-	Graphics2D g2 = (Graphics2D) g;
-	
-	// decorative border
-	g2.setColor( Color.BLACK );
-	g2.drawRect( 0, 0, dX-1, dY-1 );
+        int dX = getSize().width, dY = getSize().height;
+        Graphics2D g2 = (Graphics2D) g;
+
+        // decorative border
+        g2.setColor( Color.BLACK );
+        g2.drawRect( 0, 0, dX - 1, dY - 1 );
     }
 
 }

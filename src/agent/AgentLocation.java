@@ -40,8 +40,8 @@ public class AgentLocation
         if ( !Environment.contains( newX, y ) )
         {
             throw new IndexOutOfBoundsException( "new agent horizontal postion " + newX + " is out of world bounds" );
-
         }
+
         x = newX;
     }
 
@@ -51,6 +51,7 @@ public class AgentLocation
         {
             throw new IndexOutOfBoundsException( "new agent vertical postion " + newY + " is out of world bounds" );
         }
+
         y = newY;
     }
 

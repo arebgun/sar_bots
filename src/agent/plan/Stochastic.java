@@ -35,9 +35,9 @@ public class Stochastic extends PlanModule
         double curX = location.getX(), curY = location.getY();
         double newX = -1, newY = -1, newTheta = location.getTheta();
         double wingSpan = agentConfig.getWingSpan();
-
         int limit      = 1000;
         boolean placed = false;
+
         while ( !placed && --limit > 0 )
         {
             newX = bounds.getX() + bounds.getWidth() * rand.nextDouble();
@@ -49,16 +49,13 @@ public class Stochastic extends PlanModule
                 Area path = new Area( new Rectangle2D.Double( curX, curY, hypot( newX - curX, newY - curY ), wingSpan / 2 ) );
                 path.transform( AffineTransform.getRotateInstance( newTheta, curX, curY ) );
                 path.intersect( sensorView );
-                if ( !path.isEmpty() && path.isSingular() )
-                {
-                    placed = true;
-                }
+
+                if ( !path.isEmpty() && path.isSingular() ) { placed = true; }
             }
         }
-        if ( !placed )
-        {
-            throw new IllegalStateException( "unable to find agent next goal location" );
-        }
+
+        if ( !placed ) { throw new IllegalStateException( "unable to find agent next goal location" ); }
+
         return new AgentLocation( newX, newY, newTheta );
     }
 }
