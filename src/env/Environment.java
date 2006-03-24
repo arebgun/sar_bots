@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 public class Environment
 {
+    private static ArrayList<Rectangle2D> grid;
     private static ArrayList<Polygon> buildings;
     private static HashMap<Integer, ArrayList<Ellipse2D.Double>> fires;
     private static ConfigEnv config;
@@ -40,6 +41,16 @@ public class Environment
     public static void load( String envConfigFileName ) throws Exception
     {
         config = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
+	
+	grid = new ArrayList<Rectangle2D>();
+	int gridSize = config.getGridSize();
+	for ( int i = 0; i < config.getWorldWidth(); i += gridSize ) 
+	    {
+		for ( int j = 0; j < config.getWorldHeight(); j += gridSize )
+		{
+		    grid.add( new Rectangle2D.Double( i, j, gridSize, gridSize ) );
+		}
+	    }
 
         loadBuildings( config.getBuildingsFileName() );
 
@@ -130,5 +141,10 @@ public class Environment
     public static Iterator<Polygon> buildingsIterator()
     {
         return buildings.iterator();
+    }
+
+    public static Iterator<Rectangle2D> gridIterator()
+    {
+        return grid.iterator();
     }
 }

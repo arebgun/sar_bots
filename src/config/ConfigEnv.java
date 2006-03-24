@@ -24,6 +24,11 @@ public class ConfigEnv extends Config
         return Integer.parseInt( pTable.get( "worldHeight" ) );
     }
 
+    public int getGridSize()
+    {
+	return Integer.parseInt( pTable.get( "gridSize" ) );
+    }
+
     public String getBuildingsFileName()
     {
         return pTable.get( "buildingsFileName" );

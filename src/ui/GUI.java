@@ -4,18 +4,15 @@ import agent.Agent;
 import env.Environment;
 import sim.Simulator;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import static java.lang.Math.max;
+import java.awt.geom.*;
+import java.awt.event.*;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Iterator;
+import javax.swing.*;
+import javax.swing.event.*;
+import static java.lang.Math.max;
 
 public class GUI
 {
@@ -200,10 +197,22 @@ class RescueArea extends JPanel
         g2.drawRect( 0, 0, dX - 1, dY - 1 );
 
         Environment.scaleGraphics( g2, dX, dY );
+	paintGrid( g2 );
         paintEnvironment( g2 );
         paintAgents( g2 );
-
     }
+
+    private void paintGrid( Graphics2D g2 )
+    {
+        g2.setColor( Color.GRAY );
+	g2.setStroke( new BasicStroke( 0.3f ) );
+        Iterator<Rectangle2D> iter = Environment.gridIterator();
+
+        while ( iter.hasNext() )
+        {
+            g2.draw( iter.next() );
+        }
+    }	
 
     private void paintEnvironment( Graphics2D g2 )
     {
@@ -235,6 +244,10 @@ class RescueArea extends JPanel
 
 class SidePanel extends JPanel
 {
+    private final JLabel lblStep           = new JLabel( "Step: " );
+    private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: " );
+    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: " );
+
     private final JButton btnStartStop = new JButton( "Start" );
     private final JButton btnStep = new JButton( "Step" );
     private final JButton btnScreenshot = new JButton( "Screenshot" );
@@ -247,6 +260,14 @@ class SidePanel extends JPanel
         tmrSim = tmr;
         setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
         setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ) );
+
+	JPanel jpStats = new JPanel( );
+	jpStats.setLayout( new BoxLayout(jpStats, BoxLayout.Y_AXIS) );
+	jpStats.setBorder( BorderFactory.createTitledBorder("Statistics") );
+	jpStats.add( lblStep );
+	jpStats.add( lblNumFiresActive );
+	jpStats.add( lblNumFiresFound );
+	add( jpStats );
 
         addConfiguredButton( btnStartStop, new ActionListener()
         {

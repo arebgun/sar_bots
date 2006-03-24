@@ -3,6 +3,7 @@
 # general parameters
 worldWidth=100
 worldHeight=100
+gridSize=5
 
 # map configuration
 buildingsFileName=usr/maps/default.buildings
