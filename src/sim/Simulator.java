@@ -20,9 +20,10 @@ import java.util.logging.StreamHandler;
  */
 public class Simulator
 {
+    public static Logger logger;
+
     private static ConfigSim config;
     private static long time;
-    private static Logger logger;
     private static ArrayList<Agent> agents;
 
     public static void run( String configFilePath ) throws Exception
@@ -59,7 +60,6 @@ public class Simulator
 
     public static void step()
     {
-        logger.info( "step " + time );
 
         for ( Agent agent : agents )
         {

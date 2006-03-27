@@ -7,9 +7,8 @@ import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
 import config.ConfigAgent;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
+import java.awt.*;
+import java.awt.geom.*;
 
 /**
  * @author Anton Rebgun
@@ -17,10 +16,9 @@ import java.awt.geom.Ellipse2D;
  */
 public abstract class Agent
 {
-    /**
-     * Agent unique Identification Number.
-     */
-    protected static int id = 0;
+    protected static int typeID = 0;
+
+    protected ConfigAgent config;
 
     /**
      * Agent deployment strategy. Determines initial position.
@@ -30,30 +28,28 @@ public abstract class Agent
     protected double velocity;
     protected double health;
 
-    protected ConfigAgent config;
-
     protected DeploymentStrategy deployStrategy;
     protected SensorModule sensor;
     protected PlanModule plan;
     protected CommModule communication;
     protected PropulsionModule propulsion;
 
+    protected int unitID;
+
     /**
      * Agent constructor. Creates a new agent.
      */
     public Agent( ConfigAgent config ) throws Exception
     {
-        this.config = config;
-
-        String deployClass = config.getDeploymentName();
-        String sensorClass = config.getSensorName();
-        String commClass = config.getCommName();
-        String planClass = config.getPlanName();
+        this.config            = config;
+        String deployClass     = config.getDeploymentName();
+        String sensorClass     = config.getSensorName();
+        String commClass       = config.getCommName();
+        String planClass       = config.getPlanName();
         String propulsionClass = config.getPropulsionName();
 
+        unitID = typeID++;
         initialize( deployClass, sensorClass, planClass, commClass, propulsionClass );
-
-        id++;
     }
 
     /**
@@ -61,14 +57,9 @@ public abstract class Agent
      *
      * @return unique agent ID
      */
-    public int getId()
+    public int getID()
     {
-        return id;
-    }
-
-    public ConfigAgent getConfig()
-    {
-        return config;
+        return unitID;
     }
 
     /**
@@ -81,6 +72,30 @@ public abstract class Agent
         return location;
     }
 
+    public Area getSensorView()
+    {
+        return sensor.getView( location );
+    }
+
+    public Color getSensorColor()
+    {
+	return config.getSensorColor();
+    }
+
+    public Area getBodyArea()
+    {
+        double wingSpan = config.getWingSpan(), dimUnit = wingSpan / 3;
+        double wingWidth = dimUnit, bodyLength = 5 * dimUnit, bodyWidth = dimUnit;
+
+        Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth, wingSpan ) );
+        Area body = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
+
+        wings.add( body );
+        //BUG-DIMZAR-20060320: is this the right point to rotate about?  Do we care?
+        wings.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
+        return wings;
+    }
+
     /**
      * Updates agent's location.
      */
@@ -90,12 +105,6 @@ public abstract class Agent
         AgentLocation goal = plan.getGoalLocation( location, sensorView );
         location = propulsion.move( location, goal );
     }
-
-    public Area getSensorView()
-    {
-        return sensor.getView( location );
-    }
-
 
     /**
      * Initializes agent deployment strategy and all subsystems:
@@ -128,20 +137,6 @@ public abstract class Agent
         loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
         propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location = deployStrategy.getNextLocation( id );
-    }
-
-    public Area getBodyArea()
-    {
-        double wingSpan = config.getWingSpan(), dimUnit = wingSpan / 3;
-        double wingWidth = dimUnit, bodyLength = 5 * dimUnit, bodyWidth = dimUnit;
-
-        Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth, wingSpan ) );
-        Area body = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
-
-        wings.add( body );
-        //BUG-DIMZAR-20060320: is this the right point to rotate about?  Do we care?
-        wings.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
-        return wings;
+        location = deployStrategy.getNextLocation( unitID );
     }
 }

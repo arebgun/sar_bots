@@ -8,19 +8,14 @@ package env;
 import config.ConfigEnv;
 import sim.Simulator;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.StreamTokenizer;
-import static java.lang.Math.max;
+import java.awt.geom.*;
+import java.io.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+import javax.swing.*;
+
+import static java.lang.Math.*;
 
 public class Environment
 {
@@ -123,9 +118,13 @@ public class Environment
         g2.scale( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
     }
 
-    public static void scaleRescueArea( JPanel rescueArea, int zoom )
+    public static void scaleRescueArea( JPanel rescueArea, Dimension pixelScreenSize )
     {
-        rescueArea.setPreferredSize( new Dimension( zoom * config.getWorldWidth(), zoom * config.getWorldHeight() ) );
+	int zoom             = optimalZoom( pixelScreenSize );
+	Dimension scaledSize = new Dimension( zoom*config.getWorldWidth()+1, zoom*config.getWorldHeight()+1 );
+
+        rescueArea.setSize( scaledSize );
+        rescueArea.setPreferredSize( scaledSize );
     }
 
     public static double aspectRatio()
@@ -133,9 +132,9 @@ public class Environment
         return config.getWorldWidth() / config.getWorldHeight();
     }
 
-    public static int optimalZoom( int pixelWidth, int pixelHeight )
+    public static int optimalZoom( Dimension pixelScreenSize )
     {
-        return max( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
+        return max( 1, max( pixelScreenSize.width/config.getWorldWidth(), pixelScreenSize.height/config.getWorldHeight() ) );
     }
 
     public static Iterator<Polygon> buildingsIterator()

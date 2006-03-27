@@ -5,6 +5,7 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
+import java.awt.Color;
 import java.io.IOException;
 
 public class ConfigAgent extends Config
@@ -28,7 +29,6 @@ public class ConfigAgent extends Config
     {
         return Double.parseDouble( pTable.get( "wingSpan" ) );
     }
-
 
     public String getCommName()
     {
@@ -83,5 +83,14 @@ public class ConfigAgent extends Config
     public double getSensorRange()
     {
         return Double.parseDouble( pTable.get( "sensorRange" ) );
+    }
+
+    public Color getSensorColor()
+    {
+	String clrValues[] = pTable.get( "sensorColor" ).split( "\\," );
+	return new Color( Integer.parseInt( clrValues[0] ),
+			  Integer.parseInt( clrValues[1] ),
+			  Integer.parseInt( clrValues[2] ),
+			  Integer.parseInt( clrValues[3] ) );
     }
 }

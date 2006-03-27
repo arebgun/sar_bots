@@ -1,6 +1,6 @@
 package ui;
 
-import agent.Agent;
+import agent.*;
 import env.Environment;
 import sim.Simulator;
 
@@ -67,19 +67,13 @@ public class GUI
         main.setLocation( locX, locY );
         main.setLayout( new GridBagLayout() );
 
-
         main.addComponentListener( new ComponentAdapter()
         {
             public void componentResized( ComponentEvent e )
             {
-                Dimension dim = jtViewSwitcher.getSize();
-                //Environment.scaleRescueArea(this, Environment.optimalZoom( dim.width, dim.height ) );
-                int zoom = (int) max( dim.width / 100., dim.height / 100. );
-
-                area.setPreferredSize( new Dimension( zoom * 100, zoom * 100 ) );
+	    	Environment.scaleRescueArea( area, jtViewSwitcher.getSize() );
             }
         } );
-
     }
 
     public static GUI getInstance()
@@ -108,6 +102,7 @@ public class GUI
             public void run()
             {
                 area.repaint();
+		side.repaint();
             }
         } );
     }
@@ -123,26 +118,17 @@ public class GUI
     private void addComponents()
     {
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets( 2, 2, 2, 2 );
+        c.fill               = GridBagConstraints.BOTH;
+        c.insets             = new Insets( 2, 2, 2, 2 );
 
-        area = new RescueArea( tmrSim );
-        //Environment.scaleRescueArea(area, DEFAULT_ZOOM);
+        area                 = new RescueArea( tmrSim );
+	JPanel ornament      = new JPanel();
+	ornament.add( area );
 
-        JScrollPane scrlPane = new JScrollPane( area );
-        /*
-            scrlPane.setMinimumSize(area.getSize());
-            scrlPane.setSize(area.getSize());
-            scrlPane.setPreferredSize(area.getSize());
-        */
-
-        jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
+        JScrollPane scrlPane = new JScrollPane( ornament );
+        jtViewSwitcher       = new JTabbedPane( JTabbedPane.BOTTOM );
         jtViewSwitcher.addTab( "Environment", scrlPane );
         jtViewSwitcher.addTab( "Sensor Coverage", null );
-
-        //jtViewSwitcher.setMinimumSize(area.getSize());
-        //jtViewSwitcher.setSize(area.getSize());
-        //jtViewSwitcher.setPreferredSize(area.getSize());
 
         setGrigBagConstraints( c, 0, 0, 1, 1, 1, 1 );
         main.add( jtViewSwitcher, c );
@@ -177,8 +163,9 @@ public class GUI
 
 class RescueArea extends JPanel
 {
-    private static final Color clrAgentSensor = new Color( 0, 255, 170, 255 );
     private final Timer tmrSim;
+
+    private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 5 );
 
     public RescueArea( Timer tmr )
     {
@@ -192,9 +179,9 @@ class RescueArea extends JPanel
         int dX = getSize().width, dY = getSize().height;
         Graphics2D g2 = (Graphics2D) g;
 
-        // decorative border
-        g2.setColor( Color.RED );
-        g2.drawRect( 0, 0, dX - 1, dY - 1 );
+        // decorative border (dimzar-20060327: disabled for now, since the grid takes care of drawing the bounds)
+        //g2.setColor( Color.BLACK );
+        //g2.drawRect( 0, 0, dX - 1, dY - 1 );
 
         Environment.scaleGraphics( g2, dX, dY );
 	paintGrid( g2 );
@@ -229,24 +216,27 @@ class RescueArea extends JPanel
 
     private void paintAgents( Graphics2D g2 )
     {
+	g2.setFont( fontAgentID );
         Iterator<Agent> iter = Simulator.agentsIterator();
-
         while ( iter.hasNext() )
         {
-            Agent agent = iter.next();
-            g2.setColor( clrAgentSensor );
-            g2.fill( agent.getSensorView() );
+            Agent agent            = iter.next();
+	    Area sensView          = agent.getSensorView();
+	    Rectangle2D sensBounds = sensView.getBounds2D();
+            g2.setColor( agent.getSensorColor() );
+            g2.fill( sensView );
             g2.setColor( Color.BLUE );
             g2.fill( agent.getBodyArea() );
+	    g2.drawString( String.valueOf( agent.getID() ), (float)sensBounds.getX(), (float)sensBounds.getY() );
         }
     }
 }
 
 class SidePanel extends JPanel
 {
-    private final JLabel lblStep           = new JLabel( "Step: " );
-    private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: " );
-    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: " );
+    private final JLabel lblStep           = new JLabel( "Time: ?" );
+    private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
+    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
 
     private final JButton btnStartStop = new JButton( "Start" );
     private final JButton btnStep = new JButton( "Step" );
@@ -257,19 +247,22 @@ class SidePanel extends JPanel
 
     public SidePanel( Timer tmr )
     {
+	super( new BorderLayout() );
+
         tmrSim = tmr;
         setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
-        setLayout( new BoxLayout( this, BoxLayout.Y_AXIS ) );
 
-	JPanel jpStats = new JPanel( );
+	JPanel jpStats = new JPanel();
 	jpStats.setLayout( new BoxLayout(jpStats, BoxLayout.Y_AXIS) );
 	jpStats.setBorder( BorderFactory.createTitledBorder("Statistics") );
 	jpStats.add( lblStep );
 	jpStats.add( lblNumFiresActive );
 	jpStats.add( lblNumFiresFound );
-	add( jpStats );
+	add( jpStats, BorderLayout.PAGE_START );
 
-        addConfiguredButton( btnStartStop, new ActionListener()
+	JPanel jpCtrl = new JPanel();
+	jpCtrl.setLayout( new BoxLayout(jpCtrl, BoxLayout.Y_AXIS) );
+        addConfiguredButton( jpCtrl, btnStartStop, new ActionListener()
         {
             public void actionPerformed( ActionEvent e )
             {
@@ -287,17 +280,16 @@ class SidePanel extends JPanel
                 }
             }
         } );
-
-        addConfiguredButton( btnStep, new ActionListener()
+        addConfiguredButton( jpCtrl, btnStep, new ActionListener()
         {
             public void actionPerformed( ActionEvent e )
             {
                 Simulator.step();
             }
         } );
-
-        addConfiguredButton( btnScreenshot, null );
-        addConfiguredButton( btnSave, null );
+        addConfiguredButton( jpCtrl, btnScreenshot, null );
+        addConfiguredButton( jpCtrl, btnSave, null );
+	add( jpCtrl, BorderLayout.PAGE_END );
     }
 
     public void paint( Graphics g )
@@ -309,9 +301,11 @@ class SidePanel extends JPanel
 
         g.setColor( Color.BLACK );
         g.drawRect( 0, 0, dX - 1, dY - 1 );
+
+	lblStep.setText( "Time                  : " + Simulator.getTime() );
     }
 
-    private void addConfiguredButton( JButton button, ActionListener action )
+    private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
     {
         Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
         Dimension buttonSize = new Dimension( 105, 25 );
@@ -319,8 +313,8 @@ class SidePanel extends JPanel
         button.addActionListener( action );
         button.setPreferredSize( buttonSize );
         button.setMaximumSize( buttonSize );
-        add( buttonGlue );
-        add( button );
+        panel.add( buttonGlue );
+        panel.add( button );
     }
 }
 
