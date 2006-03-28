@@ -4,20 +4,11 @@ import agent.Agent;
 import env.Environment;
 import sim.Simulator;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import static java.lang.Math.round;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,9 +16,15 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TimeZone;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.event.*;
+
+import static java.lang.Math.round;
+
 public class GUI
 {
-    private static final int DEFAULT_WIDTH = 580;
+    private static final int DEFAULT_WIDTH  = 580;
     private static final int DEFAULT_HEIGHT = 540;
 
     private static GUI guiInstance;
@@ -39,20 +36,13 @@ public class GUI
     private BottomPanel bottom;
 
 
-    private final Timer tmrSim = new javax.swing.Timer( 0, new ActionListener()
+    private final Timer tmrSim = new Timer( 0, new ActionListener()
     {
         public void actionPerformed( ActionEvent e )
         {
             Simulator.step();
         }
     } );
-
-    // properties specific to the GUI (dumped as a serialized object)
-    /* zoom
-       refresh rate
-       window size
-       position
-    */
 
     private GUI()
     {
@@ -61,13 +51,13 @@ public class GUI
 
         // Set application icon, if not found system default will be used
         URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/icons/bot_16.gif" );
-        Image icon = null;
+        Image icon  = null;
         if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
 
         // Set main window location (center of the screen)
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int locX = (int)( screenSize.getWidth() / 2 - DEFAULT_WIDTH / 2 );
-        int locY = (int)( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
+        int locX = (int)( screenSize.getWidth()/2 - DEFAULT_WIDTH/2 );
+        int locY = (int)( screenSize.getHeight()/2 - DEFAULT_HEIGHT/2 );
 
         // Create main window, size and position it on the screen
         main = new JFrame( "Search and Rescue Bots" );
@@ -92,7 +82,6 @@ public class GUI
     public static GUI getInstance()
     {
         if ( guiInstance == null ) { guiInstance = new GUI(); }
-
         return guiInstance;
     }
 
@@ -132,7 +121,6 @@ public class GUI
     private void build()
     {
         addComponents();
-
         main.pack();
         main.setVisible( true );
     }
@@ -140,8 +128,8 @@ public class GUI
     private void addComponents()
     {
         // Main simulator window scroll pane and rescue area
-        area = new SimScrollPane( new JPanel(), new RescueArea( tmrSim ) );
-        coverage = new SimScrollPane( new JPanel(), new SensCoverage( tmrSim ) );
+        area     = new SimScrollPane( new JPanel(), new RescueArea() );
+        coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
 
         // Create tabs and add simulator views
         jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
@@ -190,13 +178,7 @@ class SimScrollPane extends JScrollPane
 abstract class SimDrawPanel extends JPanel
 {
     private final BasicStroke lineStroke = new BasicStroke( 0.3f );
-    protected final Timer tmrSim;
-
-    public SimDrawPanel( Timer tmr )
-    {
-        tmrSim = tmr;
-    }
-
+ 
     public void paint( Graphics g )
     {
         super.paint( g );
@@ -204,20 +186,16 @@ abstract class SimDrawPanel extends JPanel
         Graphics2D g2 = (Graphics2D)g;
 
         Environment.scaleGraphics( g2, getSize() );
-        paintGrid( g2 );
         simPaint( g2 );
     }
 
-    private void paintGrid( Graphics2D g2 )
+    protected void paintGrid( Graphics2D g2 )
     {
         g2.setColor( Color.GRAY );
         g2.setStroke( lineStroke );
         Iterator<Rectangle2D> iter = Environment.gridIterator();
 
-        while ( iter.hasNext() )
-        {
-            g2.draw( iter.next() );
-        }
+        while ( iter.hasNext() ) { g2.draw( iter.next() ); }
     }
 
     protected abstract void simPaint( Graphics2D g2 );
@@ -227,13 +205,9 @@ class RescueArea extends SimDrawPanel
 {
     private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 4 );
 
-    public RescueArea( Timer tmr )
-    {
-        super( tmr );
-    }
-
     public void simPaint( Graphics2D g2 )
     {
+        paintGrid( g2 );
         paintEnvironment( g2 );
         paintAgents( g2 );
     }
@@ -242,11 +216,7 @@ class RescueArea extends SimDrawPanel
     {
         g2.setColor( Color.BLACK );
         Iterator<Polygon> iter = Environment.buildingsIterator();
-
-        while ( iter.hasNext() )
-        {
-            g2.fillPolygon( iter.next() );
-        }
+        while ( iter.hasNext() ) { g2.fillPolygon( iter.next() ); }
     }
 
     private void paintAgents( Graphics2D g2 )
@@ -256,9 +226,9 @@ class RescueArea extends SimDrawPanel
 
         while ( iter.hasNext() )
         {
-            Agent agent = iter.next();
-            Area sensView = agent.getSensorView();
-            Area agentBody = agent.getBodyArea();
+            Agent agent            = iter.next();
+            Area sensView          = agent.getSensorView();
+            Area agentBody         = agent.getBodyArea();
             Rectangle2D bodyBounds = agentBody.getBounds2D();
 
             g2.setColor( agent.getSensorColor() );
@@ -274,44 +244,40 @@ class RescueArea extends SimDrawPanel
 
 class SensCoverage extends SimDrawPanel
 {
-    private final static float hueGreen = 1;
-    private final static float clrSize = 1023;
-    private final static Color[] clrTable = new Color[(int)clrSize + 1];
+    private final static int clrSize      = 1023;
+    private final static Color[] clrTable = new Color[clrSize + 1];
 
-    public SensCoverage( Timer tmr )
+    public SensCoverage()
     {
-        super( tmr );
         setBackground( Color.WHITE );
 
-        for ( int i = 0; i < clrTable.length; i++ )
-        {
-            clrTable[(int)clrSize - i] = new Color( i / clrSize, hueGreen, i / clrSize );
-        }
+        for ( int i = 0; i < clrTable.length; i++ ) { clrTable[clrSize-i] = new Color( i/(float)clrSize, 1.f, i/(float)clrSize ); }
     }
 
     public void simPaint( Graphics2D g2 )
     {
-        Iterator<Double> fractionIter = Environment.sensCoverageFractionIterator();
+        Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
         Iterator<Rectangle2D> gridIter = Environment.gridIterator();
 
         while ( gridIter.hasNext() )
         {
-            g2.setColor( clrTable[(int)round( fractionIter.next() * clrSize )] );
+            g2.setColor( clrTable[(int)( fractionIter.next() * clrSize )] );
             g2.fill( gridIter.next() );
         }
+        paintGrid( g2 );
     }
 }
 
 class SidePanel extends JPanel
 {
-    private final JLabel lblStep = new JLabel( "Time: ?" );
+    private final JLabel lblStep           = new JLabel( "Time: ?" );
     private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
-    private final JLabel lblNumFiresFound = new JLabel( "# of Fires Found: ?" );
+    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
 
-    private final JButton btnStartStop = new JButton( "Start" );
-    private final JButton btnStep = new JButton( "Step" );
-    private final JButton btnScreenshot = new JButton( "Screenshot" );
-    private final JButton btnSave = new JButton( "Save" );
+    private final JButton btnStartStop     = new JButton( "Start" );
+    private final JButton btnStep          = new JButton( "Step" );
+    private final JButton btnScreenshot    = new JButton( "Screenshot" );
+    private final JButton btnSave          = new JButton( "Save" );
 
     private final Timer tmrSim;
 
@@ -365,17 +331,17 @@ class SidePanel extends JPanel
             public void actionPerformed( ActionEvent e )
             {
                 SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
-                String currentDate = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
-                String outFileName = "images/screenshots/screen_" + currentDate + ".png";
+                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
 
-                Dimension position = GUI.getInstance().getMainWindowSize();
-                Point xyCoord = GUI.getInstance().getMainWindowXyPoint();
+                Dimension position   = GUI.getInstance().getMainWindowSize();
+                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
                 Rectangle mainWindow = new Rectangle( xyCoord, position );
 
                 try
                 {
                     // create screen shot
-                    Robot robot = new Robot();
+                    Robot robot         = new Robot();
                     BufferedImage image = robot.createScreenCapture( mainWindow );
 
                     // save captured image to PNG file

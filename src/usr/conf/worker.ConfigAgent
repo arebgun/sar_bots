@@ -23,9 +23,9 @@ propulsionMaxSpeed=3.0
 propulsionEnergyAmount=9999.9
 
 # sensor module parameters
-sensorName=agent.sensor.Circle
-sensorRange=7.0
-sensorColor=255,200,30,100
+sensorName=agent.sensor.Cone
+sensorRange=10.0
+sensorColor=255,200,30,155
 
  
  

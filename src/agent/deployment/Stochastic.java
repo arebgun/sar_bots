@@ -4,8 +4,7 @@ import agent.AgentLocation;
 import config.ConfigAgent;
 import env.Environment;
 
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.util.Random;
 
 /**
@@ -26,7 +25,7 @@ public class Stochastic extends DeploymentStrategy
 
     public AgentLocation getNextLocation( int id )
     {
-        Area unoccupied = Environment.unoccupiedArea();
+        Area unoccupied    = Environment.unoccupiedArea();
         Rectangle2D bounds = unoccupied.getBounds2D();
         double x = -1;
         double y = -1;
