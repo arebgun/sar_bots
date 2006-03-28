@@ -45,7 +45,7 @@ public class Simulator
 
             for ( int i = 0; i < agentConfig.getSwarmSize(); i++ )
             {
-                agents.add( (Agent) loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
+                agents.add( (Agent)loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
             }
         }
 
@@ -65,6 +65,7 @@ public class Simulator
         {
             agent.move();
         }
+
         Environment.update();
         GUI.getInstance().update();
 

@@ -21,34 +21,28 @@ public class Stochastic extends DeploymentStrategy
     public Stochastic( ConfigAgent config )
     {
         super( config );
-        if ( rand == null )
-        {
-            rand = new Random( agentConfig.getDeploymentSeed() );
-        }
+        if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() ); }
     }
 
     public AgentLocation getNextLocation( int id )
     {
         Area unoccupied = Environment.unoccupiedArea();
         Rectangle2D bounds = unoccupied.getBounds2D();
-
-        double x = -1, y = -1;
+        double x = -1;
+        double y = -1;
         int limit = 1000;
         boolean found = false;
+
         while ( !found && --limit > 0 )
         {
             x = rand.nextDouble() * bounds.getWidth();
             y = rand.nextDouble() * bounds.getHeight();
-            if ( unoccupied.contains( x, y ) )
-            {
-                found = true;
-            }
+
+            if ( unoccupied.contains( x, y ) ) { found = true; }
         }
 
-        if ( !found )
-        {
-            throw new IllegalStateException( "unable to deploy agent #" + id );
-        }
+        if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + id ); }
+
         return new AgentLocation( x, y, rand.nextGaussian() );
     }
 }

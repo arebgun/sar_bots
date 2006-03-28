@@ -19,14 +19,19 @@ public class Thruster extends PropulsionModule
 
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
-        double curX = location.getX(), curY = location.getY(), goalX = goal.getX(), goalY = goal.getY();
+        double curX = location.getX();
+        double curY = location.getY();
+        double goalX = goal.getX();
+        double goalY = goal.getY();
         double goalDist = hypot( goalX - curX, goalY - curY );
+
         if ( goalDist > maxSpeed )
         {
             double theta = atan2( goalY - curY, goalX - curX );
             goalX = curX + maxSpeed * cos( theta );
             goalY = curY + maxSpeed * sin( theta );
         }
+
         return new AgentLocation( goalX, goalY, goal.getTheta() );
     }
 }

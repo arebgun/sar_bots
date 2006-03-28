@@ -8,7 +8,6 @@ import config.ConfigAgent;
  */
 public class None extends CommModule
 {
-
     public None( ConfigAgent config )
     {
         super( config );
