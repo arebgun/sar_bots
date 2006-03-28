@@ -4,6 +4,7 @@ import agent.Agent;
 import env.Environment;
 import sim.Simulator;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,10 +15,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import static java.lang.Math.round;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 public class GUI
 {
@@ -90,6 +96,15 @@ public class GUI
         return guiInstance;
     }
 
+    public Dimension getMainWindowSize()
+    {
+        return main.getSize();
+    }
+
+    public Point getMainWindowXyPoint()
+    {
+        return new Point( main.getX(), main.getY() );
+    }
 
     public void show()
     {
@@ -345,7 +360,34 @@ class SidePanel extends JPanel
             }
         } );
 
-        addConfiguredButton( jpCtrl, btnScreenshot, null );
+        addConfiguredButton( jpCtrl, btnScreenshot, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
+                String currentDate = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName = "images/screenshots/screen_" + currentDate + ".png";
+
+                Dimension position = GUI.getInstance().getMainWindowSize();
+                Point xyCoord = GUI.getInstance().getMainWindowXyPoint();
+                Rectangle mainWindow = new Rectangle( xyCoord, position );
+
+                try
+                {
+                    // create screen shot
+                    Robot robot = new Robot();
+                    BufferedImage image = robot.createScreenCapture( mainWindow );
+
+                    // save captured image to PNG file
+                    ImageIO.write( image, "png", new File( outFileName ) );
+                }
+                catch ( Exception ex )
+                {
+                    ex.printStackTrace();
+                }
+            }
+        } );
+
         addConfiguredButton( jpCtrl, btnSave, null );
         add( jpCtrl, BorderLayout.PAGE_END );
     }
