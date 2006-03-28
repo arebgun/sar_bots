@@ -60,7 +60,7 @@ public class GUI
         JFrame.setDefaultLookAndFeelDecorated( true );
 
         // Set application icon, if not found system default will be used
-        URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/bot_16.gif" );
+        URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/icons/bot_16.gif" );
         Image icon = null;
         if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
 
