@@ -5,6 +5,7 @@ package env;
  * @author Dimitri Zarzhitsky
  */
 
+import agent.Agent;
 import config.ConfigEnv;
 import sim.Simulator;
 
@@ -20,9 +21,13 @@ import static java.lang.Math.*;
 public class Environment
 {
     private static ArrayList<Rectangle2D> grid;
+    private static int[] sensCoverageFrequency;
+    private static ArrayList<Double> sensCoverageRatios;
     private static ArrayList<Polygon> buildings;
     private static HashMap<Integer, ArrayList<Ellipse2D.Double>> fires;
     private static ConfigEnv config;
+
+    private static int gridSize;
 
     private Environment()
     {
@@ -38,7 +43,7 @@ public class Environment
         config = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
 	
 	grid = new ArrayList<Rectangle2D>();
-	int gridSize = config.getGridSize();
+	gridSize = config.getGridSize();
 	for ( int i = 0; i < config.getWorldWidth(); i += gridSize ) 
 	    {
 		for ( int j = 0; j < config.getWorldHeight(); j += gridSize )
@@ -46,9 +51,10 @@ public class Environment
 		    grid.add( new Rectangle2D.Double( i, j, gridSize, gridSize ) );
 		}
 	    }
+	sensCoverageFrequency = new int[grid.size()];
+	sensCoverageRatios    = new ArrayList<Double>( grid.size() );
 
         loadBuildings( config.getBuildingsFileName() );
-
         // populate the fires hashmap (dimzar)
     }
 
@@ -63,7 +69,6 @@ public class Environment
 
         // dimzar: speed up line right here :)
         occupied.add( Simulator.agentSpace() );
-
         return occupied;
     }
 
@@ -76,7 +81,30 @@ public class Environment
 
     public static void update()
     {
+	int gridRowWidth = config.getWorldWidth() / gridSize;
 
+	Iterator<Agent> iter = Simulator.agentsIterator();
+	while ( iter.hasNext() )
+	    {
+		Agent a = iter.next();
+
+		Area sensFootprint = a.getSensorView();
+		Rectangle2D bounds   = sensFootprint.getBounds2D();
+		
+		int startX = (int)floor( bounds.getX()/gridSize ), endX = (int)ceil( (bounds.getX()+bounds.getWidth())/gridSize );
+		int startY = (int)floor( bounds.getY()/gridSize ), endY = (int)ceil( (bounds.getY()+bounds.getHeight())/gridSize );
+		for ( int i = startX; i < endX; i += gridSize )
+		    { 
+			for ( int j = startY; j < endY; j += gridSize )
+			    {
+				int index = i + j * gridRowWidth;
+				if ( sensFootprint.intersects( grid.get( index ).getBounds2D() ) )
+				    {
+					sensCoverageFrequency[index]++;
+				    }
+			    }
+		    }
+	    }
     }
 
     private static void loadBuildings( String buildingsFileName ) throws Exception
@@ -113,18 +141,19 @@ public class Environment
         }
     }
 
-    public static void scaleGraphics( Graphics2D g2, int pixelWidth, int pixelHeight )
+    public static void scaleGraphics( Graphics2D g2, Dimension pixelScreenSize )
     {
-        g2.scale( pixelWidth / config.getWorldWidth(), pixelHeight / config.getWorldHeight() );
+        g2.scale( pixelScreenSize.width  / config.getWorldWidth(),
+		  pixelScreenSize.height / config.getWorldHeight() );
     }
 
-    public static void scaleRescueArea( JPanel rescueArea, Dimension pixelScreenSize )
+    public static void scaleDrawing( Component drawing, Dimension pixelScreenSize )
     {
 	int zoom             = optimalZoom( pixelScreenSize );
 	Dimension scaledSize = new Dimension( zoom*config.getWorldWidth()+1, zoom*config.getWorldHeight()+1 );
 
-        rescueArea.setSize( scaledSize );
-        rescueArea.setPreferredSize( scaledSize );
+        drawing.setSize( scaledSize );
+        drawing.setPreferredSize( scaledSize );
     }
 
     public static double aspectRatio()
@@ -145,5 +174,24 @@ public class Environment
     public static Iterator<Rectangle2D> gridIterator()
     {
         return grid.iterator();
+    }
+
+    public static Iterator<Double> sensCoverageFractionIterator()
+    {
+	sensCoverageRatios.clear();
+	
+	double max = 1;
+	for ( int val : sensCoverageFrequency )
+	    {
+		if ( val > max)
+		    {
+			max = val;
+		    }
+	    }
+	for ( int i = 0; i < sensCoverageFrequency.length; i++ )
+	    {
+		sensCoverageRatios.add( sensCoverageFrequency[i]/max );
+	    }
+	return sensCoverageRatios.iterator();
     }
 }

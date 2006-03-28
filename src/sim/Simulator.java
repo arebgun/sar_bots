@@ -65,7 +65,6 @@ public class Simulator
         {
             agent.move();
         }
-
         Environment.update();
         GUI.getInstance().update();
 

@@ -17,8 +17,10 @@ import java.awt.geom.*;
 public abstract class Agent
 {
     protected static int typeID = 0;
+    protected int unitID;
 
     protected ConfigAgent config;
+    protected Color sensorColor;
 
     /**
      * Agent deployment strategy. Determines initial position.
@@ -34,7 +36,6 @@ public abstract class Agent
     protected CommModule communication;
     protected PropulsionModule propulsion;
 
-    protected int unitID;
 
     /**
      * Agent constructor. Creates a new agent.
@@ -79,7 +80,7 @@ public abstract class Agent
 
     public Color getSensorColor()
     {
-	return config.getSensorColor();
+	return sensorColor;
     }
 
     public Area getBodyArea()
@@ -137,6 +138,7 @@ public abstract class Agent
         loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
         propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location = deployStrategy.getNextLocation( unitID );
+        location    = deployStrategy.getNextLocation( unitID );
+	sensorColor = config.getSensorColor();
     }
 }

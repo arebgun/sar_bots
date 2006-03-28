@@ -12,18 +12,19 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.event.*;
-import static java.lang.Math.max;
+
+import static java.lang.Math.*;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH = 640;
-    private static final int DEFAULT_HEIGHT = 480;
+    private static final int DEFAULT_WIDTH = 580;
+    private static final int DEFAULT_HEIGHT = 540;
 
     private static GUI guiInstance;
     private static JFrame main;
 
     private static JTabbedPane jtViewSwitcher;
-    private RescueArea area;
+    private SimScrollPane area, coverage;
     private SidePanel side;
     private BottomPanel bottom;
 
@@ -65,13 +66,15 @@ public class GUI
         main.setMinimumSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
         main.setPreferredSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
         main.setLocation( locX, locY );
-        main.setLayout( new GridBagLayout() );
+        main.setLayout( new BorderLayout() );
 
         main.addComponentListener( new ComponentAdapter()
         {
             public void componentResized( ComponentEvent e )
             {
-	    	Environment.scaleRescueArea( area, jtViewSwitcher.getSize() );
+		Dimension newSize = jtViewSwitcher.getSize();
+	    	Environment.scaleDrawing( area, newSize);
+	    	Environment.scaleDrawing( coverage, newSize);
             }
         } );
     }
@@ -101,7 +104,7 @@ public class GUI
         {
             public void run()
             {
-                area.repaint();
+		jtViewSwitcher.getSelectedComponent().repaint();
 		side.repaint();
             }
         } );
@@ -117,41 +120,19 @@ public class GUI
 
     private void addComponents()
     {
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill               = GridBagConstraints.BOTH;
-        c.insets             = new Insets( 2, 2, 2, 2 );
-
-        area                 = new RescueArea( tmrSim );
-	JPanel ornament      = new JPanel();
-	ornament.add( area );
-
-        JScrollPane scrlPane = new JScrollPane( ornament );
+        area                 = new SimScrollPane( new JPanel(), new RescueArea( tmrSim ) );
+	coverage             = new SimScrollPane( new JPanel(), new SensCoverage( tmrSim ) );
         jtViewSwitcher       = new JTabbedPane( JTabbedPane.BOTTOM );
-        jtViewSwitcher.addTab( "Environment", scrlPane );
-        jtViewSwitcher.addTab( "Sensor Coverage", null );
+        jtViewSwitcher.addTab( "Environment", area );
+        jtViewSwitcher.addTab( "Sensor Coverage", coverage );
 
-        setGrigBagConstraints( c, 0, 0, 1, 1, 1, 1 );
-        main.add( jtViewSwitcher, c );
+        main.add( jtViewSwitcher, BorderLayout.CENTER );
 
         side = new SidePanel( tmrSim );
-        c.fill = GridBagConstraints.VERTICAL;
-        setGrigBagConstraints( c, 1, 0, 1, 1, 0, 0 );
-        main.add( side, c );
+        main.add( side, BorderLayout.LINE_END );
 
         bottom = new BottomPanel( tmrSim );
-        c.fill = GridBagConstraints.HORIZONTAL;
-        setGrigBagConstraints( c, 0, 1, 2, 1, 0, 0 );
-        main.add( bottom, c );
-    }
-
-    private void setGrigBagConstraints( GridBagConstraints c, int x, int y, int w, int h, double wx, double wy )
-    {
-        c.gridx = x;
-        c.gridy = y;
-        c.gridwidth = w;
-        c.gridheight = h;
-        c.weightx = wx;
-        c.weighty = wy;
+        main.add( bottom, BorderLayout.PAGE_END );
     }
 
     @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
@@ -161,58 +142,92 @@ public class GUI
     }
 }
 
-class RescueArea extends JPanel
+class SimScrollPane extends JScrollPane
 {
-    private final Timer tmrSim;
+    private final SimDrawPanel drawArea;
 
-    private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 5 );
-
-    public RescueArea( Timer tmr )
+    public SimScrollPane( JPanel ornament, SimDrawPanel drawArea )
     {
-        tmrSim = tmr;
-        setBackground( Color.WHITE );
+	super( ornament );
+	ornament.add( drawArea );
+	this.drawArea = drawArea;
+    }
+
+    public void setSize( Dimension newSize )
+    {
+	drawArea.setSize( newSize );
+    }
+
+    public void setPreferredSize( Dimension newSize )
+    {
+	drawArea.setPreferredSize( newSize );
+    }
+}
+
+abstract class SimDrawPanel extends JPanel
+{
+    private final BasicStroke lineStroke = new BasicStroke( 0.3f );
+    protected final Timer tmrSim;
+
+    public SimDrawPanel( Timer tmr )
+    {
+	tmrSim = tmr;
     }
 
     public void paint( Graphics g )
     {
         super.paint( g );
-        int dX = getSize().width, dY = getSize().height;
-        Graphics2D g2 = (Graphics2D) g;
+        setBackground( Color.WHITE );
+	Graphics2D g2 = (Graphics2D) g;
 
-        // decorative border (dimzar-20060327: disabled for now, since the grid takes care of drawing the bounds)
-        //g2.setColor( Color.BLACK );
-        //g2.drawRect( 0, 0, dX - 1, dY - 1 );
+        Environment.scaleGraphics( g2, getSize() );
+	simPaint( g2 );
 
-        Environment.scaleGraphics( g2, dX, dY );
 	paintGrid( g2 );
-        paintEnvironment( g2 );
-        paintAgents( g2 );
     }
 
     private void paintGrid( Graphics2D g2 )
     {
         g2.setColor( Color.GRAY );
-	g2.setStroke( new BasicStroke( 0.3f ) );
+	g2.setStroke( lineStroke );
         Iterator<Rectangle2D> iter = Environment.gridIterator();
 
         while ( iter.hasNext() )
         {
             g2.draw( iter.next() );
         }
-    }	
+    }
+
+    protected abstract void simPaint( Graphics2D g2 );
+}
+
+class RescueArea extends SimDrawPanel
+{
+    private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 4 );
+
+    public RescueArea( Timer tmr )
+    {
+	super( tmr );
+    }
+
+    public void simPaint( Graphics2D g2 )
+    {
+        // decorative border (dimzar-20060327: disabled for now, since the grid takes care of drawing the bounds)
+        //g2.setColor( Color.BLACK );
+        //g2.drawRect( 0, 0, dX - 1, dY - 1 );
+        paintEnvironment( g2 );
+        paintAgents( g2 );
+    }
 
     private void paintEnvironment( Graphics2D g2 )
     {
         g2.setColor( Color.BLACK );
-
         Iterator<Polygon> iter = Environment.buildingsIterator();
-
         while ( iter.hasNext() )
         {
             g2.fillPolygon( iter.next() );
         }
     }
-
 
     private void paintAgents( Graphics2D g2 )
     {
@@ -222,13 +237,43 @@ class RescueArea extends JPanel
         {
             Agent agent            = iter.next();
 	    Area sensView          = agent.getSensorView();
-	    Rectangle2D sensBounds = sensView.getBounds2D();
+	    Area agentBody         = agent.getBodyArea();
+	    Rectangle2D bodyBounds = agentBody.getBounds2D();
             g2.setColor( agent.getSensorColor() );
             g2.fill( sensView );
             g2.setColor( Color.BLUE );
-            g2.fill( agent.getBodyArea() );
-	    g2.drawString( String.valueOf( agent.getID() ), (float)sensBounds.getX(), (float)sensBounds.getY() );
+            g2.fill( agentBody );
+	    g2.drawString( String.valueOf( agent.getID() ), (float)bodyBounds.getX(), (float)bodyBounds.getY() );
         }
+    }
+}
+
+class SensCoverage extends SimDrawPanel
+{
+    private final static float hueRed = 1, hueGreen = 1, hueBlue = 1;
+    private final static float clrSize = 1023;
+    private final static Color[] clrTable = new Color[(int)clrSize + 1];
+
+    public SensCoverage( Timer tmr )
+    {
+	super( tmr );
+        setBackground( Color.WHITE );
+
+	for ( int i = 0; i < clrTable.length; i++ )
+	    {
+		clrTable[(int)clrSize-i] = new Color(i/clrSize * hueRed, hueGreen, i/clrSize * hueBlue);
+	    }
+    }
+
+    public void simPaint( Graphics2D g2 )
+    {
+	Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
+	Iterator<Rectangle2D> gridIter = Environment.gridIterator();
+	while ( gridIter.hasNext() )
+	    {
+		g2.setColor( clrTable[(int)round( fractionIter.next() * clrSize)] );
+		g2.fill( gridIter.next() );
+	    }
     }
 }
 
@@ -250,7 +295,7 @@ class SidePanel extends JPanel
 	super( new BorderLayout() );
 
         tmrSim = tmr;
-        setBorder( BorderFactory.createEmptyBorder( 30, 20, 30, 20 ) );
+        setBorder( BorderFactory.createEmptyBorder( 10, 10, 20, 10 ) );
 
 	JPanel jpStats = new JPanel();
 	jpStats.setLayout( new BoxLayout(jpStats, BoxLayout.Y_AXIS) );
@@ -298,17 +343,17 @@ class SidePanel extends JPanel
 
         int dY = getSize().height;
         int dX = getSize().width;
-
+	/*
         g.setColor( Color.BLACK );
         g.drawRect( 0, 0, dX - 1, dY - 1 );
-
-	lblStep.setText( "Time                  : " + Simulator.getTime() );
+	*/
+	lblStep.setText( "Time: " + Simulator.getTime() );
     }
 
     private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
     {
         Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
-        Dimension buttonSize = new Dimension( 105, 25 );
+        Dimension buttonSize = new Dimension( 125, 25 );
 
         button.addActionListener( action );
         button.setPreferredSize( buttonSize );
@@ -326,6 +371,8 @@ class BottomPanel extends JPanel
     public BottomPanel( Timer tmr )
     {
         tmrSim = tmr;
+        setBorder( BorderFactory.createEmptyBorder( 5, 2, 5, 2 ) );
+
         sldSpeed.setMajorTickSpacing( 1000 );
         sldSpeed.setPaintTicks( true );
 
@@ -359,8 +406,10 @@ class BottomPanel extends JPanel
         Graphics2D g2 = (Graphics2D) g;
 
         // decorative border
+	/*
         g2.setColor( Color.BLACK );
         g2.drawRect( 0, 0, dX - 1, dY - 1 );
+	*/
     }
 
 }
