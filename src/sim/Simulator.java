@@ -9,10 +9,7 @@ import ui.GUI;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
+import java.util.logging.*;
 
 /**
  * @author Anton Rebgun
@@ -45,7 +42,7 @@ public class Simulator
 
             for ( int i = 0; i < agentConfig.getSwarmSize(); i++ )
             {
-                agents.add( (Agent)loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
+                agents.add( (Agent) loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
             }
         }
 

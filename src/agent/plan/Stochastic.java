@@ -4,9 +4,8 @@ import agent.AgentLocation;
 import config.ConfigAgent;
 
 import java.awt.geom.*;
-import java.util.Random;
-
 import static java.lang.Math.*;
+import java.util.Random;
 
 /**
  * @author Anton Rebgun
@@ -44,7 +43,7 @@ public class Stochastic extends PlanModule
             if ( sensorView.contains( newX, newY ) )
             {
                 newTheta = atan2( newY - curY, newX - curX );
-                Area path = new Area( new Rectangle2D.Double( curX, curY, hypot( newX - curX, newY - curY ), .5/*wingSpan/2*/) );
+                Area path = new Area( new Rectangle2D.Double( curX, curY, hypot( newX - curX, newY - curY ), .5/*wingSpan/2*/ ) );
                 path.transform( AffineTransform.getRotateInstance( newTheta, curX, curY ) );
                 path.intersect( sensorView );
 
@@ -52,12 +51,13 @@ public class Stochastic extends PlanModule
             }
         }
         //if ( !placed ) { throw new IllegalStateException( "unable to find agent next goal location" ); }
-	if ( !placed ) {
-	    newX     = curX;
-	    newY     = curY;
-	    newTheta = location.getTheta() + PI;
-	    sim.Simulator.logger.finest("agent rotated");
-	}
+        if ( !placed )
+        {
+            newX = curX;
+            newY = curY;
+            newTheta = location.getTheta() + PI;
+            sim.Simulator.logger.finest( "agent rotated" );
+        }
         return new AgentLocation( newX, newY, newTheta );
     }
 }

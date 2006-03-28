@@ -17,7 +17,7 @@ public abstract class SensorModule
     public SensorModule( ConfigAgent config )
     {
         agentConfig = config;
-	radius      = agentConfig.getSensorRange();
+        radius = agentConfig.getSensorRange();
     }
 
     public abstract Area getView( AgentLocation loc );

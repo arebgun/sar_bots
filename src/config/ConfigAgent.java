@@ -90,8 +90,8 @@ public class ConfigAgent extends Config
         String clrValues[] = pTable.get( "sensorColor" ).split( "\\," );
 
         return new Color( Integer.parseInt( clrValues[0] ),
-                Integer.parseInt( clrValues[1] ),
-                Integer.parseInt( clrValues[2] ),
-                Integer.parseInt( clrValues[3] ) );
+                          Integer.parseInt( clrValues[1] ),
+                          Integer.parseInt( clrValues[2] ),
+                          Integer.parseInt( clrValues[3] ) );
     }
 }

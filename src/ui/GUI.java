@@ -6,26 +6,25 @@ import sim.Simulator;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.*;
-
-import static java.lang.Math.round;
+import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH  = 580;
+    private static final int DEFAULT_WIDTH = 580;
     private static final int DEFAULT_HEIGHT = 540;
+    private static boolean showGrid = true;
 
     private static GUI guiInstance;
     private static JFrame main;
@@ -51,13 +50,13 @@ public class GUI
 
         // Set application icon, if not found system default will be used
         URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/icons/bot_16.gif" );
-        Image icon  = null;
+        Image icon = null;
         if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
 
         // Set main window location (center of the screen)
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int locX = (int)( screenSize.getWidth()/2 - DEFAULT_WIDTH/2 );
-        int locY = (int)( screenSize.getHeight()/2 - DEFAULT_HEIGHT/2 );
+        int locX = (int) ( screenSize.getWidth() / 2 - DEFAULT_WIDTH / 2 );
+        int locY = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
 
         // Create main window, size and position it on the screen
         main = new JFrame( "Search and Rescue Bots" );
@@ -95,6 +94,21 @@ public class GUI
         return new Point( main.getX(), main.getY() );
     }
 
+    public static boolean getShowGrid()
+    {
+        return showGrid;
+    }
+
+    public static void setShowGrid( boolean show )
+    {
+        showGrid = show;
+    }
+
+    public static Component getSelectedTabView()
+    {
+        return jtViewSwitcher.getSelectedComponent();
+    }
+
     public void show()
     {
         SwingUtilities.invokeLater( new Runnable()
@@ -128,7 +142,7 @@ public class GUI
     private void addComponents()
     {
         // Main simulator window scroll pane and rescue area
-        area     = new SimScrollPane( new JPanel(), new RescueArea() );
+        area = new SimScrollPane( new JPanel(), new RescueArea() );
         coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
 
         // Create tabs and add simulator views
@@ -146,7 +160,7 @@ public class GUI
         main.add( bottom, BorderLayout.PAGE_END );
     }
 
-    @SuppressWarnings( { "CloneDoesntCallSuperClone" } )
+    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
     public Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
@@ -178,12 +192,12 @@ class SimScrollPane extends JScrollPane
 abstract class SimDrawPanel extends JPanel
 {
     private final BasicStroke lineStroke = new BasicStroke( 0.3f );
- 
+
     public void paint( Graphics g )
     {
         super.paint( g );
         setBackground( Color.WHITE );
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
 
         Environment.scaleGraphics( g2, getSize() );
         simPaint( g2 );
@@ -195,7 +209,10 @@ abstract class SimDrawPanel extends JPanel
         g2.setStroke( lineStroke );
         Iterator<Rectangle2D> iter = Environment.gridIterator();
 
-        while ( iter.hasNext() ) { g2.draw( iter.next() ); }
+        while ( iter.hasNext() )
+        {
+            g2.draw( iter.next() );
+        }
     }
 
     protected abstract void simPaint( Graphics2D g2 );
@@ -207,7 +224,7 @@ class RescueArea extends SimDrawPanel
 
     public void simPaint( Graphics2D g2 )
     {
-        paintGrid( g2 );
+        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
         paintEnvironment( g2 );
         paintAgents( g2 );
     }
@@ -216,7 +233,11 @@ class RescueArea extends SimDrawPanel
     {
         g2.setColor( Color.BLACK );
         Iterator<Polygon> iter = Environment.buildingsIterator();
-        while ( iter.hasNext() ) { g2.fillPolygon( iter.next() ); }
+
+        while ( iter.hasNext() )
+        {
+            g2.fillPolygon( iter.next() );
+        }
     }
 
     private void paintAgents( Graphics2D g2 )
@@ -226,9 +247,9 @@ class RescueArea extends SimDrawPanel
 
         while ( iter.hasNext() )
         {
-            Agent agent            = iter.next();
-            Area sensView          = agent.getSensorView();
-            Area agentBody         = agent.getBodyArea();
+            Agent agent = iter.next();
+            Area sensView = agent.getSensorView();
+            Area agentBody = agent.getBodyArea();
             Rectangle2D bodyBounds = agentBody.getBounds2D();
 
             g2.setColor( agent.getSensorColor() );
@@ -237,47 +258,51 @@ class RescueArea extends SimDrawPanel
             g2.setColor( Color.BLUE );
             g2.fill( agentBody );
 
-            g2.drawString( String.valueOf( agent.getID() ), (float)bodyBounds.getX(), (float)bodyBounds.getY() );
+            g2.drawString( String.valueOf( agent.getID() ), (float) bodyBounds.getX(), (float) bodyBounds.getY() );
         }
     }
 }
 
 class SensCoverage extends SimDrawPanel
 {
-    private final static int clrSize      = 1023;
+    private final static int clrSize = 1023;
     private final static Color[] clrTable = new Color[clrSize + 1];
 
     public SensCoverage()
     {
         setBackground( Color.WHITE );
 
-        for ( int i = 0; i < clrTable.length; i++ ) { clrTable[clrSize-i] = new Color( i/(float)clrSize, 1.f, i/(float)clrSize ); }
+        for ( int i = 0; i < clrTable.length; i++ )
+        {
+            clrTable[clrSize - i] = new Color( i / (float) clrSize, 1f, i / (float) clrSize );
+        }
     }
 
     public void simPaint( Graphics2D g2 )
     {
-        Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
+        Iterator<Double> fractionIter = Environment.sensCoverageFractionIterator();
         Iterator<Rectangle2D> gridIter = Environment.gridIterator();
 
         while ( gridIter.hasNext() )
         {
-            g2.setColor( clrTable[(int)( fractionIter.next() * clrSize )] );
+            g2.setColor( clrTable[(int) ( fractionIter.next() * clrSize )] );
             g2.fill( gridIter.next() );
         }
-        paintGrid( g2 );
+
+        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
     }
 }
 
 class SidePanel extends JPanel
 {
-    private final JLabel lblStep           = new JLabel( "Time: ?" );
+    private final JLabel lblStep = new JLabel( "Time: ?" );
     private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
-    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
+    private final JLabel lblNumFiresFound = new JLabel( "# of Fires Found: ?" );
 
-    private final JButton btnStartStop     = new JButton( "Start" );
-    private final JButton btnStep          = new JButton( "Step" );
-    private final JButton btnScreenshot    = new JButton( "Screenshot" );
-    private final JButton btnSave          = new JButton( "Save" );
+    private final JButton btnStartStop = new JButton( "Start" );
+    private final JButton btnStep = new JButton( "Step" );
+    private final JButton btnScreenshot = new JButton( "Screenshot" );
+    private final JButton btnSave = new JButton( "Save" );
 
     private final Timer tmrSim;
 
@@ -331,17 +356,17 @@ class SidePanel extends JPanel
             public void actionPerformed( ActionEvent e )
             {
                 SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
-                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
-                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
+                String currentDate = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName = "images/screenshots/screen_" + currentDate + ".png";
 
-                Dimension position   = GUI.getInstance().getMainWindowSize();
-                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
+                Dimension position = GUI.getInstance().getMainWindowSize();
+                Point xyCoord = GUI.getInstance().getMainWindowXyPoint();
                 Rectangle mainWindow = new Rectangle( xyCoord, position );
 
                 try
                 {
                     // create screen shot
-                    Robot robot         = new Robot();
+                    Robot robot = new Robot();
                     BufferedImage image = robot.createScreenCapture( mainWindow );
 
                     // save captured image to PNG file
@@ -380,6 +405,7 @@ class SidePanel extends JPanel
 class BottomPanel extends JPanel
 {
     private final JSlider sldSpeed = new JSlider( 100, 5100, 100 );
+    private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", true );
     private final Timer tmrSim;
 
     public BottomPanel( Timer tmr )
@@ -403,13 +429,21 @@ class BottomPanel extends JPanel
         {
             public void stateChanged( ChangeEvent e )
             {
-                if ( !sldSpeed.getValueIsAdjusting() )
-                {
-                    tmrSim.setDelay( sldSpeed.getValue() );
-                }
+                if ( !sldSpeed.getValueIsAdjusting() ) { tmrSim.setDelay( sldSpeed.getValue() ); }
             }
         } );
 
         add( sldSpeed );
+
+        cbShowGrid.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                GUI.setShowGrid( cbShowGrid.isSelected() );
+                GUI.getSelectedTabView().repaint();
+            }
+        } );
+
+        add( cbShowGrid );
     }
 }

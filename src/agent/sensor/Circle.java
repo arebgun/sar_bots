@@ -4,7 +4,8 @@ import agent.AgentLocation;
 import config.ConfigAgent;
 import env.Environment;
 
-import java.awt.geom.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 
 /**
  * @author Anton Rebgun
@@ -14,13 +15,14 @@ public class Circle extends SensorModule
 {
     public Circle( ConfigAgent config )
     {
-	super( config );
+        super( config );
     }
 
     public Area getView( AgentLocation loc )
     {
-        Area footprint = new Area( new Ellipse2D.Double( loc.getX()-radius, loc.getY()-radius, 2*radius, 2*radius ) );
+        Area footprint = new Area( new Ellipse2D.Double( loc.getX() - radius, loc.getY() - radius, 2 * radius, 2 * radius ) );
         footprint.intersect( Environment.unoccupiedArea() );
+
         return footprint;
     }
 }

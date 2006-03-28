@@ -5,10 +5,7 @@ package config;
  * @author Dimitri Zarzhitsky
  */
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StreamTokenizer;
+import java.io.*;
 import java.util.Hashtable;
 
 public abstract class Config

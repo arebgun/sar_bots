@@ -42,11 +42,11 @@ public abstract class Agent
      */
     public Agent( ConfigAgent config ) throws Exception
     {
-        this.config            = config;
-        String deployClass     = config.getDeploymentName();
-        String sensorClass     = config.getSensorName();
-        String commClass       = config.getCommName();
-        String planClass       = config.getPlanName();
+        this.config = config;
+        String deployClass = config.getDeploymentName();
+        String sensorClass = config.getSensorName();
+        String commClass = config.getCommName();
+        String planClass = config.getPlanName();
         String propulsionClass = config.getPropulsionName();
 
         unitID = typeID++;
@@ -88,11 +88,12 @@ public abstract class Agent
         double wingSpan = config.getWingSpan(), dimUnit = wingSpan / 3;
         double wingWidth = dimUnit, bodyLength = 5 * dimUnit, bodyWidth = dimUnit;
 
-        Area body  = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
+        Area body = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit, location.getY() - dimUnit / 2, bodyLength, bodyWidth ) );
         Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth, wingSpan ) );
         body.add( wings );
         //TODO: DIMZAR-20060320: is this the right point to rotate about?  Do we care?
         body.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
+        
         return body;
     }
 
@@ -101,9 +102,9 @@ public abstract class Agent
      */
     public void move()
     {
-        Area sensorView    = sensor.getView( location );
+        Area sensorView = sensor.getView( location );
         AgentLocation goal = plan.getGoalLocation( location, sensorView );
-        location           = propulsion.move( location, goal );
+        location = propulsion.move( location, goal );
     }
 
     /**
@@ -120,23 +121,23 @@ public abstract class Agent
      */
     private void initialize( String deployClass, String sensorClass, String planClass, String commClass, String propulsionClass ) throws Exception
     {
-        Class aC       = ConfigAgent.class;
-        Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
-        deployStrategy = (DeploymentStrategy)loader.getConstructor( aC ).newInstance( config );
+        Class aC = ConfigAgent.class;
+        Class loader = Class.forName( deployClass, true, this.getClass().getClassLoader() );
+        deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );
 
-        loader         = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
-        sensor         = (SensorModule)loader.getConstructor( aC ).newInstance( config );
+        loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
+        sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
 
-        loader         = Class.forName( planClass, true, this.getClass().getClassLoader() );
-        plan           = (PlanModule)loader.getConstructor( aC ).newInstance( config );
+        loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
+        plan = (PlanModule) loader.getConstructor( aC ).newInstance( config );
 
-        loader         = Class.forName( commClass, true, this.getClass().getClassLoader() );
-        comm           = (CommModule)loader.getConstructor( aC ).newInstance( config );
+        loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
+        comm = (CommModule) loader.getConstructor( aC ).newInstance( config );
 
-        loader         = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
-        propulsion     = (PropulsionModule)loader.getConstructor( aC ).newInstance( config );
+        loader = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
+        propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location       = deployStrategy.getNextLocation( unitID );
-        sensorColor    = config.getSensorColor();
+        location = deployStrategy.getNextLocation( unitID );
+        sensorColor = config.getSensorColor();
     }
 }
