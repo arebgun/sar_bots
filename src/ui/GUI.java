@@ -189,9 +189,8 @@ abstract class SimDrawPanel extends JPanel
         Graphics2D g2 = (Graphics2D)g;
 
         Environment.scaleGraphics( g2, getSize() );
-        simPaint( g2 );
-
         paintGrid( g2 );
+        simPaint( g2 );
     }
 
     private void paintGrid( Graphics2D g2 )
