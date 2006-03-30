@@ -50,6 +50,18 @@ public class Simulator
         GUI.getInstance().show();
     }
 
+    public static void reset()
+    {
+        time = 0;
+
+        for(Agent agent : agents)
+        {
+            agent.reset();
+        }
+
+        Environment.reset();
+    }
+
     public static int getTime()
     {
         return time;
@@ -58,10 +70,12 @@ public class Simulator
     public static void step()
     {
         time++;
+
         for ( Agent agent : agents )
         {
             agent.move();
         }
+
         Environment.update();
         GUI.getInstance().update();
     }

@@ -107,6 +107,12 @@ public abstract class Agent
         location = propulsion.move( location, goal );
     }
 
+    public void reset()
+    {
+        location = deployStrategy.getNextLocation( unitID );
+        // add code to read a config file in case its changed
+    }
+
     /**
      * Initializes agent deployment strategy and all subsystems:
      * sesnor module, planning module, communication module,
