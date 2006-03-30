@@ -200,9 +200,7 @@ abstract class SimDrawPanel extends JPanel
     public void paint( Graphics g )
     {
         super.paint( g );
-        setBackground( Color.WHITE );
         Graphics2D g2 = (Graphics2D) g;
-
         Environment.scaleGraphics( g2, getSize() );
         simPaint( g2 );
     }
@@ -224,24 +222,54 @@ abstract class SimDrawPanel extends JPanel
 
 class RescueArea extends SimDrawPanel
 {
-    private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 4 );
+    private final Font fontAgentID           = new Font( "Monospaced", Font.PLAIN, 4 );
+    private final GradientPaint fireGradient = new GradientPaint(0, 0, new Color( 255, 0, 0, 200 ), 
+								 1.25f, 1.25f, new Color( 255, 110, 30, 255 ), true);
+    private final String soilTextureFilename = "images/textures/Laramie.jpg";
+    private final String roofTextureFilename = "images/textures/mixed_tile.jpg";
+    private TexturePaint soilTexture, roofTexture;
+
+    public RescueArea() 
+    {
+	soilTexture = createTexture( soilTextureFilename, 1 );
+	roofTexture = createTexture( roofTextureFilename, 10 );
+    }
+
+    private TexturePaint createTexture( String fileName, double divisor ) 
+    {
+	try
+	    {
+		Image texture = new ImageIcon( ClassLoader.getSystemClassLoader().getResource( fileName ).getPath() ).getImage();
+		int width = texture.getWidth(this), height = texture.getHeight(this);
+
+		BufferedImage bi = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
+		bi.createGraphics().drawImage( texture, 0, 0, this);
+		return new TexturePaint( bi, Environment.getTextureAnchor( divisor ) );
+	    }
+	catch ( Exception e )
+	    {
+		throw new RuntimeException( e );
+	    }
+    }
 
     public void simPaint( Graphics2D g2 )
     {
-        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
         paintEnvironment( g2 );
         paintAgents( g2 );
     }
 
     private void paintEnvironment( Graphics2D g2 )
     {
-        g2.setColor( Color.BLACK );
-        Iterator<Polygon> iter = Environment.buildingsIterator();
+	g2.setPaint( soilTexture );
+	g2.fill( Environment.unoccupiedArea() );
 
-        while ( iter.hasNext() )
-        {
-            g2.fillPolygon( iter.next() );
-        }
+        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
+
+        g2.setPaint( roofTexture );
+	g2.fill( Environment.getBuildings() );
+	
+	g2.setPaint( fireGradient );
+	g2.fill( Environment.getFires() );
     }
 
     private void paintAgents( Graphics2D g2 )
@@ -357,29 +385,29 @@ class SidePanel extends JPanel
 
         addConfiguredButton( jpCtrl, btnScreenshot, new ActionListener()
         {
-            public void actionPerformed( ActionEvent e )
+            public void actionPerformed( ActionEvent e ) 
             {
                 SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
-                String currentDate = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
-                String outFileName = "images/screenshots/screen_" + currentDate + ".png";
+                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
 
-                Dimension position = GUI.getInstance().getMainWindowSize();
-                Point xyCoord = GUI.getInstance().getMainWindowXyPoint();
+                Dimension position   = GUI.getInstance().getMainWindowSize();
+                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
                 Rectangle mainWindow = new Rectangle( xyCoord, position );
 
-                try
-                {
-                    // create screen shot
-                    Robot robot = new Robot();
-                    BufferedImage image = robot.createScreenCapture( mainWindow );
-
-                    // save captured image to PNG file
-                    ImageIO.write( image, "png", new File( outFileName ) );
-                }
-                catch ( Exception ex )
-                {
-                    ex.printStackTrace();
-                }
+		try 
+		    {
+			// create screen shot
+			Robot robot         = new Robot();
+			BufferedImage image = robot.createScreenCapture( mainWindow );
+		
+			// save captured image to PNG file
+			ImageIO.write( image, "png", new File( outFileName ) );
+		    }
+		catch (Exception error)
+		    {
+			throw new RuntimeException(error);
+		    }
             }
         } );
 

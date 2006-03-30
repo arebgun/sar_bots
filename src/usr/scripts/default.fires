@@ -1,4 +1,11 @@
 # basic fire script
 
-# time, origin of the bounding box, dimensions of the bounding box
-50 25 25 30 20
+# Fire 1
+# time, xOrigin, yOrigin, width, height ...
+5,8,10,3,3
+
+# Fire 2
+10,82,87,2,2
+
+# Fire 3
+15,27,80,7,7

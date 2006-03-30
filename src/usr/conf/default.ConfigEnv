@@ -10,3 +10,5 @@ buildingsFileName=usr/maps/default.buildings
 
 # script configuration
 firesFileName=usr/scripts/default.fires
+fireSeed=1
+

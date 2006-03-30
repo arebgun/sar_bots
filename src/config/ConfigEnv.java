@@ -38,4 +38,9 @@ public class ConfigEnv extends Config
     {
         return pTable.get( "firesFileName" );
     }
+
+    public long getFireSeed()
+    {
+	return Long.parseLong( pTable.get( "fireSeed" ) );
+    }
 }

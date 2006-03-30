@@ -24,7 +24,7 @@ propulsionEnergyAmount=9999.9
 
 # sensor module parameters
 sensorName=agent.sensor.Circle
-sensorRange=5.0
+sensorRange=15.0
 sensorColor=0,255,170,155
 
  

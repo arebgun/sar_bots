@@ -20,7 +20,7 @@ public class Simulator
     public static Logger logger;
 
     private static ConfigSim config;
-    private static long time;
+    private static int time;
     private static ArrayList<Agent> agents;
 
     public static void run( String configFilePath ) throws Exception
@@ -50,23 +50,20 @@ public class Simulator
         GUI.getInstance().show();
     }
 
-    public static long getTime()
+    public static int getTime()
     {
         return time;
     }
 
     public static void step()
     {
-
+        time++;
         for ( Agent agent : agents )
         {
             agent.move();
         }
-
         Environment.update();
         GUI.getInstance().update();
-
-        time++;
     }
 
     public static Area agentSpace()

@@ -56,7 +56,6 @@ public class Stochastic extends PlanModule
             newX = curX;
             newY = curY;
             newTheta = location.getTheta() + PI;
-            sim.Simulator.logger.finest( "agent rotated" );
         }
         return new AgentLocation( newX, newY, newTheta );
     }

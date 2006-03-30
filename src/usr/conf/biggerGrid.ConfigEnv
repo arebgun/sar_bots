@@ -10,3 +10,4 @@ buildingsFileName=usr/maps/biggerGrid.buildings
 
 # script configuration
 firesFileName=usr/scripts/biggerGrid.fires
+fireSeed=1
