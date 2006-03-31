@@ -13,13 +13,14 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
-import static java.lang.Math.*;
 import java.text.ParseException;
 import java.util.*;
 
+import static java.lang.Math.*;
+
 public class Environment
 {
-    private static ConfigEnv config;
+    static ConfigEnv config;
     private static int worldWidth, worldHeight;
     private static int gridSize, gridRowSize, gridColSize;
     private static ArrayList<Rectangle2D> grid;
@@ -27,9 +28,6 @@ public class Environment
     private static ArrayList<Double> sensCoverageRatios;
     private static Area buildings;
     private static ArrayList<Polygon> buildingList;
-    private static Area fires;
-    private static HashMap<Integer, ArrayList<Polygon>> fireList;
-    private static Random fireRand;
 
     public static boolean contains( double x, double y )
     {
@@ -38,11 +36,11 @@ public class Environment
 
     public static void load( String envConfigFileName ) throws Exception
     {
-        config = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
-        worldWidth = config.getWorldWidth();
+        config      = new ConfigEnv( ClassLoader.getSystemClassLoader().getResource( envConfigFileName ).getPath() );
+        worldWidth  = config.getWorldWidth();
         worldHeight = config.getWorldHeight();
-        grid = new ArrayList<Rectangle2D>();
-        gridSize = config.getGridSize();
+        grid        = new ArrayList<Rectangle2D>();
+        gridSize    = config.getGridSize();
         gridRowSize = worldWidth / gridSize;
         gridColSize = worldHeight / gridSize;
 
@@ -56,7 +54,7 @@ public class Environment
         }
 
         sensCoverageFrequency = new int[grid.size()];
-        sensCoverageRatios = new ArrayList<Double>( grid.size() );
+        sensCoverageRatios    = new ArrayList<Double>( grid.size() );
 
         loadBuildings( config.getBuildingsFileName() );
         loadFires( config.getFiresFileName() );
@@ -64,20 +62,15 @@ public class Environment
 
     public static void reset()
     {
-        fires.reset();
+	Fire.reset();
         sensCoverageRatios.clear();
-
-        for ( int i = 0; i < sensCoverageFrequency.length; i++ )
-        {
-            sensCoverageFrequency[i] = 0;
-        }
+	Arrays.fill( sensCoverageFrequency, 0 );
     }
 
     public static Area occupiedArea()
     {
         Area occupied = new Area( buildings );
         occupied.add( Simulator.agentSpace() );  // dimzar: speed up line right here :)
-
         return occupied;
     }
 
@@ -85,7 +78,6 @@ public class Environment
     {
         Area world = new Area( new Rectangle2D.Double( 0, 0, worldWidth, worldHeight ) );
         world.subtract( occupiedArea() );
-
         return world;
     }
 
@@ -102,8 +94,8 @@ public class Environment
 
             int startX = (int) max( 0, floor( bounds.getX() / gridSize ) );
             int startY = (int) max( 0, floor( bounds.getY() / gridSize ) );
-            int endX = (int) min( gridRowSize, ceil( ( bounds.getX() + bounds.getWidth() ) / gridSize ) );
-            int endY = (int) min( gridColSize, ceil( ( bounds.getY() + bounds.getHeight() ) / gridSize ) );
+            int endX   = (int) min( gridRowSize, ceil( ( bounds.getX() + bounds.getWidth() ) / gridSize ) );
+            int endY   = (int) min( gridColSize, ceil( ( bounds.getY() + bounds.getHeight() ) / gridSize ) );
 
             for ( int i = startX; i < endX; i++ )
             {
@@ -117,16 +109,7 @@ public class Environment
         }
 
         // introduce fires
-        Integer curTime = Simulator.getTime();
-        ArrayList<Polygon> list = fireList.get( curTime );
-
-        if ( list != null )
-        {
-            for ( Polygon fire : list )
-            {
-                fires.add( new Area( fire ) );
-            }
-        }
+	Fire.update( Simulator.getTime() );
     }
 
     private static void loadBuildings( String buildingsFileName ) throws Exception
@@ -165,10 +148,6 @@ public class Environment
 
     private static void loadFires( String firesFileName ) throws Exception
     {
-        fireRand = new Random( config.getFireSeed() );
-        fires = new Area();
-        fireList = new HashMap<Integer, ArrayList<Polygon>>();
-
         StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( firesFileName ) ) );
         st.ordinaryChars( '+', '9' );
         st.wordChars( ' ', '~' );
@@ -176,41 +155,8 @@ public class Environment
 
         while ( st.nextToken() != StreamTokenizer.TT_EOF )
         {
-            String[] fireDesc = st.sval.split( "\\," );
-            if ( fireDesc.length != 5 ) { throw new ParseException( "fire description number of arguments", fireDesc.length ); }
-            Integer key = Integer.valueOf( fireDesc[0] );
-
-            if ( fireList.containsKey( key ) )
-            {
-                fireList.get( key ).add( buildFire( Double.parseDouble( fireDesc[1] ),
-                                                    Double.parseDouble( fireDesc[2] ),
-                                                    Double.parseDouble( fireDesc[3] ),
-                                                    Double.parseDouble( fireDesc[4] ) ) );
-            }
-            else
-            {
-                ArrayList<Polygon> value = new ArrayList<Polygon>();
-                value.add( buildFire( Double.parseDouble( fireDesc[1] ),
-                                      Double.parseDouble( fireDesc[2] ),
-                                      Double.parseDouble( fireDesc[3] ),
-                                      Double.parseDouble( fireDesc[4] ) ) );
-                fireList.put( key, value );
-            }
+            Fire.add( st.sval.split( "\\," ) );
         }
-    }
-
-    private static Polygon buildFire( double x, double y, double width, double height )
-    {
-        double originX = x + width / 2, originY = y + height / 2, avgR = ( width + height ) / 2;
-        Polygon fire = new Polygon();
-
-        for ( int i = 0; i < 300; i++ )
-        {
-            double theta = i * PI / 150, r = ( 1 + .5 * fireRand.nextGaussian() ) * avgR;
-            fire.addPoint( (int) round( r * cos( theta ) + originX ), (int) round( r * sin( theta ) + originY ) );
-        }
-
-        return fire;
     }
 
     public static void scaleGraphics( Graphics2D g2, Dimension pixelScreenSize )
@@ -243,7 +189,17 @@ public class Environment
 
     public static Area getFires()
     {
-        return fires;
+        return Fire.getFires();
+    }
+
+    public static int getActiveFires()
+    {
+	return Fire.getCurFires();
+    }
+
+    public static int getFoundFires()
+    {
+	return Fire.getDetFires();
     }
 
     public static Rectangle2D getTextureAnchor( double divisor )

@@ -92,6 +92,16 @@ public class Simulator
         return space;
     }
 
+    public static Area agentSensorSpace()
+    {
+        Area space = new Area();
+        for ( Agent agent : agents )
+        {
+            space.add( agent.getSensorView() );
+        }
+        return space;
+    }
+
     public static Iterator<Agent> agentsIterator()
     {
         return agents.iterator();

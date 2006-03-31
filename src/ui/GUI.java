@@ -308,7 +308,7 @@ class SensCoverage extends SimDrawPanel
 
     public void simPaint( Graphics2D g2 )
     {
-        Iterator<Double> fractionIter = Environment.sensCoverageFractionIterator();
+        Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
         Iterator<Rectangle2D> gridIter = Environment.gridIterator();
 
         while ( gridIter.hasNext() )
@@ -429,6 +429,8 @@ class SidePanel extends JPanel
     {
         super.paint( g );
         lblStep.setText( "Time: " + Simulator.getTime() );
+	lblNumFiresActive.setText( "# of Active Fires: " + Environment.getActiveFires() );
+	lblNumFiresFound.setText( "# of Fires Found: " + Environment.getFoundFires() );
     }
 
     private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
