@@ -1,16 +1,25 @@
 package agent;
 
-import env.Environment;
-
-/**
+/*
+ * Class Name:    agent.AgentLocation
+ * Last Modified: 4/2/2006 3:5
+ *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
- *         Date:   Feb 24, 2006
- *         Time:   8:52:15 PM
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
+
+import env.Environment;
+
 public class AgentLocation
 {
-    private double x = 0, y = 0, theta = 0;
+    private double x     = 0;
+    private double y     = 0;
+    private double theta = 0;
 
     public AgentLocation( double x, double y, double theta )
     {

@@ -1,8 +1,16 @@
 package env;
 
-/**
+/*
+ * Class Name:    env.Environment
+ * Last Modified: 4/2/2006 2:45
+ *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
 import agent.Agent;
@@ -41,7 +49,7 @@ public class Environment
         worldHeight = config.getWorldHeight();
         grid        = new ArrayList<Rectangle2D>();
         gridSize    = config.getGridSize();
-        gridRowSize = worldWidth / gridSize;
+        gridRowSize = worldWidth  / gridSize;
         gridColSize = worldHeight / gridSize;
 
         // NOTE: cells are stored in top-down, left-to-right order (column-major mode when looking at the grid)
@@ -62,15 +70,16 @@ public class Environment
 
     public static void reset()
     {
-	Fire.reset();
+        Fire.reset();
         sensCoverageRatios.clear();
-	Arrays.fill( sensCoverageFrequency, 0 );
+        Arrays.fill( sensCoverageFrequency, 0 );
     }
 
     public static Area occupiedArea()
     {
         Area occupied = new Area( buildings );
-        occupied.add( Simulator.agentSpace() );  // dimzar: speed up line right here :)
+        occupied.add( Simulator.agentSpace() ); // dimzar: speed up line right here :)
+
         return occupied;
     }
 
@@ -78,6 +87,7 @@ public class Environment
     {
         Area world = new Area( new Rectangle2D.Double( 0, 0, worldWidth, worldHeight ) );
         world.subtract( occupiedArea() );
+
         return world;
     }
 
@@ -88,13 +98,13 @@ public class Environment
 
         while ( iter.hasNext() )
         {
-            Agent a = iter.next();
-            Area sensFootprint = a.getSensorView();
+            Agent agent        = iter.next();
+            Area sensFootprint = agent.getSensorView();
             Rectangle2D bounds = sensFootprint.getBounds2D();
 
             int startX = (int) max( 0, floor( bounds.getX() / gridSize ) );
             int startY = (int) max( 0, floor( bounds.getY() / gridSize ) );
-            int endX   = (int) min( gridRowSize, ceil( ( bounds.getX() + bounds.getWidth() ) / gridSize ) );
+            int endX   = (int) min( gridRowSize, ceil( ( bounds.getX() + bounds.getWidth()  ) / gridSize ) );
             int endY   = (int) min( gridColSize, ceil( ( bounds.getY() + bounds.getHeight() ) / gridSize ) );
 
             for ( int i = startX; i < endX; i++ )
@@ -109,12 +119,12 @@ public class Environment
         }
 
         // introduce fires
-	Fire.update( Simulator.getTime() );
+        Fire.update( Simulator.getTime() );
     }
 
     private static void loadBuildings( String buildingsFileName ) throws Exception
     {
-        buildings = new Area();
+        buildings    = new Area();
         buildingList = new ArrayList<Polygon>();
 
         StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( buildingsFileName ) ) );
@@ -129,7 +139,7 @@ public class Environment
             String yPoints[] = st.sval.split( "\\," );
 
             int n = xPoints.length;
-            if ( n != yPoints.length ) { throw new ParseException( "building vertex X/Y list length mismatch", n ); }
+            if ( n != yPoints.length ){ throw new ParseException( "building vertex X/Y list length mismatch", n ); }
 
             int x[] = new int[n];
             int y[] = new int[n];
@@ -166,7 +176,7 @@ public class Environment
 
     public static void scaleDrawing( Component drawing, Dimension pixelScreenSize )
     {
-        int zoom = optimalZoom( pixelScreenSize );
+        int zoom             = optimalZoom( pixelScreenSize );
         Dimension scaledSize = new Dimension( zoom * worldWidth + 1, zoom * worldHeight + 1 );
         drawing.setSize( scaledSize );
         drawing.setPreferredSize( scaledSize );
@@ -194,12 +204,12 @@ public class Environment
 
     public static int getActiveFires()
     {
-	return Fire.getCurFires();
+        return Fire.getCurFires();
     }
 
     public static int getFoundFires()
     {
-	return Fire.getDetFires();
+        return Fire.getDetFires();
     }
 
     public static Rectangle2D getTextureAnchor( double divisor )

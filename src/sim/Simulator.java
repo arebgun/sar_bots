@@ -1,5 +1,18 @@
 package sim;
 
+/*
+ * Class Name:    sim.Simulator
+ * Last Modified: 4/2/2006 2:45
+ *
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
+ */
+
 import agent.Agent;
 import config.ConfigAgent;
 import config.ConfigSim;
@@ -11,10 +24,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- */
 public class Simulator
 {
     public static Logger logger;
@@ -25,7 +34,7 @@ public class Simulator
 
     public static void run( String configFilePath ) throws Exception
     {
-        time = 0;
+        time   = 0;
         config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
 
         logger.info( "loading ENVIRONMENT data ..." );
@@ -38,7 +47,7 @@ public class Simulator
         for ( String aFile : agentConfigFiles )
         {
             ConfigAgent agentConfig = new ConfigAgent( aFile );
-            Class loader = Class.forName( agentConfig.getClassName(), true, agentConfig.getClass().getClassLoader() );
+            Class loader            = Class.forName( agentConfig.getClassName(), true, agentConfig.getClass().getClassLoader() );
 
             for ( int i = 0; i < agentConfig.getSwarmSize(); i++ )
             {
@@ -95,10 +104,12 @@ public class Simulator
     public static Area agentSensorSpace()
     {
         Area space = new Area();
+
         for ( Agent agent : agents )
         {
             space.add( agent.getSensorView() );
         }
+
         return space;
     }
 

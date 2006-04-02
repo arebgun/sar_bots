@@ -1,5 +1,18 @@
 package agent.deployment;
 
+/*
+ * Class Name:    agent.deployment.Stochastic
+ * Last Modified: 4/2/2006 2:50
+ *
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
+ */
+
 import agent.AgentLocation;
 import config.ConfigAgent;
 import env.Environment;
@@ -8,12 +21,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- *         Date:   Feb 24, 2006
- *         Time:   8:51:45 PM
- */
 public class Stochastic extends DeploymentStrategy
 {
     private static Random rand = null;
@@ -26,12 +33,12 @@ public class Stochastic extends DeploymentStrategy
 
     public AgentLocation getNextLocation( int id )
     {
-        Area unoccupied = Environment.unoccupiedArea();
+        Area unoccupied    = Environment.unoccupiedArea();
         Rectangle2D bounds = unoccupied.getBounds2D();
-        double x = -1;
-        double y = -1;
-        int limit = 1000;
-        boolean found = false;
+        double x           =   -1;
+        double y           =   -1;
+        int limit          = 1000;
+        boolean found      = false;
 
         while ( !found && --limit > 0 )
         {

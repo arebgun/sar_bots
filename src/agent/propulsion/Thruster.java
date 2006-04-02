@@ -1,8 +1,16 @@
 package agent.propulsion;
 
-/**
+/*
+ * Class Name:    agent.propulsion.Thruster
+ * Last Modified: 4/2/2006 3:1
+ *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
 import agent.AgentLocation;
@@ -19,10 +27,10 @@ public class Thruster extends PropulsionModule
 
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
-        double curX = location.getX();
-        double curY = location.getY();
-        double goalX = goal.getX();
-        double goalY = goal.getY();
+        double curX     = location.getX();
+        double curY     = location.getY();
+        double goalX    = goal.getX();
+        double goalY    = goal.getY();
         double goalDist = hypot( goalX - curX, goalY - curY );
 
         if ( goalDist > maxSpeed )

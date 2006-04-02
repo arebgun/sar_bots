@@ -1,14 +1,20 @@
 package agent.deployment;
 
-import agent.AgentLocation;
-import config.ConfigAgent;
-
-/**
+/*
+ * Class Name:    agent.deployment.DeploymentStrategy
+ * Last Modified: 4/2/2006 2:50
+ *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
- *         Date:   Feb 24, 2006
- *         Time:   8:51:45 PM
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
+
+import agent.AgentLocation;
+import config.ConfigAgent;
 
 public abstract class DeploymentStrategy
 {

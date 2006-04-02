@@ -1,5 +1,18 @@
 package ui;
 
+/*
+ * Class Name:    ui.GUI
+ * Last Modified: 4/2/2006 2:45
+ *
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
+ */
+
 import agent.Agent;
 import env.Environment;
 import sim.Simulator;
@@ -22,26 +35,22 @@ import javax.swing.event.ChangeListener;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH = 580;
+    private static final int DEFAULT_WIDTH  = 580;
     private static final int DEFAULT_HEIGHT = 540;
-    private static boolean showGrid = true;
+    private static boolean showGrid         = true;
+    private final Timer tmrSim;
 
     private static GUI guiInstance;
     private static JFrame main;
-
     private static JTabbedPane jtViewSwitcher;
-    private SimScrollPane area, coverage;
+
+    // Tab scroll panes
+    private SimScrollPane area;
+    private SimScrollPane coverage;
+
+    // Side and bottom control panels
     private SidePanel side;
     private BottomPanel bottom;
-
-
-    private final Timer tmrSim = new Timer( 0, new ActionListener()
-    {
-        public void actionPerformed( ActionEvent e )
-        {
-            Simulator.step();
-        }
-    } );
 
     private GUI()
     {
@@ -50,13 +59,13 @@ public class GUI
 
         // Set application icon, if not found system default will be used
         URL iconURL = ClassLoader.getSystemClassLoader().getResource( "images/icons/bot_16.gif" );
-        Image icon = null;
-        if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage(); }
+        Image icon  = null;
+        if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage();  }
 
         // Set main window location (center of the screen)
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int locX = (int) ( screenSize.getWidth() / 2 - DEFAULT_WIDTH / 2 );
-        int locY = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
+        int locX             = (int) ( screenSize.getWidth()  / 2 - DEFAULT_WIDTH  / 2 );
+        int locY             = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
 
         // Create main window, size and position it on the screen
         main = new JFrame( "Search and Rescue Bots" );
@@ -74,6 +83,14 @@ public class GUI
                 Dimension newSize = jtViewSwitcher.getSize();
                 Environment.scaleDrawing( area, newSize );
                 Environment.scaleDrawing( coverage, newSize );
+            }
+        } );
+
+        tmrSim = new Timer( 0, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                Simulator.step();
             }
         } );
     }
@@ -142,7 +159,7 @@ public class GUI
     private void addComponents()
     {
         // Main simulator window scroll pane and rescue area
-        area = new SimScrollPane( new JPanel(), new RescueArea() );
+        area     = new SimScrollPane( new JPanel(), new RescueArea() );
         coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
 
         // Create tabs and add simulator views
@@ -218,12 +235,13 @@ abstract class SimDrawPanel extends JPanel
 
 class RescueArea extends SimDrawPanel
 {
-    private final Font fontAgentID = new Font( "Monospaced", Font.PLAIN, 4 );
-    private final GradientPaint fireGradient = new GradientPaint( 0, 0, new Color( 255, 0, 0, 200 ),
+    private final Font fontAgentID           = new Font( "Monospaced", Font.PLAIN, 4 );
+    private final GradientPaint fireGradient = new GradientPaint(     0,     0, new Color( 255,   0,  0, 200 ),
                                                                   1.25f, 1.25f, new Color( 255, 110, 30, 255 ), true );
     private final String soilTextureFilename = "images/textures/Laramie.jpg";
     private final String roofTextureFilename = "images/textures/mixed_tile.jpg";
-    private TexturePaint soilTexture, roofTexture;
+    private TexturePaint soilTexture;
+    private TexturePaint roofTexture;
 
     public RescueArea()
     {
@@ -236,7 +254,8 @@ class RescueArea extends SimDrawPanel
         try
         {
             Image texture = new ImageIcon( ClassLoader.getSystemClassLoader().getResource( fileName ).getPath() ).getImage();
-            int width = texture.getWidth( this ), height = texture.getHeight( this );
+            int width     = texture.getWidth( this );
+            int height    = texture.getHeight( this );
 
             BufferedImage bi = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
             bi.createGraphics().drawImage( texture, 0, 0, this );
@@ -275,9 +294,9 @@ class RescueArea extends SimDrawPanel
 
         while ( iter.hasNext() )
         {
-            Agent agent = iter.next();
-            Area sensView = agent.getSensorView();
-            Area agentBody = agent.getBodyArea();
+            Agent agent            = iter.next();
+            Area sensView          = agent.getSensorView();
+            Area agentBody         = agent.getBodyArea();
             Rectangle2D bodyBounds = agentBody.getBounds2D();
 
             g2.setColor( agent.getSensorColor() );
@@ -293,8 +312,8 @@ class RescueArea extends SimDrawPanel
 
 class SensCoverage extends SimDrawPanel
 {
-    private final static int clrSize = 1023;
-    private final static Color[] clrTable = new Color[clrSize + 1];
+    private final static int clrSize     = 1023;
+    private final static Color[]clrTable = new Color[clrSize + 1];
 
     public SensCoverage()
     {
@@ -323,15 +342,15 @@ class SensCoverage extends SimDrawPanel
 
 class SidePanel extends JPanel
 {
-    private final JLabel lblStep = new JLabel( "Time: ?" );
+    private final JLabel lblStep           = new JLabel( "Time: ?" );
     private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
-    private final JLabel lblNumFiresFound = new JLabel( "# of Fires Found: ?" );
+    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
 
-    private final JButton btnStartStop = new JButton( "Start" );
-    private final JButton btnStep = new JButton( "Step" );
-    private final JButton btnReset = new JButton( "Reset " );
+    private final JButton btnStartStop  = new JButton( "Start" );
+    private final JButton btnStep       = new JButton( "Step" );
+    private final JButton btnReset      = new JButton( "Reset " );
     private final JButton btnScreenshot = new JButton( "Screenshot" );
-    private final JButton btnSave = new JButton( "Save" );
+    private final JButton btnSave       = new JButton( "Save" );
 
     private final Timer tmrSim;
 
@@ -398,17 +417,17 @@ class SidePanel extends JPanel
             public void actionPerformed( ActionEvent e )
             {
                 SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
-                String currentDate = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
-                String outFileName = "images/screenshots/screen_" + currentDate + ".png";
+                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
 
-                Dimension position = GUI.getInstance().getMainWindowSize();
-                Point xyCoord = GUI.getInstance().getMainWindowXyPoint();
+                Dimension position   = GUI.getInstance().getMainWindowSize();
+                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
                 Rectangle mainWindow = new Rectangle( xyCoord, position );
 
                 try
                 {
                     // create screen shot
-                    Robot robot = new Robot();
+                    Robot robot         = new Robot();
                     BufferedImage image = robot.createScreenCapture( mainWindow );
 
                     // save captured image to PNG file
@@ -429,8 +448,8 @@ class SidePanel extends JPanel
     {
         super.paint( g );
         lblStep.setText( "Time: " + Simulator.getTime() );
-	lblNumFiresActive.setText( "# of Active Fires: " + Environment.getActiveFires() );
-	lblNumFiresFound.setText( "# of Fires Found: " + Environment.getFoundFires() );
+        lblNumFiresActive.setText( "# of Active Fires: " + Environment.getActiveFires() );
+        lblNumFiresFound.setText ( "# of Fires Found: "  + Environment.getFoundFires() );
     }
 
     private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
@@ -448,7 +467,7 @@ class SidePanel extends JPanel
 
 class BottomPanel extends JPanel
 {
-    private final JSlider sldSpeed = new JSlider( 100, 5100, 100 );
+    private final JSlider sldSpeed     = new JSlider( 100, 5100, 100 );
     private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", true );
     private final Timer tmrSim;
 
@@ -461,7 +480,7 @@ class BottomPanel extends JPanel
         sldSpeed.setPaintTicks( true );
 
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put( 100, new JLabel( "Fast" ) );
+        labelTable.put(  100, new JLabel( "Fast" ) );
         labelTable.put( 2500, new JLabel( "Medium" ) );
         labelTable.put( 5000, new JLabel( "Slow" ) );
 

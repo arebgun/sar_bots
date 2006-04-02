@@ -1,5 +1,18 @@
 package agent.plan;
 
+/*
+ * Class Name:    agent.plan.Stochastic
+ * Last Modified: 4/2/2006 2:57
+ *
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
+ */
+
 import agent.AgentLocation;
 import config.ConfigAgent;
 
@@ -7,10 +20,6 @@ import java.awt.geom.*;
 import static java.lang.Math.*;
 import java.util.Random;
 
-/**
- * @author Anton Rebgun
- * @author Dimitri Zarzhitsky
- */
 public class Stochastic extends PlanModule
 {
     private static Random rand = null;
@@ -29,15 +38,19 @@ public class Stochastic extends PlanModule
     public AgentLocation getGoalLocation( AgentLocation location, Area sensorView )
     {
         Rectangle2D bounds = sensorView.getBounds();
-        double curX = location.getX(), curY = location.getY();
-        double newX = -1, newY = -1, newTheta = location.getTheta();
-        double wingSpan = agentConfig.getWingSpan();
-        int limit = 1000;
+        double curX        = location.getX();
+        double curY        = location.getY();
+
+        double newX     = -1;
+        double newY     = -1;
+        double newTheta = location.getTheta();
+
+        int limit      = 1000;
         boolean placed = false;
 
         while ( !placed && --limit > 0 )
         {
-            newX = bounds.getX() + bounds.getWidth() * rand.nextDouble();
+            newX = bounds.getX() + bounds.getWidth()  * rand.nextDouble();
             newY = bounds.getY() + bounds.getHeight() * rand.nextDouble();
 
             if ( sensorView.contains( newX, newY ) )
@@ -50,13 +63,14 @@ public class Stochastic extends PlanModule
                 if ( !path.isEmpty() && path.isSingular() ) { placed = true; }
             }
         }
-        //if ( !placed ) { throw new IllegalStateException( "unable to find agent next goal location" ); }
+
         if ( !placed )
         {
-            newX = curX;
-            newY = curY;
+            newX     = curX;
+            newY     = curY;
             newTheta = location.getTheta() + PI;
         }
+
         return new AgentLocation( newX, newY, newTheta );
     }
 }
