@@ -1,5 +1,5 @@
 Artificial Intelligence II
-Search & Rescue MAV simulation project
+Search & Rescue Bot Simulation Framework project
 
 Developers:
 Anton Rebgun
