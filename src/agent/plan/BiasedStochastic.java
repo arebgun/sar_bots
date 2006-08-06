@@ -1,8 +1,8 @@
 package agent.plan;
 
 /*
- * Class Name:    agent.plan.Stochastic
- * Last Modified: 4/2/2006 3:5
+ * Class Name:    agent.plan.BiasedStochastic
+ * Last Modified: 5/3/2006 9:2
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -13,6 +13,12 @@ package agent.plan;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+/**
+ * Author: Anton Rebgun
+ * Date:   May 3, 2006
+ * Time:   9:02:18 PM
+ */
+
 import agent.AgentLocation;
 import config.ConfigAgent;
 
@@ -20,11 +26,11 @@ import java.awt.geom.*;
 import static java.lang.Math.*;
 import java.util.Random;
 
-public class Stochastic extends PlanModule
+public class BiasedStochastic extends PlanModule
 {
     private static Random rand = null;
 
-    public Stochastic( ConfigAgent config )
+    public BiasedStochastic( ConfigAgent config )
     {
         super( config );
 
@@ -40,6 +46,7 @@ public class Stochastic extends PlanModule
         Rectangle2D bounds = sensorView.getBounds();
         double curX        = location.getX();
         double curY        = location.getY();
+        double curTheta    = location.getTheta();
 
         double newX     = -1;
         double newY     = -1;
@@ -50,8 +57,34 @@ public class Stochastic extends PlanModule
 
         while ( !placed && --limit > 0 )
         {
-            newX = bounds.getX() + bounds.getWidth()  * rand.nextDouble();
-            newY = bounds.getY() + bounds.getHeight() * rand.nextDouble();
+            if ( Math.random() < 0.7 )
+            {
+                if ( curTheta < PI / 4 )
+                {
+                    newX = curX + ( bounds.getWidth() / 2 ) * rand.nextDouble();
+                    newY = bounds.getY() + ( curY - bounds.getY() ) * rand.nextDouble();
+                }
+                else if ( curTheta < PI / 2 )
+                {
+                    newX = bounds.getX() + ( bounds.getWidth() / 2 ) * rand.nextDouble();
+                    newY = bounds.getY() + ( curY - bounds.getY() ) * rand.nextDouble();
+                }
+                else if ( curTheta < 3 * PI / 2 )
+                {
+                    newX = bounds.getX() + ( bounds.getWidth() / 2 ) * rand.nextDouble();
+                    newY = curY + ( bounds.getY() + bounds.getHeight() - curY ) * rand.nextDouble();
+                }
+                else
+                {
+                    newX = ( bounds.getX() + bounds.getWidth() ) / 2 + ( bounds.getWidth() / 2 ) * rand.nextDouble();
+                    newY = curY + ( bounds.getY() + bounds.getHeight() - curY ) * rand.nextDouble();
+                }
+            }
+            else
+            {
+                newX = bounds.getX() + bounds.getWidth()  * rand.nextDouble();
+                newY = bounds.getY() + bounds.getHeight() * rand.nextDouble();
+            }
 
             if ( sensorView.contains( newX, newY ) )
             {
@@ -68,7 +101,7 @@ public class Stochastic extends PlanModule
         {
             newX     = curX;
             newY     = curY;
-            newTheta = location.getTheta() + PI;
+            newTheta = curTheta + PI;
         }
 
         return new AgentLocation( newX, newY, newTheta );

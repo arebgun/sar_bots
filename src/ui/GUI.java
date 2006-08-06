@@ -2,7 +2,7 @@ package ui;
 
 /*
  * Class Name:    ui.GUI
- * Last Modified: 4/2/2006 2:45
+ * Last Modified: 5/1/2006 3:21
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -39,6 +39,7 @@ public class GUI
     private static final int DEFAULT_HEIGHT = 540;
     private static boolean showGrid         = true;
     private final Timer tmrSim;
+    private final Timer tmrUpdate;
 
     private static GUI guiInstance;
     private static JFrame main;
@@ -51,6 +52,8 @@ public class GUI
     // Side and bottom control panels
     private SidePanel side;
     private BottomPanel bottom;
+
+    private int delay = 0;
 
     private GUI()
     {
@@ -86,11 +89,20 @@ public class GUI
             }
         } );
 
-        tmrSim = new Timer( 0, new ActionListener()
+        tmrSim = new Timer( 100, new ActionListener()
         {
             public void actionPerformed( ActionEvent e )
             {
                 Simulator.step();
+                delay = tmrSim.getDelay();
+            }
+        } );
+
+        tmrUpdate = new Timer( 100, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                update();
             }
         } );
     }
@@ -99,6 +111,16 @@ public class GUI
     {
         if ( guiInstance == null ) { guiInstance = new GUI(); }
         return guiInstance;
+    }
+
+    public Timer getTmrUpdate()
+    {
+        return tmrUpdate;
+    }
+
+    public int getDelay()
+    {
+        return delay;
     }
 
     public Dimension getMainWindowSize()
@@ -145,6 +167,7 @@ public class GUI
             {
                 jtViewSwitcher.getSelectedComponent().repaint();
                 side.repaint();
+                Toolkit.getDefaultToolkit().sync();
             }
         } );
     }
@@ -212,7 +235,6 @@ abstract class SimDrawPanel extends JPanel
 
     public void paint( Graphics g )
     {
-        super.paint( g );
         Graphics2D g2 = (Graphics2D) g;
         Environment.scaleGraphics( g2, getSize() );
         simPaint( g2 );
@@ -289,6 +311,8 @@ class RescueArea extends SimDrawPanel
 
     private void paintAgents( Graphics2D g2 )
     {
+        int delay = GUI.getInstance().getDelay();
+
         g2.setFont( fontAgentID );
         Iterator<Agent> iter = Simulator.agentsIterator();
 
@@ -306,6 +330,8 @@ class RescueArea extends SimDrawPanel
             g2.fill( agentBody );
 
             g2.drawString( String.valueOf( agent.getID() ), (float) bodyBounds.getX(), (float) bodyBounds.getY() );
+
+            agent.setSleepTime( delay );
         }
     }
 }
@@ -345,6 +371,8 @@ class SidePanel extends JPanel
     private final JLabel lblStep           = new JLabel( "Time: ?" );
     private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
     private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
+    private final JLabel lblPercentCovered = new JLabel( "% Covered: ?" );
+    private final JLabel lblWellCovered    = new JLabel( "% Well Covered: ?" );
 
     private final JButton btnStartStop  = new JButton( "Start" );
     private final JButton btnStep       = new JButton( "Step" );
@@ -367,6 +395,8 @@ class SidePanel extends JPanel
         jpStats.add( lblStep );
         jpStats.add( lblNumFiresActive );
         jpStats.add( lblNumFiresFound );
+        jpStats.add( lblPercentCovered );
+        jpStats.add( lblWellCovered );
         add( jpStats, BorderLayout.PAGE_START );
 
         JPanel jpCtrl = new JPanel();
@@ -378,7 +408,16 @@ class SidePanel extends JPanel
             {
                 if ( tmrSim.isRunning() )
                 {
+                    GUI.getInstance().getTmrUpdate().stop();
                     tmrSim.stop();
+                    Iterator<Agent> it = Simulator.agentsIterator();
+
+                    while(it.hasNext())
+                    {
+                        Agent agent = it.next();
+                        agent.stop();
+                    }
+
                     btnStartStop.setText( "Start" );
                     btnStep.setEnabled( true );
                 }
@@ -387,6 +426,14 @@ class SidePanel extends JPanel
                     btnStep.setEnabled( false );
                     btnStartStop.setText( "Stop" );
                     tmrSim.start();
+                    GUI.getInstance().getTmrUpdate().start();
+                    Iterator<Agent> it = Simulator.agentsIterator();
+
+                    while(it.hasNext())
+                    {
+                        Agent agent = it.next();
+                        agent.start(false);
+                    }
                 }
             }
         } );
@@ -396,6 +443,15 @@ class SidePanel extends JPanel
             public void actionPerformed( ActionEvent e )
             {
                 Simulator.step();
+                Iterator<Agent> it = Simulator.agentsIterator();
+
+                while(it.hasNext())
+                {
+                    Agent agent = it.next();
+                    agent.start(true);
+                }
+
+                GUI.getInstance().update();
             }
         } );
 
@@ -450,6 +506,8 @@ class SidePanel extends JPanel
         lblStep.setText( "Time: " + Simulator.getTime() );
         lblNumFiresActive.setText( "# of Active Fires: " + Environment.getActiveFires() );
         lblNumFiresFound.setText ( "# of Fires Found: "  + Environment.getFoundFires() );
+        lblPercentCovered.setText( "% Covered: "   + Environment.getTotalCoveragePercentage() );
+        lblWellCovered.setText( "% Well Covered: " + Environment.getWellCoveredPercentage() );
     }
 
     private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
@@ -467,7 +525,7 @@ class SidePanel extends JPanel
 
 class BottomPanel extends JPanel
 {
-    private final JSlider sldSpeed     = new JSlider( 100, 5100, 100 );
+    private final JSlider sldSpeed     = new JSlider( 100, 500, 100 );
     private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", true );
     private final Timer tmrSim;
 
@@ -476,13 +534,13 @@ class BottomPanel extends JPanel
         tmrSim = tmr;
         setBorder( BorderFactory.createEmptyBorder( 5, 2, 5, 2 ) );
 
-        sldSpeed.setMajorTickSpacing( 1000 );
+        sldSpeed.setMajorTickSpacing( 50 );
         sldSpeed.setPaintTicks( true );
 
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put(  100, new JLabel( "Fast" ) );
-        labelTable.put( 2500, new JLabel( "Medium" ) );
-        labelTable.put( 5000, new JLabel( "Slow" ) );
+        labelTable.put( 100, new JLabel( "Fast" ) );
+        labelTable.put( 250, new JLabel( "Medium" ) );
+        labelTable.put( 500, new JLabel( "Slow" ) );
 
         sldSpeed.setLabelTable( labelTable );
         sldSpeed.setPaintLabels( true );

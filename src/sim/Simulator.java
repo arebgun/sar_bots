@@ -2,7 +2,7 @@ package sim;
 
 /*
  * Class Name:    sim.Simulator
- * Last Modified: 4/2/2006 2:45
+ * Last Modified: 4/30/2006 10:48
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -17,7 +17,9 @@ import agent.Agent;
 import config.ConfigAgent;
 import config.ConfigSim;
 import env.Environment;
+import env.Fire;
 import ui.GUI;
+import ui.CLI;
 
 import java.awt.geom.Area;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class Simulator
     private static int time;
     private static ArrayList<Agent> agents;
 
-    public static void run( String configFilePath ) throws Exception
+    public static void run( String configFilePath, String uiType ) throws Exception
     {
         time   = 0;
         config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
@@ -55,8 +57,16 @@ public class Simulator
             }
         }
 
-        logger.info( "displaying the GUI ..." );
-        GUI.getInstance().show();
+        if ( uiType.equalsIgnoreCase( "gui" ) )
+        {
+            logger.info( "displaying the GUI ..." );
+            GUI.getInstance().show();
+        }
+        else
+        {
+            logger.info( "displaying the CLI ..." );
+            CLI.getInstance().show();
+        }
     }
 
     public static void reset()
@@ -80,13 +90,10 @@ public class Simulator
     {
         time++;
 
-        for ( Agent agent : agents )
-        {
-            agent.move();
-        }
+        /*if (time % 3 == 0)*/ { Environment.update(); }
 
-        Environment.update();
-        GUI.getInstance().update();
+        // introduce fires
+        Fire.update( time );
     }
 
     public static Area agentSpace()
@@ -133,15 +140,17 @@ public class Simulator
             logger.setLevel( Level.ALL );
             logger.addHandler( handler );
 
-            if ( args.length < 1 )
+            if ( args.length < 2 )
             {
                 logger.config( "using the default simulator configuration file '" + DEFAULT_CONF_FILE + "'" );
-                Simulator.run( DEFAULT_CONF_FILE );
+                logger.config( "loading the default user interface");
+                Simulator.run( DEFAULT_CONF_FILE, "gui" );
             }
             else
             {
-                logger.config( "using the 'usr/conf/" + args[0] + "' simulator configuration file" );
-                Simulator.run( "usr/conf/" + args[0] );
+                logger.config( "using the 'usr/conf/" + args[0] + ".ConfigSim' simulator configuration file" );
+                logger.config( "loading user interface: " + (args[1].equalsIgnoreCase( "cli") ? "'Command Line Interface'" : "'Graphical User Interface'"));
+                Simulator.run( "usr/conf/" + args[0] + ".ConfigSim", args[1] );
             }
         }
         catch ( Exception e )

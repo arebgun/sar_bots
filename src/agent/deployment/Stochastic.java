@@ -2,7 +2,7 @@ package agent.deployment;
 
 /*
  * Class Name:    agent.deployment.Stochastic
- * Last Modified: 4/2/2006 2:50
+ * Last Modified: 4/2/2006 3:5
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky

@@ -2,7 +2,7 @@ package agent.sensor;
 
 /*
  * Class Name:    agent.sensor.Cone
- * Last Modified: 4/2/2006 3:2
+ * Last Modified: 4/30/2006 4:3
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky

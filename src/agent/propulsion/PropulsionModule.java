@@ -2,7 +2,7 @@ package agent.propulsion;
 
 /*
  * Class Name:    agent.propulsion.PropulsionModule
- * Last Modified: 4/2/2006 3:1
+ * Last Modified: 4/2/2006 3:5
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky

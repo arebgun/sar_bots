@@ -2,7 +2,7 @@ package config;
 
 /*
  * Class Name:    config.ConfigSim
- * Last Modified: 4/2/2006 2:45
+ * Last Modified: 4/2/2006 3:7
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky

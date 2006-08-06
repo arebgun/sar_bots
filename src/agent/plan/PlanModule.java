@@ -2,7 +2,7 @@ package agent.plan;
 
 /*
  * Class Name:    agent.plan.PlanModule
- * Last Modified: 4/2/2006 2:52
+ * Last Modified: 4/2/2006 3:5
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky

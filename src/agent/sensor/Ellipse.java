@@ -1,8 +1,8 @@
 package agent.sensor;
 
 /*
- * Class Name:    agent.sensor.Circle
- * Last Modified: 4/30/2006 4:3
+ * Class Name:    agent.sensor.Ellipse
+ * Last Modified: 5/3/2006 8:30
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -17,19 +17,21 @@ import agent.AgentLocation;
 import config.ConfigAgent;
 import env.Environment;
 
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.*;
 
-public class Circle extends SensorModule
+public class Ellipse extends SensorModule
 {
-    public Circle( ConfigAgent config )
+    public Ellipse( ConfigAgent config )
     {
         super( config );
     }
 
     public Area getView( AgentLocation loc )
     {
-        Area footprint = new Area( new Ellipse2D.Double( loc.getX() - radius, loc.getY() - radius, 2 * radius, 2 * radius ) );
+        Ellipse2D ellipse  = new Ellipse2D.Double( loc.getX() - radius / 2, loc.getY() - radius * 2, radius, 2 * radius );
+        Area footprint = new Area( ellipse );
+        footprint.transform( AffineTransform.getRotateInstance( -loc.getTheta(), loc.getX(), loc.getY() ) );
+
         footprint.intersect( Environment.unoccupiedArea() );
 
         return footprint;

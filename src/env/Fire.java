@@ -2,7 +2,7 @@ package env;
 
 /*
  * Class Name:    env.Fire
- * Last Modified: 4/2/2006 2:45
+ * Last Modified: 4/30/2006 8:41
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -69,7 +69,7 @@ public class Fire
     public static void reset()
     {
         fires.reset();
-        fireList.clear();
+        //fireList.clear(); //can't clear fire list - not reloading the config file
         curFires.clear();
         detFires.clear();
     }

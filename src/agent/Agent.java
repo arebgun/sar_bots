@@ -2,7 +2,7 @@ package agent;
 
 /*
  * Class Name:    agent.Agent
- * Last Modified: 4/2/2006 2:49
+ * Last Modified: 4/30/2006 10:38
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -23,10 +23,10 @@ import config.ConfigAgent;
 import java.awt.*;
 import java.awt.geom.*;
 
-public abstract class Agent
+public abstract class Agent implements Runnable
 {
-    protected static int typeID = 0;
     protected int unitID;
+    protected String idString;
 
     protected ConfigAgent config;
     protected Color sensorColor;
@@ -45,6 +45,9 @@ public abstract class Agent
     protected CommModule comm;
     protected PropulsionModule propulsion;
 
+    private Thread agentThread;
+    private int sleepTime;
+    private boolean oneStep;
 
     /**
      * Agent constructor. Creates a new agent.
@@ -58,7 +61,7 @@ public abstract class Agent
         String planClass       = config.getPlanName();
         String propulsionClass = config.getPropulsionName();
 
-        unitID = typeID++;
+        idString = "Agent unit id = " + unitID;
         initialize( deployClass, sensorClass, planClass, commClass, propulsionClass );
     }
 
@@ -70,6 +73,16 @@ public abstract class Agent
     public int getID()
     {
         return unitID;
+    }
+
+    public int getSleepTime()
+    {
+        return sleepTime;
+    }
+
+    public void setSleepTime( int sleepTime )
+    {
+        this.sleepTime = sleepTime;
     }
 
     /**
@@ -100,11 +113,15 @@ public abstract class Agent
         double bodyWidth  = dimUnit;
         double bodyLength = 5 * dimUnit;
 
-        Area body  = new Area( new Ellipse2D.Double( location.getX() - 3 * dimUnit,   location.getY() - dimUnit / 2,  bodyLength, bodyWidth ) );
-        Area wings = new Area( new Ellipse2D.Double( location.getX() - wingWidth / 2, location.getY() - wingSpan / 2, wingWidth,  wingSpan ) );
+        double x = location.getX();
+        double y = location.getY();
+        double t = location.getTheta();
+
+        Area body  = new Area( new Ellipse2D.Double( x - 3 * dimUnit,   y - dimUnit / 2,  bodyLength, bodyWidth ) );
+        Area wings = new Area( new Ellipse2D.Double( x - wingWidth / 2, y - wingSpan / 2, wingWidth,  wingSpan ) );
         body.add( wings );
         //TODO: DIMZAR-20060320: is this the right point to rotate about?  Do we care?
-        body.transform( AffineTransform.getRotateInstance( location.getTheta(), location.getX(), location.getY() ) );
+        body.transform( AffineTransform.getRotateInstance( t, x, y ) );
 
         return body;
     }
@@ -157,5 +174,42 @@ public abstract class Agent
 
         location    = deployStrategy.getNextLocation( unitID );
         sensorColor = config.getSensorColor();
+    }
+
+    public void start(boolean oneStep)
+    {
+        if ( agentThread == null ) { agentThread = new Thread( this, idString ); }
+        this.oneStep = oneStep;
+        agentThread.start();
+    }
+
+    public void stop()
+    {
+        agentThread = null;
+    }
+
+    public void run()
+    {
+        if( oneStep && agentThread != null )
+        {
+            move();
+            stop();
+        }
+        else
+        {
+            while( agentThread != null )
+            {
+                move();
+
+                try
+                {
+                    Thread.sleep( sleepTime );
+                }
+                catch ( InterruptedException e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

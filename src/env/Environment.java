@@ -2,7 +2,7 @@ package env;
 
 /*
  * Class Name:    env.Environment
- * Last Modified: 4/2/2006 2:45
+ * Last Modified: 4/30/2006 9:35
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
@@ -21,10 +21,9 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import static java.lang.Math.*;
 import java.text.ParseException;
 import java.util.*;
-
-import static java.lang.Math.*;
 
 public class Environment
 {
@@ -32,10 +31,22 @@ public class Environment
     private static int worldWidth, worldHeight;
     private static int gridSize, gridRowSize, gridColSize;
     private static ArrayList<Rectangle2D> grid;
+    private static int totalCoveragePercentage;
+    private static int wellCoveredPercentage;
     private static int[] sensCoverageFrequency;
     private static ArrayList<Double> sensCoverageRatios;
     private static Area buildings;
     private static ArrayList<Polygon> buildingList;
+
+    public static int getTotalCoveragePercentage()
+    {
+        return totalCoveragePercentage;
+    }
+
+    public static int getWellCoveredPercentage()
+    {
+        return wellCoveredPercentage;
+    }
 
     public static boolean contains( double x, double y )
     {
@@ -73,6 +84,8 @@ public class Environment
         Fire.reset();
         sensCoverageRatios.clear();
         Arrays.fill( sensCoverageFrequency, 0 );
+        totalCoveragePercentage = 0;
+        wellCoveredPercentage   = 0;
     }
 
     public static Area occupiedArea()
@@ -118,8 +131,7 @@ public class Environment
             }
         }
 
-        // introduce fires
-        Fire.update( Simulator.getTime() );
+        calculateCoverage();
     }
 
     private static void loadBuildings( String buildingsFileName ) throws Exception
@@ -224,19 +236,32 @@ public class Environment
 
     public static Iterator<Double> sensCoverageFractionIterator()
     {
+        calculateCoverage();
+
+        return sensCoverageRatios.iterator();
+    }
+
+    private static void calculateCoverage()
+    {
         sensCoverageRatios.clear();
         double max = 1;
+
+        int coveredCells     = 0;
+        int wellCoveredCells = 0;
 
         for ( int val : sensCoverageFrequency )
         {
             if ( val > max ) { max = val; }
+            if ( val != 0 )  { coveredCells++; }
         }
 
         for ( int ratio : sensCoverageFrequency )
         {
             sensCoverageRatios.add( ratio / max );
+            if ( ratio / max > 0.5 ) { wellCoveredCells++; }
         }
 
-        return sensCoverageRatios.iterator();
+        totalCoveragePercentage = ( 100 * coveredCells )     / sensCoverageFrequency.length;
+        wellCoveredPercentage   = ( 100 * wellCoveredCells ) / sensCoverageFrequency.length;
     }
 }
