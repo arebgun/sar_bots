@@ -25,10 +25,25 @@ import java.awt.geom.*;
 
 public abstract class Agent implements Runnable
 {
+    /**
+     * Agent unique ID. Can be used to identify agents onscreen or
+     * perform certain operations on specified agent.
+     */
     protected int unitID;
+
+    /**
+     * Used to identify an agent thread. This becomes thread name.
+     */
     protected String idString;
 
+    /**
+     * Configuration class that specifies all agent properties.
+     */
     protected ConfigAgent config;
+
+    /**
+     * Sensor color.
+     */
     protected Color sensorColor;
 
     /**
@@ -36,13 +51,40 @@ public abstract class Agent implements Runnable
      */
     protected AgentLocation location;
 
+    /**
+     * Agent's current speed. Currently not used.
+     */
     protected double velocity;
+
+    /**
+     * Agent's "hit points" - might be used to keep track of damage.
+     * Currently not used.
+     */
     protected double health;
 
+    /**
+     * Deployment strategy subsystem (detremines agent initial position).
+     */
     protected DeploymentStrategy deployStrategy;
+
+    /**
+     * Sensor subsystem (sesnor shape).
+     */
     protected SensorModule sensor;
+
+    /**
+     * Planning subsystem (AI algorithm goes here)
+     */
     protected PlanModule plan;
+
+    /**
+     * Communication subsystem (inter-agent communication).
+     */
     protected CommModule comm;
+
+    /**
+     * Propulsion subsystem (max speed, intertia, current speed, etc.).
+     */
     protected PropulsionModule propulsion;
 
     private Thread agentThread;
@@ -75,11 +117,11 @@ public abstract class Agent implements Runnable
         return unitID;
     }
 
-    public int getSleepTime()
-    {
-        return sleepTime;
-    }
-
+    /**
+     * Sets the sleep time for agent thread (time between move() call executions).
+     *
+     * @param sleepTime thread sleep time in milliseconds
+     */
     public void setSleepTime( int sleepTime )
     {
         this.sleepTime = sleepTime;
@@ -100,11 +142,21 @@ public abstract class Agent implements Runnable
         return sensor.getView( location );
     }
 
+    /**
+     *Gtes the color of the sensor area.
+     *
+     * @return sensor color
+     */
     public Color getSensorColor()
     {
         return sensorColor;
     }
 
+    /**
+     * Calculates and returns agent total body area (wings + body).
+     *
+     * @return total area of the agent (wings + body)
+     */
     public Area getBodyArea()
     {
         double wingSpan   = config.getWingSpan();
@@ -127,7 +179,9 @@ public abstract class Agent implements Runnable
     }
 
     /**
-     * Updates agent's location.
+     * Updates agent's location. Possible next location is selected according to
+     * result returned from the planning module. Next location is within sensor
+     * range of the agent.
      */
     public void move()
     {
@@ -136,6 +190,11 @@ public abstract class Agent implements Runnable
         location           = propulsion.move( location, goal );
     }
 
+    /**
+     * Resents agent properties. This is used to restart the simulation. Currently
+     * only resets agent location, but all subsystem modules could be reset here,
+     * if the need arises.
+     */
     public void reset()
     {
         location = deployStrategy.getNextLocation( unitID );
@@ -176,18 +235,32 @@ public abstract class Agent implements Runnable
         sensorColor = config.getSensorColor();
     }
 
-    public void start(boolean oneStep)
+    /**
+     * Starts the simulation (creates a separate thread for current agent and executes
+     * the code in run() method).
+     *
+     * @param oneStep specifies if an agnet should perform only one step of execution,
+     * i.e. move only once
+     */
+    public void start( boolean oneStep )
     {
         if ( agentThread == null ) { agentThread = new Thread( this, idString ); }
         this.oneStep = oneStep;
         agentThread.start();
     }
 
+    /**
+     * Stops current agent.
+     */
     public void stop()
     {
         agentThread = null;
     }
 
+    /**
+     * Moves the current agent. If oneStep is true moves only one step,
+     * otherwise agent moves until Stop button is pressed.
+     */
     public void run()
     {
         if( oneStep && agentThread != null )

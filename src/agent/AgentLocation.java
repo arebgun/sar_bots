@@ -28,22 +28,42 @@ public class AgentLocation
         setTheta( theta );
     }
 
+    /**
+     * Gets x coordinate of the agent.
+     *
+     * @return x coordinate of the agent
+     */
     public double getX()
     {
         return x;
     }
 
+    /**
+     * Gets y coordinate of the agent.
+     *
+     * @return y coordinate of the agent
+     */
     public double getY()
     {
         return y;
     }
 
+    /**
+     * Gets the direction of the agent (in radians).
+     *
+     * @return x coordinate of the agent (in radians)
+     */
     public double getTheta()
     {
         return theta;
     }
 
-
+    /**
+     * Sets a new x coordiante of the agent. If the new coordiante is out
+     * of the world bounds throws an exception.
+     *
+     * @param newX new x coordinate of the agent
+     */
     public void setX( double newX )
     {
         if ( !Environment.contains( newX, y ) )
@@ -54,6 +74,12 @@ public class AgentLocation
         x = newX;
     }
 
+    /**
+     * Sets a new y coordiante of the agent. If the new coordiante is out
+     * of the world bounds throws an exception.
+     *
+     * @param newY new y coordinate of the agent
+     */
     public void setY( double newY )
     {
         if ( !Environment.contains( x, newY ) )
@@ -64,6 +90,11 @@ public class AgentLocation
         y = newY;
     }
 
+    /**
+     * Sets a new direction of the agent.
+     *
+     * @param newTheta new direction of the agent (in radians)
+     */
     public void setTheta( double newTheta )
     {
         theta = newTheta;
