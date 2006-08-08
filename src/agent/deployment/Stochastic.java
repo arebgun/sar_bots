@@ -21,6 +21,9 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
+/**
+ * Stochastic deployment strategy will randomly place MAVs throughout the world.
+ */
 public class Stochastic extends DeploymentStrategy
 {
     private static Random rand = null;
@@ -31,6 +34,13 @@ public class Stochastic extends DeploymentStrategy
         if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() ); }
     }
 
+    /**
+     * Return next feasible agent location. This deployment strategy will
+     * return locations that random points in the world.
+     *
+     * @param id unique agent id
+     * @return AgentLocation object for the agent specified by id
+     */
     public AgentLocation getNextLocation( int id )
     {
         Area unoccupied    = Environment.unoccupiedArea();

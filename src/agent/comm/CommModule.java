@@ -15,10 +15,21 @@ package agent.comm;
 
 import config.ConfigAgent;
 
+/**
+ * Agent communcation module. Implement inter-agent communication.
+ */
 public abstract class CommModule
 {
+    /**
+     * Configuration class that specifies all agent properties.
+     */
     protected ConfigAgent agentConfig;
 
+    /**
+     * Default constructor.
+     *
+     * @param config ConfigAgent class that specifies all agent properties
+     */
     protected CommModule( ConfigAgent config )
     {
         agentConfig = config;

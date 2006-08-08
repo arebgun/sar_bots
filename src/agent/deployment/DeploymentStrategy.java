@@ -16,14 +16,32 @@ package agent.deployment;
 import agent.AgentLocation;
 import config.ConfigAgent;
 
+/**
+ * Specifies the initial position of all MAVs.
+ */
 public abstract class DeploymentStrategy
 {
+    /**
+     * Configuration class that specifies all agent properties.
+     */
     protected ConfigAgent agentConfig;
 
+    /**
+     * Default constructor.
+     *
+     * @param config ConfigAgent class that specifies all agent properties
+     */
     protected DeploymentStrategy( ConfigAgent config )
     {
         agentConfig = config;
     }
 
+    /**
+     * Return a Location object that describes x, y coordinates
+     * as well heading of the agent specified by id.
+     *
+     * @param id unique agent id
+     * @return AgentLocation object for the agent specified by id
+     */
     public abstract AgentLocation getNextLocation( int id );
 }

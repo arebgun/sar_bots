@@ -15,6 +15,10 @@ package agent.comm;
 
 import config.ConfigAgent;
 
+/**
+ * Implements CommModule abstract class.
+ * Does not do anything :)
+ */
 public class None extends CommModule
 {
     public None( ConfigAgent config )

@@ -21,6 +21,9 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
+/**
+ * Deployment strategy that puts all agent in right upper corner of the world.
+ */
 public class RightUpperCorner extends DeploymentStrategy
 {
     private static Random rand = null;
@@ -31,6 +34,13 @@ public class RightUpperCorner extends DeploymentStrategy
         if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() ); }
     }
 
+    /**
+     * Return next feasible agent location. This deployment strategy will
+     * return locations that are in the right upper corner of the world.
+     *
+     * @param id unique agent id
+     * @return AgentLocation object for the agent specified by id
+     */
     public AgentLocation getNextLocation( int id )
     {
         Area unoccupied    = Environment.unoccupiedArea();

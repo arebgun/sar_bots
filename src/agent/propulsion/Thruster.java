@@ -18,6 +18,10 @@ import config.ConfigAgent;
 
 import static java.lang.Math.*;
 
+/**
+ * Simple thruster that can turn agent instantly and move the
+ * agent with constant speed (no acceleration, inertia, etc.).
+ */
 public class Thruster extends PropulsionModule
 {
     public Thruster( ConfigAgent config )
@@ -25,6 +29,17 @@ public class Thruster extends PropulsionModule
         super( config );
     }
 
+    /**
+     * Moves the agent from current to goal location using a
+     * straight line trajectory. If the distance between current and
+     * goal location exceeds the maximum speed, then the new goal
+     * location is set to current location + maximum speed. This is also
+     * the result returned by tjis method.
+     *
+     * @param location current location of the agent
+     * @param goal goal location of the agent
+     * @return new agent location after moving
+     */
     public AgentLocation move( AgentLocation location, AgentLocation goal )
     {
         double curX     = location.getX();
