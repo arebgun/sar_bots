@@ -16,10 +16,20 @@ package config;
 import java.io.*;
 import java.util.Hashtable;
 
+/**
+ * Utility class for building application property hashtables based on configuration files.
+ */
 public abstract class Config
 {
     protected final Hashtable<String, String> pTable;
 
+    /**
+     * Parses the configuration files, using the parameter name as the key into a Hashtable structure.
+     * Key, Value pairs are separated by equal signs, and all values, including numbers are treated as strings.
+     *
+     * @param configFileName The fully qualified file path for the configuration file being parsed.
+     * @throws IOException
+     */
     protected Config( String configFileName ) throws IOException
     {
         pTable = new Hashtable<String, String>();

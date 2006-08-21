@@ -19,6 +19,9 @@ import env.Environment;
 
 import java.awt.geom.*;
 
+/**
+ * Implements an elliptical agent sensor.
+ */
 public class Ellipse extends SensorModule
 {
     public Ellipse( ConfigAgent config )
@@ -26,6 +29,14 @@ public class Ellipse extends SensorModule
         super( config );
     }
 
+    /**
+     * Starts with an elliptical view, centered at the agents present location and radii specified by the sensor module
+     * configuration file, with the longer axis along the main fuselage of the UAV.  Returns the intersection of the
+     * sensor view and unoocupied areas of the environment.
+     *
+     * @param loc Agent's current location.
+     * @return Area suitable for use by the agent's navigation planner module.
+     */
     public Area getView( AgentLocation loc )
     {
         Ellipse2D ellipse  = new Ellipse2D.Double( loc.getX() - radius / 2, loc.getY() - radius * 2, radius, 2 * radius );

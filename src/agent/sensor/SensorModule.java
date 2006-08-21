@@ -18,11 +18,20 @@ import config.ConfigAgent;
 
 import java.awt.geom.Area;
 
+/**
+ * Provides a common initialization routines for all sensor modules using the agent configuration
+ * object supplied by the Simulator.
+ */
 public abstract class SensorModule
 {
     protected ConfigAgent agentConfig;
     protected double radius;
 
+    /**
+     * Initializes basic sensor module state using the agent configuation object.
+     *
+     * @param config
+     */
     public SensorModule( ConfigAgent config )
     {
         agentConfig = config;

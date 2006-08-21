@@ -20,6 +20,10 @@ import env.Environment;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 
+/**
+ * Implements a circular shaped agent sensor.
+ *
+ */
 public class Circle extends SensorModule
 {
     public Circle( ConfigAgent config )
@@ -27,6 +31,13 @@ public class Circle extends SensorModule
         super( config );
     }
 
+    /**
+     * Starts with a circular view, centered at the agents present location and radius specified by the sensor module
+     * configuration file.  Returns the intersection of the sensor view and unoocupied areas of the environment.
+     *
+     * @param loc Agent's current location.
+     * @return Area suitable for use by the agent's navigation planner module.
+     */
     public Area getView( AgentLocation loc )
     {
         Area footprint = new Area( new Ellipse2D.Double( loc.getX() - radius, loc.getY() - radius, 2 * radius, 2 * radius ) );

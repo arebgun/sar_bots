@@ -22,6 +22,12 @@ import java.util.*;
 
 import static java.lang.Math.*;
 
+/**
+ * Encapsulator class to provide access to fire object management.  Stores the random seed for circular Gaussian
+ * fire shapes (i.e., a circle with jagged edges).  Keeps track of currently active and detected fires, as well as
+ * all fires specified in the configuration file.
+ *
+ */
 public class Fire
 {
     private static Random fireRand                            = new Random( Environment.config.getFireSeed() );
@@ -66,6 +72,9 @@ public class Fire
         return detFires.size();
     }
 
+    /**
+     * Restore the initial state as far as the current and detected fires, but leaves the all fires hashtables intact.
+     */
     public static void reset()
     {
         fires.reset();
@@ -74,6 +83,13 @@ public class Fire
         detFires.clear();
     }
 
+    /**
+     * Checks the current simulation time against the all fires hashtable, and adds fires if the times match.  Also
+     * computes fire detection statistic.
+     *
+     * @param curTime Current simulation step.  This matches directly to the time steps specified in the fire configuration
+     * file.
+     */
     public static void update( Integer curTime )
     {
         // introduce new fires
@@ -106,6 +122,12 @@ public class Fire
         }
     }
 
+    /**
+     * Fire description line, which consits of time, location, and size (specified as a bounding box)
+     *
+     * @param fireDesc
+     * @throws Exception
+     */
     public static void add( String[]fireDesc ) throws Exception
     {
         if ( fireDesc.length != 5 ){ throw new ParseException( "fire description number of arguments", fireDesc.length ); }

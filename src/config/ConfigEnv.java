@@ -15,6 +15,9 @@ package config;
 
 import java.io.IOException;
 
+/**
+ * Extracts configuation information specific to the @see Environment objects.
+*/
 public class ConfigEnv extends Config
 {
     public ConfigEnv( String configFileName ) throws IOException

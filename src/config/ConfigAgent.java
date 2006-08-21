@@ -16,6 +16,9 @@ package config;
 import java.awt.*;
 import java.io.IOException;
 
+/**
+ * Extracts configuation information specific to the @see Agent objects.
+*/
 public class ConfigAgent extends Config
 {
     public ConfigAgent( String configFileName ) throws IOException

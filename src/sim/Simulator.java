@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
 
+/**
+ * The main entrypoint for the UAV Search and Rescue Bot simulator.  This object keeps track of the main components,
+ * such as the agents, the enviroment, and configuration.
+*/
 public class Simulator
 {
     public static Logger logger;
@@ -34,6 +38,14 @@ public class Simulator
     private static int time;
     private static ArrayList<Agent> agents;
 
+    /**
+     * The driver method of the simulation which instructs all of the components to initialize, update, and produce
+     * output.
+     *
+     * @param configFilePath The relative pathname for the configuation files.
+     * @param uiType The selector for the output method (e.g., GUI, CLI, etc)
+     * @throws Exception
+     */
     public static void run( String configFilePath, String uiType ) throws Exception
     {
         time   = 0;
@@ -69,6 +81,9 @@ public class Simulator
         }
     }
 
+    /**
+     * Implements the reset functionality by delegating to the reset method of all of the components.
+     */
     public static void reset()
     {
         time = 0;
@@ -86,6 +101,10 @@ public class Simulator
         return time;
     }
 
+    /**
+     * Advances the simulation time by increasing the current simulation step, and calling the update method of each
+     * component.
+    */
     public static void step()
     {
         time++;
@@ -96,6 +115,10 @@ public class Simulator
         Fire.update( time );
     }
 
+    /**
+     * Computes space currently occupied by the airborne agents.
+     * @return The area occupied by the agents.
+     */
     public static Area agentSpace()
     {
         Area space = new Area();
@@ -108,6 +131,11 @@ public class Simulator
         return space;
     }
 
+    /**
+     * Computes the space covered by the sensors of each agent.
+     *
+     * @return Area currently surveyed by the agents.
+     */
     public static Area agentSensorSpace()
     {
         Area space = new Area();
@@ -125,6 +153,11 @@ public class Simulator
         return agents.iterator();
     }
 
+    /**
+     * Initializes the simulator state, sets up the logging facilities, and parses the command line arguments.
+     *
+     * @param args
+     */
     public static void main( String[] args )
     {
         final String DEFAULT_CONF_FILE = "usr/conf/default.ConfigSim";
@@ -132,7 +165,7 @@ public class Simulator
         try
         {
             StreamHandler handler = new ConsoleHandler();
-            //StreamHandler handler = new FileHandler( "some-log-filename-for-srbots-project.xml" );
+            //StreamHandler handler = new FileHandler( "some-log-filename-for-srbots-project.log" );
             handler.setLevel( Level.ALL );
 
             logger = Logger.getLogger( "sim.Simulator" );

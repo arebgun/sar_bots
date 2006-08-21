@@ -20,6 +20,9 @@ import env.Environment;
 import java.awt.geom.*;
 import static java.lang.Math.toDegrees;
 
+/**
+ * Implements a pie-shaped agent sensor.
+ */
 public class Cone extends SensorModule
 {
     public Cone( ConfigAgent config )
@@ -27,6 +30,13 @@ public class Cone extends SensorModule
         super( config );
     }
 
+    /**
+     * This sensor model starts out with a 60 degree pie shaped view, which is then intersected with the
+     * unoccupied areas of the environment to produce the final set of visible world locations.
+     *
+     * @param loc Agent's current location.
+     * @return a set of points visible to the agent and that are potentially accessible to the navigation planner
+     */
     public Area getView( AgentLocation loc )
     {
         Rectangle2D bounds = new Rectangle2D.Double( loc.getX() - radius, loc.getY() - radius, 2 * radius, 2 * radius );

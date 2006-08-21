@@ -15,6 +15,9 @@ package config;
 
 import java.io.IOException;
 
+/**
+ * Extracts configuation information specific to the @see Simulator objects.
+*/
 public class ConfigSim extends Config
 {
     public ConfigSim( String configFileName ) throws IOException
