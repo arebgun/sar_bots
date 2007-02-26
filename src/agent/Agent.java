@@ -136,6 +136,16 @@ public abstract class Agent implements Runnable
     {
         return location;
     }
+    
+    /**
+     * Gets the velocity of the agent.
+     * @author jeff
+     * @return agent velocity
+     */
+    public double getVelocity()
+    {
+        return velocity;
+    }
 
     public Area getSensorView()
     {
