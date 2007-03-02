@@ -12,3 +12,6 @@ buildingsFileName=usr/maps/default.buildings
 firesFileName=usr/scripts/default.fires
 fireSeed=1
 
+# flag configuration
+flagsFileName=usr/scripts/default.flags
+

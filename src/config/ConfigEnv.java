@@ -49,6 +49,11 @@ public class ConfigEnv extends Config
     {
         return pTable.get( "firesFileName" );
     }
+    
+    public String getFlagsFileName()
+    {
+    	return pTable.get( "flagsFileName" );
+    }
 
     public long getFireSeed()
     {

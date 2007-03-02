@@ -100,6 +100,8 @@ public class Environment
 
         loadBuildings( config.getBuildingsFileName() );
         loadFires( config.getFiresFileName() );
+        loadFlags( config.getFlagsFileName() );
+ 
     }
 
     /**
@@ -232,6 +234,26 @@ public class Environment
         {
             Fire.add( st.sval.split( "\\," ) );
         }
+    }
+    
+    /**
+     * Parses the (x,y) coordinate information for flags and creates as many
+     * flags as needed
+     * 
+     * @param flagsFileName Fully qualified pathname to the flags configuration file.
+     * @throws Exception
+     */
+    private static void loadFlags( String flagsFileName ) throws Exception
+    {
+    	StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( flagsFileName ) ) );
+    	st.ordinaryChars('+', '9' );
+    	st.wordChars( ' ', '~' );
+    	st.commentChar( '#');
+    	
+    	while ( st.nextToken() != StreamTokenizer.TT_EOF )
+    	{
+    		String flagData[] = st.sval.split( "\\,");
+    	}
     }
 
     /**

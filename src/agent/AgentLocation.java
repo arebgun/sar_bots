@@ -2,10 +2,11 @@ package agent;
 
 /*
  * Class Name:    agent.AgentLocation
- * Last Modified: 4/2/2006 3:5
+ * Last Modified: 02/18/2007 5:42
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
+ * @modified Joshua Sanderlin
  *
  * Source code may be freely copied and reused.
  * Please copy credits, and send any bug fixes to the authors.
@@ -98,5 +99,17 @@ public class AgentLocation
     public void setTheta( double newTheta )
     {
         theta = newTheta;
+    }
+    
+    /**
+     * Sets this object's members to equal another AgentLocation.
+     * 
+     * @param 
+     */
+    public void copy(AgentLocation loc)
+    {
+    	theta = loc.theta;
+    	x = loc.x;
+    	y = loc.y;
     }
 }
