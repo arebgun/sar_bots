@@ -14,8 +14,10 @@ package env;
  */
 
 import agent.Agent;
+import agent.AgentLocation;
 import config.ConfigEnv;
 import sim.Simulator;
+import env.Flag;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -47,6 +49,7 @@ public class Environment
     private static int[] sensCoverageFrequency;
     private static ArrayList<Double> sensCoverageRatios;
     private static Area buildings;
+    private static Flag flag1;
     private static ArrayList<Polygon> buildingList;
 
     public static int getTotalCoveragePercentage()
@@ -253,6 +256,10 @@ public class Environment
     	while ( st.nextToken() != StreamTokenizer.TT_EOF )
     	{
     		String flagData[] = st.sval.split( "\\,");
+    		int x = Integer.parseInt(flagData[1]);
+    		int y = Integer.parseInt(flagData[2]);
+    		AgentLocation temp = new AgentLocation(x,y,0);
+    		flag1 = new Flag(temp);
     	}
     }
 
