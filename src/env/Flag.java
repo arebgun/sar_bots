@@ -23,13 +23,35 @@ public class Flag {
 	private int owner;
 	private int radius;
 	
-	public Flag()
+	public Flag(AgentLocation init)
 	{
+		initialPosition = init;
+		owner = 0;
 		radius = 5;
+	}
+	
+	public void setPosition(AgentLocation newPosition)
+	{
+		currentPosition = newPosition;
+	}
+	
+	public AgentLocation getPosition()
+	{
+		return currentPosition;
+	}
+	
+	public void setOwner(int i)
+	{
+		owner = i;
+	}
+	
+	public int getOwner()
+	{
+		return owner;
 	}
 	
 	public static void reset()
 	{
-		currentPosition.copy( initialPosition );
+		currentPosition = initialPosition;
 	}
 }
