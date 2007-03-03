@@ -104,7 +104,7 @@ public class AgentLocation
     /**
      * Sets this object's members to equal another AgentLocation.
      * 
-     * @param 
+     * @param loc 
      */
     public void copy(AgentLocation loc)
     {
