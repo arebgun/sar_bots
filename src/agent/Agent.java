@@ -57,6 +57,12 @@ public abstract class Agent implements Runnable
     protected double velocity;
 
     /**
+     * @author jeff
+     * Agent's current sound radius.
+     */
+    protected double soundRadius;
+    
+    /**
      * Agent's "hit points" - might be used to keep track of damage.
      * Currently not used.
      */
@@ -147,6 +153,16 @@ public abstract class Agent implements Runnable
         return velocity;
     }
 
+    /**
+     * Gets the sound radius of the agent.
+     * @author jeff
+     * @return agent soundRadius
+     */
+    public double getSoundRadius()
+    {
+    	return soundRadius;
+    }
+    
     public Area getSensorView()
     {
         return sensor.getView( location );
