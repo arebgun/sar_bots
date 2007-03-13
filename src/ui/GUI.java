@@ -2,11 +2,11 @@ package ui;
 
 /*
  * Class Name:    ui.GUI
- * Last Modified: 5/1/2006 3:21
+ * Last Modified: 3/13/2007 3:21
  *
  * @author Anton Rebgun
  * @author Dimitri Zarzhitsky
- *
+ * @author Steve Diersen
  * Source code may be freely copied and reused.
  * Please copy credits, and send any bug fixes to the authors.
  *
@@ -35,9 +35,9 @@ import javax.swing.event.ChangeListener;
 
 public class GUI
 {
-    private static final int DEFAULT_WIDTH  = 580;
-    private static final int DEFAULT_HEIGHT = 540;
-    private static boolean showGrid         = false;
+    private static int DEFAULT_WIDTH  = 1024;
+    private static int DEFAULT_HEIGHT = 768;
+    private static boolean showGrid   = false;
     private final Timer tmrSim;
     private final Timer tmrUpdate;
 
@@ -49,9 +49,8 @@ public class GUI
     private SimScrollPane area;
     private SimScrollPane coverage;
 
-    // Side and bottom control panels
-    // private SidePanel side;
-    private BottomPanel bottom;
+    // Bottom control panels
+     private BottomPanel bottom;
 
     private int delay = 0;
 
@@ -65,11 +64,16 @@ public class GUI
         Image icon  = null;
         if ( iconURL != null ) { icon = new ImageIcon( iconURL.getPath() ).getImage();  }
 
-        // Set main window location (center of the screen)
+        // Set main window to be the size of the screen resolution
+        // for optimal appereance screen resolution should be 1024x768
+        // screen will be equal to the current resolution of the computer
+        // covering the entire screen.
+        int locX = 0;
+        int locY = 0;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int locX             = (int) ( screenSize.getWidth()  / 2 - DEFAULT_WIDTH  / 2 );
-        int locY             = (int) ( screenSize.getHeight() / 2 - DEFAULT_HEIGHT / 2 );
-
+        DEFAULT_WIDTH = (int) screenSize.getWidth();
+        DEFAULT_HEIGHT = (int) screenSize.getHeight();
+        
         // Create main window, size and position it on the screen
         main = new JFrame( "Search and Rescue Bots" );
         main.setIconImage( icon );
@@ -166,7 +170,7 @@ public class GUI
             public void run()
             {
                 jtViewSwitcher.getSelectedComponent().repaint();
-    //            side.repaint();
+    
                 Toolkit.getDefaultToolkit().sync();
             }
         } );
@@ -191,11 +195,7 @@ public class GUI
         jtViewSwitcher.addTab( "Sensor Coverage", coverage );
         main.add( jtViewSwitcher, BorderLayout.CENTER );
 
-        // Create and add side panel (buttons and stats)
-      //  side = new SidePanel( tmrSim );
-      //  main.add( side, BorderLayout.LINE_END );
-
-        // Create and add bottom panel (spped slider)
+        // Create and add bottom panel
         bottom = new BottomPanel( tmrSim );
         main.add( bottom, BorderLayout.PAGE_END );
     }
