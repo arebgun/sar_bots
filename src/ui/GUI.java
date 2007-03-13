@@ -37,7 +37,7 @@ public class GUI
 {
     private static final int DEFAULT_WIDTH  = 580;
     private static final int DEFAULT_HEIGHT = 540;
-    private static boolean showGrid         = true;
+    private static boolean showGrid         = false;
     private final Timer tmrSim;
     private final Timer tmrUpdate;
 
@@ -50,7 +50,7 @@ public class GUI
     private SimScrollPane coverage;
 
     // Side and bottom control panels
-    private SidePanel side;
+    // private SidePanel side;
     private BottomPanel bottom;
 
     private int delay = 0;
@@ -166,7 +166,7 @@ public class GUI
             public void run()
             {
                 jtViewSwitcher.getSelectedComponent().repaint();
-                side.repaint();
+    //            side.repaint();
                 Toolkit.getDefaultToolkit().sync();
             }
         } );
@@ -192,8 +192,8 @@ public class GUI
         main.add( jtViewSwitcher, BorderLayout.CENTER );
 
         // Create and add side panel (buttons and stats)
-        side = new SidePanel( tmrSim );
-        main.add( side, BorderLayout.LINE_END );
+      //  side = new SidePanel( tmrSim );
+      //  main.add( side, BorderLayout.LINE_END );
 
         // Create and add bottom panel (spped slider)
         bottom = new BottomPanel( tmrSim );
@@ -366,7 +366,151 @@ class SensCoverage extends SimDrawPanel
     }
 }
 
-class SidePanel extends JPanel
+/*
+ * Class Name:    BottomPanel
+ * Last Modified: 3/13/2007
+ *
+ * @author Anton Rebgun
+ * @author Dimitri Zarzhitsky
+ * @author Steve Diersen
+ *
+ * Source code may be freely copied and reused.
+ * Please copy credits, and send any bug fixes to the authors.
+ *
+ * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
+ */
+class BottomPanel extends JPanel
+{
+	private final JButton btnStartStop = new JButton("Start");
+	private final JButton btnReset = new JButton("Reset");
+	private final JButton btnScreenshot = new JButton("Screenshot");
+	private final JButton btnSave = new JButton("Save");
+	
+	private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", false );
+	
+	private final Timer tmrSim;
+
+    public BottomPanel( Timer tmr )
+    {
+        tmrSim = tmr;
+        setBorder( BorderFactory.createEmptyBorder( 5, 2, 5, 2 ) );
+        JPanel jpCtrl = new JPanel();
+        jpCtrl.setLayout( new BoxLayout( jpCtrl, BoxLayout.X_AXIS ) );
+
+        cbShowGrid.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                GUI.setShowGrid( cbShowGrid.isSelected() );
+                GUI.getSelectedTabView().repaint();
+            }
+        } );
+
+        add( cbShowGrid );
+        
+        addConfiguredButton( jpCtrl, btnStartStop, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                if ( tmrSim.isRunning() )
+                {
+                    GUI.getInstance().getTmrUpdate().stop();
+                    tmrSim.stop();
+                    Iterator<Agent> it = Simulator.agentsIterator();
+
+                    while(it.hasNext())
+                    {
+                        Agent agent = it.next();
+                        agent.stop();
+                    }
+
+                    btnStartStop.setText( "Start" );
+                }
+                else
+                {
+                    btnStartStop.setText( "Stop" );
+                    tmrSim.start();
+                    GUI.getInstance().getTmrUpdate().start();
+                    Iterator<Agent> it = Simulator.agentsIterator();
+
+                    while(it.hasNext())
+                    {
+                        Agent agent = it.next();
+                        agent.start(false);
+                    }
+                }
+            }
+        } );
+
+        jpCtrl.add( Box.createRigidArea( new Dimension( 0, 15 ) ) );
+
+        addConfiguredButton( jpCtrl, btnReset, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                Simulator.reset();
+                GUI.getInstance().update();
+            }
+        } );
+
+        jpCtrl.add( Box.createRigidArea( new Dimension( 0, 15 ) ) );
+
+        addConfiguredButton( jpCtrl, btnScreenshot, new ActionListener()
+        {
+            public void actionPerformed( ActionEvent e )
+            {
+                SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
+                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
+                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
+
+                Dimension position   = GUI.getInstance().getMainWindowSize();
+                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
+                Rectangle mainWindow = new Rectangle( xyCoord, position );
+
+                try
+                {
+                    // create screen shot
+                    Robot robot         = new Robot();
+                    BufferedImage image = robot.createScreenCapture( mainWindow );
+
+                    // save captured image to PNG file
+                    ImageIO.write( image, "png", new File( outFileName ) );
+                }
+                catch ( Exception error )
+                {
+                    throw new RuntimeException( error );
+                }
+            }
+        } );
+
+        addConfiguredButton( jpCtrl, btnSave, null );
+        add( jpCtrl, BorderLayout.PAGE_END );
+    }
+
+    public void paint( Graphics g )
+    {
+        super.paint( g );
+    }
+
+    private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
+    {
+        Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
+        Dimension buttonSize = new Dimension( 125, 25 );
+
+        button.addActionListener( action );
+        button.setPreferredSize( buttonSize );
+        button.setMaximumSize( buttonSize );
+        panel.add( buttonGlue );
+        panel.add( button );
+    }
+}
+
+/*
+  original BottomPanel and SidePanel saved as comments
+  in case some need to revert to old version
+*/
+/*
+ class SidePanel extends JPanel
 {
     private final JLabel lblStep           = new JLabel( "Time: ?" );
     private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
@@ -521,9 +665,10 @@ class SidePanel extends JPanel
         panel.add( buttonGlue );
         panel.add( button );
     }
-}
-
-class BottomPanel extends JPanel
+} 
+*/
+/*
+ class BottomPanel extends JPanel
 {
     private final JSlider sldSpeed     = new JSlider( 100, 500, 100 );
     private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", true );
@@ -568,3 +713,4 @@ class BottomPanel extends JPanel
         add( cbShowGrid );
     }
 }
+*/
