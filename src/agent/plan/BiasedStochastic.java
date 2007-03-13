@@ -26,6 +26,7 @@ import java.awt.geom.*;
 import static java.lang.Math.*;
 import java.util.Random;
 
+// TODO: remove Area from BiasedStochastic.java (possibly the whole class if we implement other planning modules)
 public class BiasedStochastic extends PlanModule
 {
     private static Random rand = null;

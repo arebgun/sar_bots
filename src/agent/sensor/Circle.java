@@ -19,7 +19,7 @@ import env.Environment;
 
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
-
+// TODO: remove Area from Circle.java (possibly remove Circle.java as well)
 /**
  * Implements a circular shaped agent sensor.
  *

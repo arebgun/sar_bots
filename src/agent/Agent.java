@@ -66,7 +66,7 @@ public abstract class Agent implements Runnable
      * Agent's "hit points" - might be used to keep track of damage.
      * Currently not used.
      */
-    protected double health;
+    protected int health;
 
     /**
      * Deployment strategy subsystem (detremines agent initial position).
@@ -183,6 +183,7 @@ public abstract class Agent implements Runnable
      *
      * @return total area of the agent (wings + body)
      */
+// TODO: remove Area from getBodyArea (possibly remove the entire fuction)
     public Area getBodyArea()
     {
         double wingSpan   = config.getWingSpan();
@@ -209,6 +210,7 @@ public abstract class Agent implements Runnable
      * result returned from the planning module. Next location is within sensor
      * range of the agent.
      */
+// TODO: remove Area from move
     public void move()
     {
         Area sensorView    = sensor.getView( location );

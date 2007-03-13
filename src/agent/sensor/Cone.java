@@ -19,7 +19,7 @@ import env.Environment;
 
 import java.awt.geom.*;
 import static java.lang.Math.toDegrees;
-
+// TODO: remove Area from Cone.java (possibly remove Cone.java as well)
 /**
  * Implements a pie-shaped agent sensor.
  */

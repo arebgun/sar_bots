@@ -20,7 +20,7 @@ import env.Environment;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
-
+// TODO: remove Area from RightUpperCorner.java (might remove this class as it is just a starting position calculator)
 /**
  * Deployment strategy that puts all agent in right upper corner of the world.
  */

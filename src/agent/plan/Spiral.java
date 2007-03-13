@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static java.lang.Math.*;
-
+// TODO: remove Area from Spiral.java (probably remove the entire class, no need for it)
 public class Spiral extends PlanModule
 {
     private static Random rand  = null;

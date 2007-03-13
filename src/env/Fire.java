@@ -21,7 +21,8 @@ import java.text.ParseException;
 import java.util.*;
 
 import static java.lang.Math.*;
-
+// TODO: remove Area from Fire (possibly remove Fire altogether, though might be used
+// as extra fluff for damaged units)
 /**
  * Encapsulator class to provide access to fire object management.  Stores the random seed for circular Gaussian
  * fire shapes (i.e., a circle with jagged edges).  Keeps track of currently active and detected fires, as well as

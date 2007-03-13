@@ -18,7 +18,7 @@ import config.ConfigAgent;
 import env.Environment;
 
 import java.awt.geom.*;
-
+// TODO: remove Area from Ellipse.java (possibly remove entire Ellipse.java)
 /**
  * Implements an elliptical agent sensor.
  */

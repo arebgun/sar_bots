@@ -13,6 +13,7 @@ package sim;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+
 import agent.Agent;
 import config.ConfigAgent;
 import config.ConfigSim;
@@ -25,7 +26,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
-
+// TODO: remove Area from this file including import java.awt.geom.Area and
 /**
  * The main entrypoint for the UAV Search and Rescue Bot simulator.  This object keeps track of the main components,
  * such as the agents, the enviroment, and configuration.
@@ -114,7 +115,7 @@ public class Simulator
         // introduce fires
         Fire.update( time );
     }
-
+// TODO: remove Area from agentSpace
     /**
      * Computes space currently occupied by the airborne agents.
      * @return The area occupied by the agents.
@@ -130,7 +131,7 @@ public class Simulator
 
         return space;
     }
-
+// TODO: removoe Area from agentSensorSpace
     /**
      * Computes the space covered by the sensors of each agent.
      *

@@ -60,6 +60,7 @@ public class Stochastic extends PlanModule
      * that the agent will end up in that location on the next step; the next actual location
      * will depend on the @see Propulsion module.
      */
+// TODO: remove Area from getGoalLocation (used for sensor's range and a silly navigation computation)
     public AgentLocation getGoalLocation( AgentLocation location, Area sensorView )
     {
         Rectangle2D bounds = sensorView.getBounds();

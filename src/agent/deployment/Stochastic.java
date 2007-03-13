@@ -21,6 +21,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
+// TODO: remove Area from Stochastic.java
 /**
  * Stochastic deployment strategy will randomly place MAVs throughout the world.
  */
@@ -41,6 +42,7 @@ public class Stochastic extends DeploymentStrategy
      * @param id unique agent id
      * @return AgentLocation object for the agent specified by id
      */
+// TODO: remove Area from getNextLocation (used to determine unoccupied locations in the world)
     public AgentLocation getNextLocation( int id )
     {
         Area unoccupied    = Environment.unoccupiedArea();

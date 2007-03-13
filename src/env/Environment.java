@@ -26,7 +26,8 @@ import java.io.*;
 import static java.lang.Math.*;
 import java.text.ParseException;
 import java.util.*;
-
+// TODO: remove Area and all of its functions from Environment including
+// import java.awt.geom.Area and import java.awt.geom.Rectangle2D
 /**
  * The encapsulator object for keeping track of the simulated environment (i.e., world) state.
  * This class is responsible for keeping track of the buildings map, the appearance of fires.
@@ -38,6 +39,8 @@ import java.util.*;
  * which can be queried by other objects.  Hence this object also keeps track of the agent performance
  * such as sensor coverage, fire detection, etc.
  */
+
+// TODO: Remove Area from Environment (such as buildings)
 public class Environment
 {
     static ConfigEnv config;
@@ -126,6 +129,8 @@ public class Environment
      * the agents to occur.
      * @return
      */
+    
+// TODO: occupiedArea must be completly redone without Area or scrapped altogether
     public static Area occupiedArea()
     {
         Area occupied = new Area( buildings );
@@ -138,6 +143,7 @@ public class Environment
      * Uses the @see occupiedArea to compute the set of points accessible to the navigation planners.
      * @return
      */
+// TODO: unoccupiedArea must be completly redone without Area or scrapped altogether
     public static Area unoccupiedArea()
     {
         Area world = new Area( new Rectangle2D.Double( 0, 0, worldWidth, worldHeight ) );
@@ -149,6 +155,7 @@ public class Environment
     /**
      * Advances the state of the simulation one time step; introduces fires, computes detection and coverage statistics.
      */
+// TODO: remove Area from update
     public static void update()
     {
         // compute sensor coverage frequency
@@ -186,6 +193,7 @@ public class Environment
      * @param buildingsFileName Fully qualified pathname to the buildings configuration file.
      * @throws Exception
      */
+// TODO: remove Area from loadBuildings
     private static void loadBuildings( String buildingsFileName ) throws Exception
     {
         buildings    = new Area();
@@ -303,12 +311,12 @@ public class Environment
     {
         return max( 1, max( pixelScreenSize.width / worldWidth, pixelScreenSize.height / worldHeight ) );
     }
-
+// TODO: remove Area from getBuildings
     public static Area getBuildings()
     {
         return buildings;
     }
-
+// TODO: remove Area from getFires
     public static Area getFires()
     {
         return Fire.getFires();

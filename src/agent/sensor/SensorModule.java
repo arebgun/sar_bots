@@ -18,6 +18,7 @@ import config.ConfigAgent;
 
 import java.awt.geom.Area;
 
+// TODO: remove Area from SensorModule.java (possibly the entire class depending on how we will implement collision detection)
 /**
  * Provides a common initialization routines for all sensor modules using the agent configuration
  * object supplied by the Simulator.

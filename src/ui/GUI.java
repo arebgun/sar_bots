@@ -13,6 +13,8 @@ package ui;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+// TODO: remove Area from this file including import java.awt.geom.Area and
+// import java.awt.geom.Rectangle2D
 import agent.Agent;
 import env.Environment;
 import sim.Simulator;
@@ -294,7 +296,7 @@ class RescueArea extends SimDrawPanel
         paintEnvironment( g2 );
         paintAgents( g2 );
     }
-
+ // TODO: change paintEnvironment to exclude the use of Area and its functions
     private void paintEnvironment( Graphics2D g2 )
     {
         g2.setPaint( soilTexture );
@@ -308,7 +310,7 @@ class RescueArea extends SimDrawPanel
         g2.setPaint( fireGradient );
         g2.fill( Environment.getFires() );
     }
-
+ // TODO: change paintAgents to exclude the use of Area and its functions
     private void paintAgents( Graphics2D g2 )
     {
         int delay = GUI.getInstance().getDelay();
@@ -351,6 +353,7 @@ class SensCoverage extends SimDrawPanel
         }
     }
 
+ // TODO: change simPaint to exclude Area and its functions
     public void simPaint( Graphics2D g2 )
     {
         Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
@@ -504,213 +507,3 @@ class BottomPanel extends JPanel
         panel.add( button );
     }
 }
-
-/*
-  original BottomPanel and SidePanel saved as comments
-  in case some need to revert to old version
-*/
-/*
- class SidePanel extends JPanel
-{
-    private final JLabel lblStep           = new JLabel( "Time: ?" );
-    private final JLabel lblNumFiresActive = new JLabel( "# of Active Fires: ?" );
-    private final JLabel lblNumFiresFound  = new JLabel( "# of Fires Found: ?" );
-    private final JLabel lblPercentCovered = new JLabel( "% Covered: ?" );
-    private final JLabel lblWellCovered    = new JLabel( "% Well Covered: ?" );
-
-    private final JButton btnStartStop  = new JButton( "Start" );
-    private final JButton btnStep       = new JButton( "Step" );
-    private final JButton btnReset      = new JButton( "Reset " );
-    private final JButton btnScreenshot = new JButton( "Screenshot" );
-    private final JButton btnSave       = new JButton( "Save" );
-
-    private final Timer tmrSim;
-
-    public SidePanel( Timer tmr )
-    {
-        super( new BorderLayout() );
-
-        tmrSim = tmr;
-        setBorder( BorderFactory.createEmptyBorder( 10, 10, 20, 10 ) );
-
-        JPanel jpStats = new JPanel();
-        jpStats.setLayout( new BoxLayout( jpStats, BoxLayout.Y_AXIS ) );
-        jpStats.setBorder( BorderFactory.createTitledBorder( "Statistics" ) );
-        jpStats.add( lblStep );
-        jpStats.add( lblNumFiresActive );
-        jpStats.add( lblNumFiresFound );
-        jpStats.add( lblPercentCovered );
-        jpStats.add( lblWellCovered );
-        add( jpStats, BorderLayout.PAGE_START );
-
-        JPanel jpCtrl = new JPanel();
-        jpCtrl.setLayout( new BoxLayout( jpCtrl, BoxLayout.Y_AXIS ) );
-
-        addConfiguredButton( jpCtrl, btnStartStop, new ActionListener()
-        {
-            public void actionPerformed( ActionEvent e )
-            {
-                if ( tmrSim.isRunning() )
-                {
-                    GUI.getInstance().getTmrUpdate().stop();
-                    tmrSim.stop();
-                    Iterator<Agent> it = Simulator.agentsIterator();
-
-                    while(it.hasNext())
-                    {
-                        Agent agent = it.next();
-                        agent.stop();
-                    }
-
-                    btnStartStop.setText( "Start" );
-                    btnStep.setEnabled( true );
-                }
-                else
-                {
-                    btnStep.setEnabled( false );
-                    btnStartStop.setText( "Stop" );
-                    tmrSim.start();
-                    GUI.getInstance().getTmrUpdate().start();
-                    Iterator<Agent> it = Simulator.agentsIterator();
-
-                    while(it.hasNext())
-                    {
-                        Agent agent = it.next();
-                        agent.start(false);
-                    }
-                }
-            }
-        } );
-
-        addConfiguredButton( jpCtrl, btnStep, new ActionListener()
-        {
-            public void actionPerformed( ActionEvent e )
-            {
-                Simulator.step();
-                Iterator<Agent> it = Simulator.agentsIterator();
-
-                while(it.hasNext())
-                {
-                    Agent agent = it.next();
-                    agent.start(true);
-                }
-
-                GUI.getInstance().update();
-            }
-        } );
-
-        jpCtrl.add( Box.createRigidArea( new Dimension( 0, 15 ) ) );
-
-        addConfiguredButton( jpCtrl, btnReset, new ActionListener()
-        {
-            public void actionPerformed( ActionEvent e )
-            {
-                Simulator.reset();
-                GUI.getInstance().update();
-            }
-        } );
-
-        jpCtrl.add( Box.createRigidArea( new Dimension( 0, 15 ) ) );
-
-        addConfiguredButton( jpCtrl, btnScreenshot, new ActionListener()
-        {
-            public void actionPerformed( ActionEvent e )
-            {
-                SimpleDateFormat sdf = new SimpleDateFormat( "MMddyyHHmmss" );
-                String currentDate   = sdf.format( Calendar.getInstance( TimeZone.getDefault() ).getTime() );
-                String outFileName   = "images/screenshots/screen_" + currentDate + ".png";
-
-                Dimension position   = GUI.getInstance().getMainWindowSize();
-                Point xyCoord        = GUI.getInstance().getMainWindowXyPoint();
-                Rectangle mainWindow = new Rectangle( xyCoord, position );
-
-                try
-                {
-                    // create screen shot
-                    Robot robot         = new Robot();
-                    BufferedImage image = robot.createScreenCapture( mainWindow );
-
-                    // save captured image to PNG file
-                    ImageIO.write( image, "png", new File( outFileName ) );
-                }
-                catch ( Exception error )
-                {
-                    throw new RuntimeException( error );
-                }
-            }
-        } );
-
-        addConfiguredButton( jpCtrl, btnSave, null );
-        add( jpCtrl, BorderLayout.PAGE_END );
-    }
-
-    public void paint( Graphics g )
-    {
-        super.paint( g );
-        lblStep.setText( "Time: " + Simulator.getTime() );
-        lblNumFiresActive.setText( "# of Active Fires: " + Environment.getActiveFires() );
-        lblNumFiresFound.setText ( "# of Fires Found: "  + Environment.getFoundFires() );
-        lblPercentCovered.setText( "% Covered: "   + Environment.getTotalCoveragePercentage() );
-        lblWellCovered.setText( "% Well Covered: " + Environment.getWellCoveredPercentage() );
-    }
-
-    private void addConfiguredButton( JPanel panel, JButton button, ActionListener action )
-    {
-        Component buttonGlue = Box.createRigidArea( new Dimension( 0, 5 ) );
-        Dimension buttonSize = new Dimension( 125, 25 );
-
-        button.addActionListener( action );
-        button.setPreferredSize( buttonSize );
-        button.setMaximumSize( buttonSize );
-        panel.add( buttonGlue );
-        panel.add( button );
-    }
-} 
-*/
-/*
- class BottomPanel extends JPanel
-{
-    private final JSlider sldSpeed     = new JSlider( 100, 500, 100 );
-    private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", true );
-    private final Timer tmrSim;
-
-    public BottomPanel( Timer tmr )
-    {
-        tmrSim = tmr;
-        setBorder( BorderFactory.createEmptyBorder( 5, 2, 5, 2 ) );
-
-        sldSpeed.setMajorTickSpacing( 50 );
-        sldSpeed.setPaintTicks( true );
-
-        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put( 100, new JLabel( "Fast" ) );
-        labelTable.put( 250, new JLabel( "Medium" ) );
-        labelTable.put( 500, new JLabel( "Slow" ) );
-
-        sldSpeed.setLabelTable( labelTable );
-        sldSpeed.setPaintLabels( true );
-        sldSpeed.setInverted( true );
-
-        sldSpeed.addChangeListener( new ChangeListener()
-        {
-            public void stateChanged( ChangeEvent e )
-            {
-                if ( !sldSpeed.getValueIsAdjusting() ) { tmrSim.setDelay( sldSpeed.getValue() ); }
-            }
-        } );
-
-        add( sldSpeed );
-
-        cbShowGrid.addActionListener( new ActionListener()
-        {
-            public void actionPerformed( ActionEvent e )
-            {
-                GUI.setShowGrid( cbShowGrid.isSelected() );
-                GUI.getSelectedTabView().repaint();
-            }
-        } );
-
-        add( cbShowGrid );
-    }
-}
-*/
