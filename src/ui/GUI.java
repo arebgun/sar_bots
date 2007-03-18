@@ -262,7 +262,7 @@ class RescueArea extends SimDrawPanel
     private final Font fontAgentID           = new Font( "Monospaced", Font.PLAIN, 4 );
     private final GradientPaint fireGradient = new GradientPaint(     0,     0, new Color( 255,   0,  0, 200 ),
                                                                   1.25f, 1.25f, new Color( 255, 110, 30, 255 ), true );
-    private final String soilTextureFilename = "images/textures/Laramie.jpg";
+    private final String soilTextureFilename = "images/textures/grass.jpg";
     private final String roofTextureFilename = "images/textures/mixed_tile.jpg";
     private TexturePaint soilTexture;
     private TexturePaint roofTexture;

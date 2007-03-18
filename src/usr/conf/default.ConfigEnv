@@ -1,8 +1,8 @@
 # default S&R Bots Sim Environment configuration file
 
 # general parameters
-worldWidth=1000
-worldHeight=1000
+worldWidth=980	
+worldHeight=600
 gridSize=5
 
 # map configuration
