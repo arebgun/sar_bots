@@ -24,7 +24,7 @@ import config.ConfigAgent;
 
 import java.awt.*;
 import java.awt.geom.*;
-
+//this thing sux
 public abstract class Agent implements Runnable
 {
     /**
