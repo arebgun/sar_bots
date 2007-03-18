@@ -20,6 +20,8 @@ import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
 import config.ConfigAgent;
 
+//import baseobject.*;
+
 import java.awt.*;
 import java.awt.geom.*;
 
@@ -151,16 +153,6 @@ public abstract class Agent implements Runnable
     public double getVelocity()
     {
         return velocity;
-    }
-
-    /**
-     * Gets the sound radius of the agent.
-     * @author jeff
-     * @return agent soundRadius
-     */
-    public double getSoundRadius()
-    {
-    	return soundRadius;
     }
     
     public Area getSensorView()
