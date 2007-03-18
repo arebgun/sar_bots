@@ -19,19 +19,20 @@ import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
 import config.ConfigAgent;
+import baseobject.Bobject;
 
 //import baseobject.*;
 
 import java.awt.*;
 import java.awt.geom.*;
 //this thing sux bad
-public abstract class Agent implements Runnable
+public abstract class Agent extends Bobject implements Runnable
 {
     /**
      * Agent unique ID. Can be used to identify agents onscreen or
      * perform certain operations on specified agent.
      */
-    protected int unitID;
+    protected int objectID;
 
     /**
      * Used to identify an agent thread. This becomes thread name.
@@ -49,20 +50,9 @@ public abstract class Agent implements Runnable
     protected Color sensorColor;
 
     /**
-     * Agent deployment strategy. Determines initial position.
-     */
-    protected AgentLocation location;
-
-    /**
      * Agent's current speed. Currently not used.
      */
     protected double velocity;
-
-    /**
-     * @author jeff
-     * Agent's current sound radius.
-     */
-    protected double soundRadius;
     
     /**
      * Agent's "hit points" - might be used to keep track of damage.
@@ -111,19 +101,11 @@ public abstract class Agent implements Runnable
         String planClass       = config.getPlanName();
         String propulsionClass = config.getPropulsionName();
 
-        idString = "Agent unit id = " + unitID;
+        idString = "Agent unit id = " + objectID;
         initialize( deployClass, sensorClass, planClass, commClass, propulsionClass );
     }
 
-    /**
-     * Gets the Identification Number of the agent.
-     *
-     * @return unique agent ID
-     */
-    public int getID()
-    {
-        return unitID;
-    }
+   
 
     /**
      * Sets the sleep time for agent thread (time between move() call executions).
@@ -133,16 +115,6 @@ public abstract class Agent implements Runnable
     public void setSleepTime( int sleepTime )
     {
         this.sleepTime = sleepTime;
-    }
-
-    /**
-     * Gets the location of the agent.
-     *
-     * @return agent location on the map
-     */
-    public AgentLocation getLocation()
-    {
-        return location;
     }
     
     /**
@@ -158,6 +130,11 @@ public abstract class Agent implements Runnable
     public Area getSensorView()
     {
         return sensor.getView( location );
+    }
+    
+    public int getSoundRadius()
+    {
+    	return (int)(velocity*soundRadius)+soundRadius;
     }
 
     /**
@@ -217,7 +194,7 @@ public abstract class Agent implements Runnable
      */
     public void reset()
     {
-        location = deployStrategy.getNextLocation( unitID );
+        location = deployStrategy.getNextLocation( objectID );
         // TODO: add code to read a config file in case its changed
     }
 
@@ -251,7 +228,7 @@ public abstract class Agent implements Runnable
         loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
         propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location    = deployStrategy.getNextLocation( unitID );
+        location    = deployStrategy.getNextLocation( objectID );
         sensorColor = config.getSensorColor();
     }
 
