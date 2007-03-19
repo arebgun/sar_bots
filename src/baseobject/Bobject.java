@@ -4,31 +4,25 @@ import agent.AgentLocation;
 import java.awt.Color;
 
 public abstract class Bobject {
-	protected int ObjectID;
-	protected AgentLocation Location;
-	protected double Orientation;
-	protected int BoundingRadius;
-	protected int SoundRadius;
+	protected int objectID;
+	protected AgentLocation location;
+	protected int boundingRadius;
+	protected int soundRadius;
 	protected Color color;
 	
 	public int getObjectID()
 	{
-		return ObjectID;
+		return objectID;
 	}
 	
 	public AgentLocation getLocation()
 	{
-		return Location;
-	}
-	
-	public double getOrientation()
-	{
-		return Orientation;
+		return location;
 	}
 	
 	public int getBoundingRadius()
 	{
-		return BoundingRadius;
+		return boundingRadius;
 	}
 	
 	public abstract int getSoundRadius();
@@ -41,29 +35,24 @@ public abstract class Bobject {
 	public void setObjectID(int newID)
 	{
 		if (newID >= 0)
-			ObjectID = newID;
+			objectID = newID;
 	}
 	
 	public void setLocation(AgentLocation newLoc)
 	{
-		Location = newLoc;
-	}
-	
-	public void setOrientation(double newOrient)
-	{
-		Orientation = newOrient % 360;
+		location = newLoc;
 	}
 	
 	public void setBoundingRadius(int newRad)
 	{
 		if (newRad > 0)
-			BoundingRadius = newRad;
+			boundingRadius = newRad;
 	}
 	
 	public void setSoundRadius(int newSound)
 	{
 		if (newSound > 0)
-			SoundRadius = newSound;
+			soundRadius = newSound;
 	}
 	
 	public void setColor(Color newColor)

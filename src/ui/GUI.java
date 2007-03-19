@@ -331,7 +331,7 @@ class RescueArea extends SimDrawPanel
             g2.setColor( Color.BLUE );
             g2.fill( agentBody );
 
-            g2.drawString( String.valueOf( agent.getID() ), (float) bodyBounds.getX(), (float) bodyBounds.getY() );
+            g2.drawString( String.valueOf( agent.getObjectID() ), (float) bodyBounds.getX(), (float) bodyBounds.getY() );
 
             agent.setSleepTime( delay );
         }
