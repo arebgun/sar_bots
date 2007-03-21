@@ -30,4 +30,9 @@ public class Obstacle extends Bobject{
 	{
 		return soundRadius;
 	}
+	
+	public void reset()
+	{
+		
+	}
 }

@@ -34,6 +34,7 @@ public abstract class Bobject {
 	}
 	
 	public abstract int getSoundRadius();
+	public abstract void reset();
 	
 	public Color getColor()
 	{
