@@ -34,5 +34,10 @@ public class ConfigSim extends Config
     {
         return pTable.get( "agentConfigFileNames" ).split( "\\," );
     }
+    
+    public String[] getObjectConfigFileNames()
+    {
+    	return pTable.get( "objectConfigFileNames").split( "\\,");
+    }
 
 }
