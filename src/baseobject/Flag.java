@@ -3,9 +3,20 @@ package baseobject;
 import agent.AgentLocation;
 
 public class Flag extends Bobject{
-	private AgentLocation initialPosition;
 	protected int owner;
 	protected boolean isOwned;
+	protected int teamID; //used to associate the flag with a specific team
+	
+	//Consturctors for Flag
+	public Flag(AgentLocation loc, int id)
+	{
+		initialLocation = loc;
+		location = loc;
+		teamID = id;
+		owner = 0;
+		isOwned = false;
+		type = types.FLAG;
+	}
 	
 	public boolean getOwned()
 	{
@@ -38,6 +49,6 @@ public class Flag extends Bobject{
 	
 	public void reset()
 	{
-		location = initialPosition;
+		location = initialLocation;
 	}
 }
