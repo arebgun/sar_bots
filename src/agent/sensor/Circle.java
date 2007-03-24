@@ -13,36 +13,114 @@ package agent.sensor;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import agent.AgentLocation;
-import config.ConfigAgent;
-import env.Environment;
+import agent.Agent;
+import config.ConfigBobject;
+import java.lang.Math;
+import baseobject.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-// TODO: remove Area from Circle.java (possibly remove Circle.java as well)
+import sim.Simulator;
 /**
  * Implements a circular shaped agent sensor.
  *
  */
 public class Circle extends SensorModule
 {
-    public Circle( ConfigAgent config )
+	protected double radius;
+	
+    public Circle( ConfigBobject config )
     {
         super( config );
+        radius      = objectConfig.getSensorRadius();
     }
 
-    /**
-     * Starts with a circular view, centered at the agents present location and radius specified by the sensor module
-     * configuration file.  Returns the intersection of the sensor view and unoocupied areas of the environment.
-     *
-     * @param loc Agent's current location.
-     * @return Area suitable for use by the agent's navigation planner module.
-     */
-    public Area getView( AgentLocation loc )
+     public ArrayList<Agent> getSightAgents(Agent a)
     {
-        Area footprint = new Area( new Ellipse2D.Double( loc.getX() - radius, loc.getY() - radius, 2 * radius, 2 * radius ) );
-        footprint.intersect( Environment.unoccupiedArea() );
+    	ArrayList<Agent> temp = null;
+    	Iterator<Bobject> iter = Simulator.objectIterator();
+    	temp = new ArrayList<Agent>();
+    	while ( iter.hasNext())
+    	{
+    		Bobject b = iter.next();
+    		if (b.isAgent())
+    		{
+    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
+    				(double)b.getLocation().getX()+
+    				(double)a.getLocation().getY() * 
+    				(double)b.getLocation().getY());
+    			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+    				a.getObjectID() != b.getObjectID())
+    			temp.add((Agent)b);
+    		}
 
-        return footprint;
+    	}
+    	return temp;
+    }
+    public ArrayList<Agent> getHeardAgents(Agent a)
+    {
+    	ArrayList<Agent> temp = null;
+    	Iterator<Bobject> iter = Simulator.objectIterator();
+    	temp = new ArrayList<Agent>();
+    	while ( iter.hasNext())
+    	{
+    		Bobject b = iter.next();
+    		if (b.isAgent())
+    		{
+    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
+    				(double)b.getLocation().getX()+
+    				(double)a.getLocation().getY() * 
+    				(double)b.getLocation().getY());
+    			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+    				a.getObjectID() != b.getObjectID())
+    			temp.add((Agent)b);
+    		}
+
+    	}
+    	return temp;
+    }
+    public ArrayList<Obstacle> getSightObstacles(Agent a)
+    {
+    	ArrayList<Obstacle> temp = null;
+    	Iterator<Bobject> iter = Simulator.objectIterator();
+    	temp = new ArrayList<Obstacle>();
+    	while ( iter.hasNext())
+    	{
+    		Bobject b = iter.next();
+    		if (b.isObstacle())
+    		{
+    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
+    				(double)b.getLocation().getX()+
+    				(double)a.getLocation().getY() * 
+    				(double)b.getLocation().getY());
+    			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+    				a.getObjectID() != b.getObjectID())
+    			temp.add((Obstacle)b);
+    		}
+
+    	}
+    	return temp;
+    }
+    public ArrayList<Flag> getSightFlags(Agent a)
+    {
+    	ArrayList<Flag> temp = null;
+    	Iterator<Bobject> iter = Simulator.objectIterator();
+    	temp = new ArrayList<Flag>();
+    	while ( iter.hasNext())
+    	{
+    		Bobject b = iter.next();
+    		if (b.isFlag())
+    		{
+    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
+    				(double)b.getLocation().getX()+
+    				(double)a.getLocation().getY() * 
+    				(double)b.getLocation().getY());
+    			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+    				a.getObjectID() != b.getObjectID())
+    			temp.add((Flag)b);
+    		}
+
+    	}
+    	return temp;
     }
 }

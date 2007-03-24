@@ -18,22 +18,23 @@ import agent.deployment.DeploymentStrategy;
 import agent.plan.PlanModule;
 import agent.propulsion.PropulsionModule;
 import agent.sensor.SensorModule;
-import config.ConfigAgent;
-import baseobject.Bobject;
-
-//import baseobject.*;
+import config.ConfigBobject;
+import baseobject.*;
+import java.util.ArrayList;
+import java.util.Iterator; 
 
 import java.awt.*;
-import java.awt.geom.*;
-//this thing sux bad
+
+
 public abstract class Agent extends Bobject implements Runnable
 {
-    /**
-     * Agent unique ID. Can be used to identify agents onscreen or
-     * perform certain operations on specified agent.
-     */
-    protected int objectID;
-
+	//sensor arrays for agent, these arrays are to hold only those
+	//objects that can be seen or heard.
+	protected ArrayList<Agent> agentsSeen = null;
+	protected ArrayList<Agent> agentsHeard = null;
+	protected ArrayList<Obstacle> obstaclesSeen = null;
+	protected ArrayList<Flag> flagsSeen = null;
+	
     /**
      * Used to identify an agent thread. This becomes thread name.
      */
@@ -42,12 +43,13 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Configuration class that specifies all agent properties.
      */
-    protected ConfigAgent config;
+    protected ConfigBobject config;
 
     /**
-     * Sensor color.
+     * Sensor colors, sightColor and hearColor
      */
-    protected Color sensorColor;
+    protected Color sightColor;
+    protected Color hearColor;
 
     /**
      * Agent's current speed. Currently not used.
@@ -68,7 +70,8 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Sensor subsystem (sesnor shape).
      */
-    protected SensorModule sensor;
+    protected SensorModule sensorSight;
+    protected SensorModule sensorHearing;
 
     /**
      * Planning subsystem (AI algorithm goes here)
@@ -92,17 +95,24 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Agent constructor. Creates a new agent.
      */
-    public Agent( ConfigAgent config) throws Exception
+    public Agent( ConfigBobject config) throws Exception
     {
         this.config = config;
         String deployClass     = config.getDeploymentName();
-        String sensorClass     = config.getSensorName();
+        String sensorSightClass   = config.getSensorSightName();
+        String sensorHearingClass = config.getSensorHearingName();
         String commClass       = config.getCommName();
         String planClass       = config.getPlanName();
         String propulsionClass = config.getPropulsionName();
 
         idString = "Agent unit id = " + objectID;
-        initialize( deployClass, sensorClass, planClass, commClass, propulsionClass );
+        initialize( deployClass, sensorSightClass, sensorHearingClass, planClass, commClass, propulsionClass );
+        
+        agentsSeen = new ArrayList<Agent>();
+    	agentsHeard = new ArrayList<Agent>();
+    	obstaclesSeen = new ArrayList<Obstacle>();
+    	flagsSeen = new ArrayList<Flag>();
+    	soundRadius = 4;
     }
 
    
@@ -127,66 +137,68 @@ public abstract class Agent extends Bobject implements Runnable
         return velocity;
     }
     
-    public Area getSensorView()
-    {
-        return sensor.getView( location );
-    }
-    
     public int getSoundRadius()
     {
     	return (int)(velocity*soundRadius)+soundRadius;
     }
 
     /**
-     *Gtes the color of the sensor area.
+     *Gets the color of the sensor area.
      *
-     * @return sensor color
+     * @return sightSensor color
      */
-    public Color getSensorColor()
+    public Color getSightColor()
     {
-        return sensorColor;
+        return sightColor;
     }
 
-    /**
-     * Calculates and returns agent total body area (wings + body).
-     *
-     * @return total area of the agent (wings + body)
-     */
-// TODO: remove Area from getBodyArea (possibly remove the entire fuction)
-    public Area getBodyArea()
+    public Color getHearColor()
     {
-        double wingSpan   = config.getWingSpan();
-        double dimUnit    = wingSpan / 3;
-        double wingWidth  = dimUnit;
-        double bodyWidth  = dimUnit;
-        double bodyLength = 5 * dimUnit;
-
-        double x = location.getX();
-        double y = location.getY();
-        double t = location.getTheta();
-
-        Area body  = new Area( new Ellipse2D.Double( x - 3 * dimUnit,   y - dimUnit / 2,  bodyLength, bodyWidth ) );
-        Area wings = new Area( new Ellipse2D.Double( x - wingWidth / 2, y - wingSpan / 2, wingWidth,  wingSpan ) );
-        body.add( wings );
-        //TODO: DIMZAR-20060320: is this the right point to rotate about?  Do we care?
-        body.transform( AffineTransform.getRotateInstance( t, x, y ) );
-
-        return body;
+    	return hearColor;
     }
-
-    /**
+    
+     /**
      * Updates agent's location. Possible next location is selected according to
      * result returned from the planning module. Next location is within sensor
      * range of the agent.
      */
-// TODO: remove Area from move
     public void move()
     {
-        Area sensorView    = sensor.getView( location );
-        AgentLocation goal = plan.getGoalLocation( location, sensorView );
+    	checkSensors();
+        AgentLocation goal = plan.getGoalLocation( this );
         location           = propulsion.move( location, goal );
     }
 
+    private void checkSensors()
+    {
+    	//wipe all sensor arrays then fill them again (no memory for the agents)
+    	agentsSeen.clear();
+    	//agentsHeard.clear();
+    	obstaclesSeen.clear();
+    	//flagsSeen.clear();
+    	
+    	//fill arraylists with all sensor information
+    	agentsSeen.addAll(sensorSight.getSightAgents(this));
+    	//agentsHeard = sensorHearing.getHeardAgents(this);
+    	obstaclesSeen.addAll(sensorSight.getSightObstacles(this));
+    	//flagsSeen = sensorSight.getSightFlags(this);
+    }
+    public Iterator<Agent> getAgentsSeen()
+    {
+    	return agentsSeen.iterator();
+    }
+    public Iterator<Agent> getAgentsHeard()
+    {
+    	return agentsHeard.iterator();
+    }
+    public Iterator<Obstacle> getObstaclesSeen()
+    {
+    	return obstaclesSeen.iterator();
+    }
+    public Iterator<Flag> getFlagsSeen()
+    {
+    	return flagsSeen.iterator();
+    }
     /**
      * Resents agent properties. This is used to restart the simulation. Currently
      * only resets agent location, but all subsystem modules could be reset here,
@@ -194,8 +206,7 @@ public abstract class Agent extends Bobject implements Runnable
      */
     public void reset()
     {
-        location = deployStrategy.getNextLocation( objectID );
-        // TODO: add code to read a config file in case its changed
+        location = initialLocation;
     }
 
     /**
@@ -210,14 +221,17 @@ public abstract class Agent extends Bobject implements Runnable
      * @param propulsionClass class to use for propulsion module (must be a subclass of PropulsionModule)
      * @throws Exception
      */
-    private void initialize( String deployClass, String sensorClass, String planClass, String commClass, String propulsionClass ) throws Exception
+    private void initialize( String deployClass, String sensorSightClass, String sensorHearingClass, String planClass, String commClass, String propulsionClass ) throws Exception
     {
-        Class aC       = ConfigAgent.class;
+        Class aC       = ConfigBobject.class;
         Class loader   = Class.forName( deployClass, true, this.getClass().getClassLoader() );
         deployStrategy = (DeploymentStrategy) loader.getConstructor( aC ).newInstance( config );
 
-        loader = Class.forName( sensorClass, true, this.getClass().getClassLoader() );
-        sensor = (SensorModule) loader.getConstructor( aC ).newInstance( config );
+        loader = Class.forName( sensorSightClass, true, this.getClass().getClassLoader() );
+        sensorSight = (SensorModule) loader.getConstructor( aC ).newInstance( config );
+        
+        loader = Class.forName( sensorHearingClass, true, this.getClass().getClassLoader() );
+        sensorHearing = (SensorModule) loader.getConstructor( aC ).newInstance( config );
 
         loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
         plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
@@ -228,8 +242,8 @@ public abstract class Agent extends Bobject implements Runnable
         loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
         propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location    = deployStrategy.getNextLocation( objectID );
-        sensorColor = config.getSensorColor();
+        location    = deployStrategy.getNextLocation( this );
+        //config.getSensorColor() is called for both atm, this needs to be changed
     }
 
     /**

@@ -13,13 +13,17 @@ package agent.deployment;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+import agent.Agent;
 import agent.AgentLocation;
+import baseobject.Bobject;
 import config.ConfigAgent;
 import env.Environment;
-
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
+
+import sim.Simulator;
 
 // TODO: remove Area from Stochastic.java
 /**
@@ -42,11 +46,9 @@ public class Stochastic extends DeploymentStrategy
      * @param id unique agent id
      * @return AgentLocation object for the agent specified by id
      */
-// TODO: remove Area from getNextLocation (used to determine unoccupied locations in the world)
-    public AgentLocation getNextLocation( int id )
+    public AgentLocation getNextLocation( Agent a )
     {
-        Area unoccupied    = Environment.unoccupiedArea();
-        Rectangle2D bounds = unoccupied.getBounds2D();
+    	Rectangle2D world = Environment.groundShape();
         double x           =   -1;
         double y           =   -1;
         int limit          = 1000;
@@ -54,13 +56,31 @@ public class Stochastic extends DeploymentStrategy
 
         while ( !found && --limit > 0 )
         {
-            x = rand.nextDouble() * bounds.getWidth();
-            y = rand.nextDouble() * bounds.getHeight();
-
-            if ( unoccupied.contains( x, y ) ) { found = true; }
+        	//find a random spot on the map
+            x = rand.nextDouble() * world.getMaxX();
+            y = rand.nextDouble() * world.getMaxY();
+            //make sure nothing is in that spot too
+           
+            boolean good = true;
+            Iterator<Bobject> iter = Simulator.objectIterator();
+        	while ( iter.hasNext())
+        	{
+        		Bobject b = iter.next();
+        		double dist = Math.sqrt(x * b.getLocation().getX() +
+        				y * b.getLocation().getY());
+        		//if object b is not within the bounding radius of a, do nothing.
+        		//if object b is within the bounding radius of a, then good = false
+        		//and this location is not a good one to start with
+        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+        				a.getObjectID() != b.getObjectID())
+        			;
+        		else
+        			good = false;
+        	}
+        	found = good; 
         }
 
-        if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + id ); }
+        if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
 
         return new AgentLocation( x, y, rand.nextGaussian() );
     }

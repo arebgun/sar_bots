@@ -13,18 +13,13 @@ package env;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import agent.Agent;
-import agent.AgentLocation;
+
 import config.ConfigEnv;
 import sim.Simulator;
-import env.Flag;
-
+import baseobject.*;
 import java.awt.*;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.io.*;
 import static java.lang.Math.*;
-import java.text.ParseException;
 import java.util.*;
 // TODO: remove Area and all of its functions from Environment including
 // import java.awt.geom.Area and import java.awt.geom.Rectangle2D
@@ -51,10 +46,8 @@ public class Environment
     private static int wellCoveredPercentage;
     private static int[] sensCoverageFrequency;
     private static ArrayList<Double> sensCoverageRatios;
-    private static Area buildings;
-    private static Flag flag1;
-    private static ArrayList<Polygon> buildingList;
-
+    private static Rectangle worldSize;
+    
     public static int getTotalCoveragePercentage()
     {
         return totalCoveragePercentage;
@@ -91,6 +84,7 @@ public class Environment
         gridSize    = config.getGridSize();
         gridRowSize = worldWidth  / gridSize;
         gridColSize = worldHeight / gridSize;
+        worldSize = new Rectangle(worldWidth, worldHeight);
 
         // NOTE: cells are stored in top-down, left-to-right order (column-major mode when looking at the grid)
         for ( int i = 0; i < gridRowSize; i++ )
@@ -104,10 +98,6 @@ public class Environment
         sensCoverageFrequency = new int[grid.size()];
         sensCoverageRatios    = new ArrayList<Double>( grid.size() );
 
-        loadBuildings( config.getBuildingsFileName() );
-        loadFires( config.getFiresFileName() );
-        loadFlags( config.getFlagsFileName() );
- 
     }
 
     /**
@@ -115,7 +105,6 @@ public class Environment
      */
     public static void reset()
     {
-        Fire.reset();
         sensCoverageRatios.clear();
         Arrays.fill( sensCoverageFrequency, 0 );
         totalCoveragePercentage = 0;
@@ -123,152 +112,26 @@ public class Environment
     }
 
     /**
-     * Computes the portion of the world that is occupied by objects, such as buildings and other agents.
-     * In order to increase simulation performance, it is possible to disable the N^2 computation for computing
-     * the area occupied by agents.  This will lead to much faster throughput, but will allow collisions between
-     * the agents to occur.
-     * @return
+     * Returns the size of the world in the form of a Rectangle
      */
-    
-// TODO: occupiedArea must be completly redone without Area or scrapped altogether
-    public static Area occupiedArea()
+    public static Rectangle groundShape()
     {
-        Area occupied = new Area( buildings );
-        occupied.add( Simulator.agentSpace() ); // dimzar: speed up line right here :)
-
-        return occupied;
+    	return worldSize;
     }
-
-    /**
-     * Uses the @see occupiedArea to compute the set of points accessible to the navigation planners.
-     * @return
-     */
-// TODO: unoccupiedArea must be completly redone without Area or scrapped altogether
-    public static Area unoccupiedArea()
-    {
-        Area world = new Area( new Rectangle2D.Double( 0, 0, worldWidth, worldHeight ) );
-        world.subtract( occupiedArea() );
-
-        return world;
-    }
-
+ 
+    //TODO: Update for environment might be used to update the statistics for each "turn"
     /**
      * Advances the state of the simulation one time step; introduces fires, computes detection and coverage statistics.
      */
-// TODO: remove Area from update
     public static void update()
     {
         // compute sensor coverage frequency
-        Iterator<Agent> iter = Simulator.agentsIterator();
-
+    	Iterator<Bobject> iter = Simulator.objectIterator();
         while ( iter.hasNext() )
         {
-            Agent agent        = iter.next();
-            Area sensFootprint = agent.getSensorView();
-            Rectangle2D bounds = sensFootprint.getBounds2D();
-
-            int startX = (int) max( 0, floor( bounds.getX() / gridSize ) );
-            int startY = (int) max( 0, floor( bounds.getY() / gridSize ) );
-            int endX   = (int) min( gridRowSize, ceil( ( bounds.getX() + bounds.getWidth()  ) / gridSize ) );
-            int endY   = (int) min( gridColSize, ceil( ( bounds.getY() + bounds.getHeight() ) / gridSize ) );
-
-            for ( int i = startX; i < endX; i++ )
-            {
-                for ( int j = startY; j < endY; j++ )
-                {
-                    // NOTE: cells are stored using column-major mode
-                    int index = i * gridColSize + j;
-                    if ( sensFootprint.intersects( grid.get( index ) ) ) { sensCoverageFrequency[index]++; }
-                }
-            }
+            Bobject b        = iter.next();
+ 
         }
-
-        calculateCoverage();
-    }
-
-    /**
-     * Loads the building geometry from the configuration file.  The buildings are specified by a list of (x,y) points,
-     * representing arbitrary polygon geometry.
-     *
-     * @param buildingsFileName Fully qualified pathname to the buildings configuration file.
-     * @throws Exception
-     */
-// TODO: remove Area from loadBuildings
-    private static void loadBuildings( String buildingsFileName ) throws Exception
-    {
-        buildings    = new Area();
-        buildingList = new ArrayList<Polygon>();
-
-        StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( buildingsFileName ) ) );
-        st.ordinaryChars( '+', '9' );
-        st.wordChars( ' ', '~' );
-        st.commentChar( '#' );
-
-        while ( st.nextToken() != StreamTokenizer.TT_EOF )
-        {
-            String xPoints[] = st.sval.split( "\\," );
-            st.nextToken();
-            String yPoints[] = st.sval.split( "\\," );
-
-            int n = xPoints.length;
-            if ( n != yPoints.length ){ throw new ParseException( "building vertex X/Y list length mismatch", n ); }
-
-            int x[] = new int[n];
-            int y[] = new int[n];
-
-            for ( int i = 0; i < n; i++ )
-            {
-                x[i] = Integer.parseInt( xPoints[i] );
-                y[i] = Integer.parseInt( yPoints[i] );
-            }
-
-            Polygon building = new Polygon( x, y, n );
-            buildingList.add( building );
-            buildings.add( new Area( building ) );
-        }
-    }
-
-    /**
-     * Parses the timing and size information for fires, storing them into the <code>Fire</code> hashtable.
-     *
-     * @param firesFileName Fully qualified pathname to the fires configuration file.
-     * @throws Exception
-     */
-    private static void loadFires( String firesFileName ) throws Exception
-    {
-        StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( firesFileName ) ) );
-        st.ordinaryChars( '+', '9' );
-        st.wordChars( ' ', '~' );
-        st.commentChar( '#' );
-
-        while ( st.nextToken() != StreamTokenizer.TT_EOF )
-        {
-            Fire.add( st.sval.split( "\\," ) );
-        }
-    }
-    
-    /**
-     * Parses the (x,y) coordinate information for flags and creates as many
-     * flags as needed
-     * 
-     * @param flagsFileName Fully qualified pathname to the flags configuration file.
-     * @throws Exception
-     */
-    private static void loadFlags( String flagsFileName ) throws Exception
-    {
-    	StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( flagsFileName ) ) );
-    	st.ordinaryChars('+', '9' );
-    	st.wordChars( ' ', '~' );
-    	st.commentChar( '#');
-    	
-    	while ( st.nextToken() != StreamTokenizer.TT_EOF )
-    	{
-    		String flagData[] = st.sval.split( "\\,");
-    		int x = Integer.parseInt(flagData[1]);
-    		int y = Integer.parseInt(flagData[2]);
-    		AgentLocation temp = new AgentLocation(x,y,0);
-    		flag1 = new Flag(temp);
-    	}
     }
 
     /**
@@ -311,26 +174,6 @@ public class Environment
     {
         return max( 1, max( pixelScreenSize.width / worldWidth, pixelScreenSize.height / worldHeight ) );
     }
-// TODO: remove Area from getBuildings
-    public static Area getBuildings()
-    {
-        return buildings;
-    }
-// TODO: remove Area from getFires
-    public static Area getFires()
-    {
-        return Fire.getFires();
-    }
-
-    public static int getActiveFires()
-    {
-        return Fire.getCurFires();
-    }
-
-    public static int getFoundFires()
-    {
-        return Fire.getDetFires();
-    }
 
     /**
      * Graphics utility routine for positioning the texture maps of the world and buildings background.
@@ -346,39 +189,5 @@ public class Environment
     public static Iterator<Rectangle2D> gridIterator()
     {
         return grid.iterator();
-    }
-
-    public static Iterator<Double> sensCoverageFractionIterator()
-    {
-        calculateCoverage();
-
-        return sensCoverageRatios.iterator();
-    }
-
-    /**
-     * Uses the grid-based coverage method to count the number of cells that have more than 50% exposure to agent sensors.
-     */
-    private static void calculateCoverage()
-    {
-        sensCoverageRatios.clear();
-        double max = 1;
-
-        int coveredCells     = 0;
-        int wellCoveredCells = 0;
-
-        for ( int val : sensCoverageFrequency )
-        {
-            if ( val > max ) { max = val; }
-            if ( val != 0 )  { coveredCells++; }
-        }
-
-        for ( int ratio : sensCoverageFrequency )
-        {
-            sensCoverageRatios.add( ratio / max );
-            if ( ratio / max > 0.5 ) { wellCoveredCells++; }
-        }
-
-        totalCoveragePercentage = ( 100 * coveredCells )     / sensCoverageFrequency.length;
-        wellCoveredPercentage   = ( 100 * wellCoveredCells ) / sensCoverageFrequency.length;
     }
 }

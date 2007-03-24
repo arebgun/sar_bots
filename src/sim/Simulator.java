@@ -14,19 +14,16 @@ package sim;
  */
 
 
-import agent.Agent;
-import config.ConfigAgent;
-import config.ConfigSim;
+import config.*;
 import env.Environment;
-import env.Fire;
 import ui.GUI;
 import ui.CLI;
+import baseobject.*;
 
-import java.awt.geom.Area;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
-// TODO: remove Area from this file including import java.awt.geom.Area and
 /**
  * The main entrypoint for the UAV Search and Rescue Bot simulator.  This object keeps track of the main components,
  * such as the agents, the enviroment, and configuration.
@@ -37,8 +34,11 @@ public class Simulator
 
     private static ConfigSim config;
     private static int time;
-    private static ArrayList<Agent> agents;
-
+   //our world objects and the number of them (numberWorldObjects is used as
+    //the index value and object id)
+    private static int numberWorldObjects = 0;
+    private static ArrayList<Bobject> worldObjects;
+    
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce
      * output.
@@ -56,18 +56,21 @@ public class Simulator
         Environment.load( config.getEnvConfigFileName() );
 
         logger.info( "loading AGENT data ..." );
-        agents = new ArrayList<Agent>();
-        String agentConfigFiles[] = config.getAgentConfigFileNames();
+        worldObjects = new ArrayList<Bobject>();
 
-        for ( String aFile : agentConfigFiles )
+        String objectConfigFiles[] = config.getObjectConfigFileNames();
+        
+        for ( String objFile : objectConfigFiles )
         {
-            ConfigAgent agentConfig = new ConfigAgent( aFile );
-            Class loader            = Class.forName( agentConfig.getClassName(), true, agentConfig.getClass().getClassLoader() );
-
-            for ( int i = 0; i < agentConfig.getSwarmSize(); i++ )
-            {
-                agents.add( (Agent) loader.getConstructor( ConfigAgent.class ).newInstance( agentConfig ) );
-            }
+        	ConfigBobject objConfig = new ConfigBobject( objFile );
+        	Class loader = Class.forName(objConfig.getClassName(), true, objConfig.getClass().getClassLoader() );
+        	
+        	for ( int o = 0; o < objConfig.getSwarmSize(); o++)
+        	{
+        		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
+        		worldObjects.get(o).setObjectID(o);
+        	}
+        	numberWorldObjects = objConfig.getSwarmSize();
         }
 
         if ( uiType.equalsIgnoreCase( "gui" ) )
@@ -89,9 +92,9 @@ public class Simulator
     {
         time = 0;
 
-        for(Agent agent : agents)
+        for(Bobject obj : worldObjects)
         {
-            agent.reset();
+            obj.reset();
         }
 
         Environment.reset();
@@ -112,48 +115,12 @@ public class Simulator
 
         /*if (time % 3 == 0)*/ { Environment.update(); }
 
-        // introduce fires
-        Fire.update( time );
     }
-// TODO: remove Area from agentSpace
-    /**
-     * Computes space currently occupied by the airborne agents.
-     * @return The area occupied by the agents.
-     */
-    public static Area agentSpace()
+
+    public static Iterator<Bobject> objectIterator()
     {
-        Area space = new Area();
-
-        for ( Agent agent : agents )
-        {
-            space.add( agent.getBodyArea() );
-        }
-
-        return space;
+    	return worldObjects.iterator();
     }
-// TODO: removoe Area from agentSensorSpace
-    /**
-     * Computes the space covered by the sensors of each agent.
-     *
-     * @return Area currently surveyed by the agents.
-     */
-    public static Area agentSensorSpace()
-    {
-        Area space = new Area();
-
-        for ( Agent agent : agents )
-        {
-            space.add( agent.getSensorView() );
-        }
-
-        return space;
-    }
-
-    public static Iterator<Agent> agentsIterator()
-    {
-        return agents.iterator();
-    }
-
     /**
      * Initializes the simulator state, sets up the logging facilities, and parses the command line arguments.
      *

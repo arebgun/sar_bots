@@ -13,11 +13,14 @@ package agent.plan;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import agent.AgentLocation;
+import agent.*;
+import baseobject.*;
 import config.ConfigAgent;
-
-import java.awt.geom.*;
+import env.Environment;
+import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
+
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -60,43 +63,68 @@ public class Stochastic extends PlanModule
      * that the agent will end up in that location on the next step; the next actual location
      * will depend on the @see Propulsion module.
      */
-// TODO: remove Area from getGoalLocation (used for sensor's range and a silly navigation computation)
-    public AgentLocation getGoalLocation( AgentLocation location, Area sensorView )
+    public AgentLocation getGoalLocation( Agent a )
     {
-        Rectangle2D bounds = sensorView.getBounds();
-        double curX        = location.getX();
-        double curY        = location.getY();
-
+ 
+        double curX        = a.getLocation().getX();
+        double curY        = a.getLocation().getY();
+        
         double newX     = -1;
         double newY     = -1;
-        double newTheta = location.getTheta();
+        double newTheta = a.getLocation().getTheta();
 
+        int range = a.getSoundRadius();
+        
         int limit      = 1000;
         boolean placed = false;
 
         while ( !placed && --limit > 0 )
         {
-            newX = bounds.getX() + bounds.getWidth()  * rand.nextDouble();
-            newY = bounds.getY() + bounds.getHeight() * rand.nextDouble();
+            newX = curX + range * rand.nextDouble();
+            newY = curY + range * rand.nextDouble();
 
-            if ( sensorView.contains( newX, newY ) )
-            {
-                newTheta = atan2( newY - curY, newX - curX );
-                // the reachability of the path is determined by creating a narrow rectangular box anchored at the
-                // current agent's location, rotated to touch the currently chosen goal point.
-                Area path = new Area( new Rectangle2D.Double( curX, curY, hypot( newX - curX, newY - curY ), .5/*wingSpan/2*/ ) );
-                path.transform( AffineTransform.getRotateInstance( newTheta, curX, curY ) );
-                path.intersect( sensorView );
-
-                if ( !path.isEmpty() && path.isSingular() ) { placed = true; }
-            }
+            boolean good = true;
+            //make sure you don't hit an agent
+            Iterator<Agent> iter = a.getAgentsSeen();
+        	
+        	while ( iter.hasNext() && good)
+        	{
+        		Agent b = iter.next();
+        		int dist = (int)Math.sqrt(newX * (double)b.getLocation().getX()+
+        				newY * (double)b.getLocation().getY());
+        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist)
+        			good = false;
+        		
+        	}
+        	
+        	//make sure you don't hit an obstacle
+        	Iterator<Obstacle> iterO = a.getObstaclesSeen();
+        	
+        	while ( iterO.hasNext() && good)
+        	{
+        		Obstacle o = iterO.next();
+        		int distO = (int)Math.sqrt(newX * (double)o.getLocation().getX()+
+        				newY * (double)o.getLocation().getY());
+        		if (a.getBoundingRadius() + o.getBoundingRadius() <= distO)
+        			good = false;
+        	}
+        	
+        	//check to make sure we are withing the borders
+        	// only need to check if the location is a good one so far
+        	if (good)
+        	{
+        		Rectangle2D world = Environment.groundShape();
+        		if (newX > 0 && newX < world.getMaxX() && newY > 0 && newY < world.getMaxY())
+        			placed = true;
+        	}
+        	
         }
 
         if ( !placed )
         {
             newX     = curX;
             newY     = curY;
-            newTheta = location.getTheta() + PI/6;
+            newTheta = a.getLocation().getTheta() + PI/6;
         }
 
         return new AgentLocation( newX, newY, newTheta );

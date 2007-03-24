@@ -13,11 +13,8 @@ package agent.plan;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import agent.AgentLocation;
+import agent.*;
 import config.ConfigAgent;
-
-import java.awt.geom.Area;
-// TODO: remove Area from PlanModule.java
 /**
  * This class is responsible for the "brain" of the MAV.
  * Real AI algorithms can be used here and placed into
@@ -48,6 +45,5 @@ public abstract class PlanModule
      * @return next location that the agent will move to
      */
     
-    // TODO: remove Area from GetGoalLocation
-    public abstract AgentLocation getGoalLocation( AgentLocation location, Area sensorView );
+    public abstract AgentLocation getGoalLocation(Agent a );
 }

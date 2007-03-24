@@ -2,11 +2,9 @@
 package agent.deployment;
 
 import config.ConfigAgent;
-/*
+
 import agent.*;
-import baseObject.Bobject;
-import env.Environment;
-import java.util.ArrayList;
+import baseobject.Bobject;
 import java.util.Iterator;
 import java.util.Random;
 import sim.Simulator;
@@ -18,7 +16,7 @@ public class CircleDeploy extends DeploymentStrategy{
 	public CircleDeploy( ConfigAgent config )
     {
         super( config );
-        if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() );
+        if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() );}
     }
 	
 	public AgentLocation getNextLocation( Agent a )
@@ -43,7 +41,7 @@ public class CircleDeploy extends DeploymentStrategy{
 	        while ( iter.hasNext())
 	        {
 	        	Bobject b = iter.next();
-	        	double dist = Math.sqrt(x * b.getLoaction().getX() +
+	        	double dist = Math.sqrt(x * b.getLocation().getX() +
 	        			y * b.getLocation().getY());
 	        	
 	        	if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
@@ -60,4 +58,3 @@ public class CircleDeploy extends DeploymentStrategy{
 		return new AgentLocation( x, y, rand.nextGaussian() );
     }
 }
-*/

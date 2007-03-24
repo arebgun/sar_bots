@@ -13,31 +13,30 @@ package agent.sensor;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import agent.AgentLocation;
-import config.ConfigAgent;
+import config.ConfigBobject;
+import java.util.ArrayList;
+import agent.Agent;
+import baseobject.*;
 
-import java.awt.geom.Area;
-
-// TODO: remove Area from SensorModule.java (possibly the entire class depending on how we will implement collision detection)
 /**
  * Provides a common initialization routines for all sensor modules using the agent configuration
  * object supplied by the Simulator.
  */
 public abstract class SensorModule
 {
-    protected ConfigAgent agentConfig;
-    protected double radius;
-
+    protected ConfigBobject objectConfig;
+    
     /**
      * Initializes basic sensor module state using the agent configuation object.
      *
      * @param config
      */
-    public SensorModule( ConfigAgent config )
+    public SensorModule( ConfigBobject config )
     {
-        agentConfig = config;
-        radius      = agentConfig.getSensorRange();
+        objectConfig = config;
     }
-
-    public abstract Area getView( AgentLocation loc );
+    public abstract ArrayList<Agent> getSightAgents(Agent a);
+    public abstract ArrayList<Obstacle> getSightObstacles(Agent a);
+    public abstract ArrayList<Flag> getSightFlags(Agent a);
+    public abstract ArrayList<Agent> getHeardAgents(Agent a);
 }

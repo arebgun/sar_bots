@@ -18,11 +18,13 @@ package ui;
 import agent.Agent;
 import env.Environment;
 import sim.Simulator;
+import baseobject.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -32,8 +34,6 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class GUI
 {
@@ -293,14 +293,20 @@ class RescueArea extends SimDrawPanel
 
     public void simPaint( Graphics2D g2 )
     {
-        paintEnvironment( g2 );
-        paintAgents( g2 );
+    	g2.setPaint(soilTexture);
+    	g2.fill(Environment.groundShape());
+    	
+    	if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
+    	
+    	paintObjects(g2);
+       // paintAgents( g2 );
     }
  // TODO: change paintEnvironment to exclude the use of Area and its functions
+    /*
     private void paintEnvironment( Graphics2D g2 )
     {
         g2.setPaint( soilTexture );
-        g2.fill( Environment.unoccupiedArea() );
+        g2.fill( Environment.groundShape() );
 
         if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
 
@@ -309,34 +315,51 @@ class RescueArea extends SimDrawPanel
 
         g2.setPaint( fireGradient );
         g2.fill( Environment.getFires() );
-    }
- // TODO: change paintAgents to exclude the use of Area and its functions
-    private void paintAgents( Graphics2D g2 )
+    }   
+    */
+    
+    private void paintObjects( Graphics2D g2)
     {
-        int delay = GUI.getInstance().getDelay();
-
-        g2.setFont( fontAgentID );
-        Iterator<Agent> iter = Simulator.agentsIterator();
-
-        while ( iter.hasNext() )
-        {
-            Agent agent            = iter.next();
-            Area sensView          = agent.getSensorView();
-            Area agentBody         = agent.getBodyArea();
-            Rectangle2D bodyBounds = agentBody.getBounds2D();
-
-            g2.setColor( agent.getSensorColor() );
-            g2.fill( sensView );
-
-            g2.setColor( Color.BLUE );
-            g2.fill( agentBody );
-
-            g2.drawString( String.valueOf( agent.getObjectID() ), (float) bodyBounds.getX(), (float) bodyBounds.getY() );
-
-            agent.setSleepTime( delay );
-        }
+    	int delay = GUI.getInstance().getDelay();
+    	
+    	Iterator<Bobject> iter = Simulator.objectIterator();
+    	
+    	while ( iter.hasNext())
+    	{
+    		Bobject b = iter.next();
+    		
+    		if (b.isAgent())
+    		{
+    			Agent a = (Agent)b;
+    			g2.setColor(a.getColor());
+    			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX(),
+        				(float)a.getLocation().getY(),
+        				(float)a.getBoundingRadius(),
+        				(float)a.getBoundingRadius()));
+    			a.setSleepTime( delay );
+    		}
+    		if (b.isFlag())
+    		{
+    			Flag f = (Flag)b;
+    			g2.setColor(f.getColor());
+    			g2.fill(new Ellipse2D.Float((float)f.getLocation().getX(),
+        				(float)f.getLocation().getY(),
+        				(float)f.getBoundingRadius(),
+        				(float)f.getBoundingRadius()));
+    		}
+    		if (b.isObstacle())
+    		{
+    			Obstacle o = (Obstacle)b;
+    			g2.setColor(o.getColor());
+    			g2.fill(new Ellipse2D.Float((float)o.getLocation().getX(),
+        				(float)o.getLocation().getY(),
+        				(float)o.getBoundingRadius(),
+        				(float)o.getBoundingRadius()));
+    		}    	
+    	}
     }
 }
+ 
 
 class SensCoverage extends SimDrawPanel
 {
@@ -353,18 +376,8 @@ class SensCoverage extends SimDrawPanel
         }
     }
 
- // TODO: change simPaint to exclude Area and its functions
     public void simPaint( Graphics2D g2 )
     {
-        Iterator<Double> fractionIter  = Environment.sensCoverageFractionIterator();
-        Iterator<Rectangle2D> gridIter = Environment.gridIterator();
-
-        while ( gridIter.hasNext() )
-        {
-            g2.setColor( clrTable[(int) ( fractionIter.next() * clrSize )] );
-            g2.fill( gridIter.next() );
-        }
-
         if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
     }
 }
@@ -419,12 +432,15 @@ class BottomPanel extends JPanel
                 {
                     GUI.getInstance().getTmrUpdate().stop();
                     tmrSim.stop();
-                    Iterator<Agent> it = Simulator.agentsIterator();
-
+                    Iterator<Bobject> it = Simulator.objectIterator();
                     while(it.hasNext())
                     {
-                        Agent agent = it.next();
-                        agent.stop();
+                    	Bobject b = it.next();
+                    	if (b.isAgent())
+                    	{
+                    		Agent a = (Agent)b;
+                    		a.stop();
+                    	}                    
                     }
 
                     btnStartStop.setText( "Start" );
@@ -434,12 +450,15 @@ class BottomPanel extends JPanel
                     btnStartStop.setText( "Stop" );
                     tmrSim.start();
                     GUI.getInstance().getTmrUpdate().start();
-                    Iterator<Agent> it = Simulator.agentsIterator();
-
+                    Iterator<Bobject> it = Simulator.objectIterator();
                     while(it.hasNext())
                     {
-                        Agent agent = it.next();
-                        agent.start(false);
+                    	Bobject b = it.next();
+                    	if (b.isAgent())
+                    	{
+                    		Agent a = (Agent)b;
+                    		a.start(false);
+                    	}
                     }
                 }
             }

@@ -77,11 +77,6 @@ public class ConfigBobject extends Config
     	return pTable.get( "sensorHearingName" );
     }
 
-    public double getSensorRange()
-    {
-        return Double.parseDouble( pTable.get( "sensorRange" ) );
-    }
-
     public Color getSightColor()
     {
         String clrValues[] = pTable.get( "sightColor" ).split( "\\," );

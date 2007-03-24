@@ -13,6 +13,7 @@ package agent.deployment;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+import agent.Agent;
 import agent.AgentLocation;
 import config.ConfigAgent;
 
@@ -43,5 +44,5 @@ public abstract class DeploymentStrategy
      * @param id unique agent id
      * @return AgentLocation object for the agent specified by id
      */
-    public abstract AgentLocation getNextLocation( int id );
+    public abstract AgentLocation getNextLocation( Agent a );
 }
