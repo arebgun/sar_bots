@@ -67,9 +67,14 @@ public class ConfigBobject extends Config
         return Double.parseDouble( pTable.get( "propulsionEnergyAmount" ) );
     }
 
-    public String getSensorName()
+    public String getSensorSightName()
     {
-        return pTable.get( "sensorName" );
+        return pTable.get( "sensorSightName" );
+    }
+    
+    public String getSensorHearingName()
+    {
+    	return pTable.get( "sensorHearingName" );
     }
 
     public double getSensorRange()
@@ -110,6 +115,21 @@ public class ConfigBobject extends Config
     public int getSoundRadius()
     {
     	return Integer.parseInt( pTable.get( "soundRadius" ) );
+    }
+    
+    public double getSensorRadius()
+    {
+    	return Double.parseDouble( pTable.get ( "sensorRadius" ) );
+    }
+    
+    public double getSensorArcAngle()
+    {
+    	return Double.parseDouble( pTable.get ( "sensorArcAngle" ) );
+    }
+    
+    public double getSensorLength()
+    {
+    	return Double.parseDouble( pTable.get ( "sensorLength" ) );
     }
     
     
