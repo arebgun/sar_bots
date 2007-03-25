@@ -3,6 +3,8 @@ package baseobject;
 import agent.AgentLocation;
 import java.awt.Color;
 
+import config.ConfigBobject;
+
 public abstract class Bobject {
 	protected int objectID;
 	protected AgentLocation location;
@@ -12,6 +14,8 @@ public abstract class Bobject {
 	protected Color color;
 	protected enum types {AGENT,FLAG,OBSTACLE}
 	protected types type;
+	protected boolean placed = false;
+    protected ConfigBobject config;
 	
 	public int getObjectID()
 	{
@@ -91,5 +95,20 @@ public abstract class Bobject {
 	public void setType(types newType)
 	{
 		type = newType;
+	}
+	
+	public boolean isPlaced()
+	{
+		return placed;
+	}
+	
+	public void togglePlaced()
+	{
+		placed = !placed;
+	}
+	
+	public void setPlaced(boolean tog)
+	{
+		placed = tog;
 	}
 }

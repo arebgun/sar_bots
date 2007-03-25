@@ -13,7 +13,7 @@ package agent.comm;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import config.ConfigAgent;
+import config.ConfigBobject;
 
 /**
  * Implements CommModule abstract class.
@@ -21,7 +21,7 @@ import config.ConfigAgent;
  */
 public class None extends CommModule
 {
-    public None( ConfigAgent config )
+    public None( ConfigBobject config )
     {
         super( config );
     }

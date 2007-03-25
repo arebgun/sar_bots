@@ -2,18 +2,19 @@
 
 #classname
 className=agent.Defender
-swarmSize=5
+swarmSize=10
+teamID=1
 
 #communications
 commName=agent.comm.None
 commRange=100
 
 #deployment
-deploymentName=agent.deployment.Stochastic
+deploymentName=agent.deployment.CircleDeploy
 deploymentSeed=0
 
 #planning
-planName=agent.deployment.CircleDeploy
+planName=agent.plan.Stochastic
 planSeed=0
 
 #propulsion
@@ -27,11 +28,12 @@ sensorHearingName=agent.sensor.Circle
 
 #bot attributes
 health=10
-boundingRadius=20
+boundingRadius=5
+objectColor=0,255,255,255
 
 #sound attributes
 soundRadius=50
-sensorRadius=100
+sensorRadius=40
 soundColor=0,170,155,255
 
 #sight attributes

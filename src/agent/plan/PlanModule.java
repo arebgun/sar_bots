@@ -14,7 +14,7 @@ package agent.plan;
  */
 
 import agent.*;
-import config.ConfigAgent;
+import config.ConfigBobject;
 /**
  * This class is responsible for the "brain" of the MAV.
  * Real AI algorithms can be used here and placed into
@@ -25,16 +25,16 @@ public abstract class PlanModule
     /**
      * Configuration class that specifies all agent properties.
      */
-    protected ConfigAgent agentConfig;
+    protected ConfigBobject objectConfig;
 
     /**
      * Default constructor.
      *
      * @param config ConfigAgent class that specifies all agent properties
      */
-    protected PlanModule( ConfigAgent config )
+    protected PlanModule( ConfigBobject config )
     {
-        agentConfig = config;
+        objectConfig = config;
     }
 
     /**

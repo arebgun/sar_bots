@@ -13,8 +13,6 @@ package ui;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-// TODO: remove Area from this file including import java.awt.geom.Area and
-// import java.awt.geom.Rectangle2D
 import agent.Agent;
 import env.Environment;
 import sim.Simulator;
@@ -22,7 +20,6 @@ import baseobject.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -259,9 +256,6 @@ abstract class SimDrawPanel extends JPanel
 
 class RescueArea extends SimDrawPanel
 {
-    private final Font fontAgentID           = new Font( "Monospaced", Font.PLAIN, 4 );
-    private final GradientPaint fireGradient = new GradientPaint(     0,     0, new Color( 255,   0,  0, 200 ),
-                                                                  1.25f, 1.25f, new Color( 255, 110, 30, 255 ), true );
     private final String soilTextureFilename = "images/textures/grass.jpg";
     private final String roofTextureFilename = "images/textures/rocks.jpg";
     private TexturePaint soilTexture;
@@ -299,25 +293,8 @@ class RescueArea extends SimDrawPanel
     	if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
     	
     	paintObjects(g2);
-       // paintAgents( g2 );
     }
- // TODO: change paintEnvironment to exclude the use of Area and its functions
-    /*
-    private void paintEnvironment( Graphics2D g2 )
-    {
-        g2.setPaint( soilTexture );
-        g2.fill( Environment.groundShape() );
-
-        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
-
-        g2.setPaint( roofTexture );
-        g2.fill( Environment.getBuildings() );
-
-        g2.setPaint( fireGradient );
-        g2.fill( Environment.getFires() );
-    }   
-    */
-    
+   
     private void paintObjects( Graphics2D g2)
     {
     	int delay = GUI.getInstance().getDelay();

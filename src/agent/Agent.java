@@ -35,15 +35,11 @@ public abstract class Agent extends Bobject implements Runnable
 	protected ArrayList<Obstacle> obstaclesSeen = null;
 	protected ArrayList<Flag> flagsSeen = null;
 	
+	int teamID;
     /**
      * Used to identify an agent thread. This becomes thread name.
      */
     protected String idString;
-
-    /**
-     * Configuration class that specifies all agent properties.
-     */
-    protected ConfigBobject config;
 
     /**
      * Sensor colors, sightColor and hearColor
@@ -112,7 +108,11 @@ public abstract class Agent extends Bobject implements Runnable
     	agentsHeard = new ArrayList<Agent>();
     	obstaclesSeen = new ArrayList<Obstacle>();
     	flagsSeen = new ArrayList<Flag>();
-    	soundRadius = 4;
+    	soundRadius = config.getSoundRadius();
+    	boundingRadius = config.getBoundingRadius();
+    	color = config.getObjectColor();
+    	teamID = config.getTeamID();
+    	type = types.AGENT;
     }
 
    

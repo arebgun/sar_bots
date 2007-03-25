@@ -15,8 +15,6 @@ package env;
 
 
 import config.ConfigEnv;
-import sim.Simulator;
-import baseobject.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
@@ -125,13 +123,7 @@ public class Environment
      */
     public static void update()
     {
-        // compute sensor coverage frequency
-    	Iterator<Bobject> iter = Simulator.objectIterator();
-        while ( iter.hasNext() )
-        {
-            Bobject b        = iter.next();
- 
-        }
+    	
     }
 
     /**

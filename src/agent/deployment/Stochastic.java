@@ -16,16 +16,14 @@ package agent.deployment;
 import agent.Agent;
 import agent.AgentLocation;
 import baseobject.Bobject;
-import config.ConfigAgent;
+import config.ConfigBobject;
 import env.Environment;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
 import sim.Simulator;
 
-// TODO: remove Area from Stochastic.java
 /**
  * Stochastic deployment strategy will randomly place MAVs throughout the world.
  */
@@ -33,10 +31,10 @@ public class Stochastic extends DeploymentStrategy
 {
     private static Random rand = null;
 
-    public Stochastic( ConfigAgent config )
+    public Stochastic( ConfigBobject config )
     {
         super( config );
-        if ( rand == null ) { rand = new Random( agentConfig.getDeploymentSeed() ); }
+        if ( rand == null ) { rand = new Random( objectConfig.getDeploymentSeed() ); }
     }
 
     /**

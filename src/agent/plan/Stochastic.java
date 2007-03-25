@@ -15,7 +15,7 @@ package agent.plan;
 
 import agent.*;
 import baseobject.*;
-import config.ConfigAgent;
+import config.ConfigBobject;
 import env.Environment;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
@@ -35,13 +35,13 @@ public class Stochastic extends PlanModule
      * the random number generator based on the "planSeed" in the agent config file.
      * @param config Agent configuration object provided by the Simulator
      */
-    public Stochastic( ConfigAgent config )
+    public Stochastic( ConfigBobject config )
     {
         super( config );
 
         if ( rand == null )
         {
-            rand = new Random( agentConfig.getPlanSeed() );
+            rand = new Random( objectConfig.getPlanSeed() );
         }
     }
 
@@ -92,7 +92,8 @@ public class Stochastic extends PlanModule
         		Agent b = iter.next();
         		int dist = (int)Math.sqrt(newX * (double)b.getLocation().getX()+
         				newY * (double)b.getLocation().getY());
-        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist)
+        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+        				a.getObjectID() != b.getObjectID())
         			good = false;
         		
         	}

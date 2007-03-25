@@ -14,7 +14,7 @@ package agent.propulsion;
  */
 
 import agent.AgentLocation;
-import config.ConfigAgent;
+import config.ConfigBobject;
 
 import static java.lang.Math.*;
 
@@ -24,7 +24,7 @@ import static java.lang.Math.*;
  */
 public class Thruster extends PropulsionModule
 {
-    public Thruster( ConfigAgent config )
+    public Thruster( ConfigBobject config )
     {
         super( config );
     }

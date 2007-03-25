@@ -15,7 +15,7 @@ package agent.deployment;
 
 import agent.Agent;
 import agent.AgentLocation;
-import config.ConfigAgent;
+import config.ConfigBobject;
 
 /**
  * Specifies the initial position of all MAVs.
@@ -25,16 +25,16 @@ public abstract class DeploymentStrategy
     /**
      * Configuration class that specifies all agent properties.
      */
-    protected ConfigAgent agentConfig;
+    protected ConfigBobject objectConfig;
 
     /**
      * Default constructor.
      *
      * @param config ConfigAgent class that specifies all agent properties
      */
-    protected DeploymentStrategy( ConfigAgent config )
+    protected DeploymentStrategy( ConfigBobject config )
     {
-        agentConfig = config;
+        objectConfig = config;
     }
 
     /**

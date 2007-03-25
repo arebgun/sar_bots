@@ -136,6 +136,18 @@ public class ConfigBobject extends Config
     							 Double.parseDouble( locValues[2] ) );
     }
     
-	
+	public Color getObjectColor()
+	{
+		 String clrValues[] = pTable.get( "objectColor" ).split( "\\," );
 
+	     return new Color( Integer.parseInt( clrValues[0] ),
+	                       Integer.parseInt( clrValues[1] ),
+	                       Integer.parseInt( clrValues[2] ),
+	                       Integer.parseInt( clrValues[3] ) );
+	}
+	
+	public int getTeamID()
+	{
+		return Integer.parseInt( pTable.get("teamID"));
+	}
 }

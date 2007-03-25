@@ -1,6 +1,7 @@
 package baseobject;
 
 import agent.AgentLocation;
+import config.ConfigBobject;
 
 public class Flag extends Bobject{
 	protected int owner;
@@ -8,6 +9,16 @@ public class Flag extends Bobject{
 	protected int teamID; //used to associate the flag with a specific team
 	
 	//Consturctors for Flag
+	public Flag(ConfigBobject conf)
+	{
+		this.config = conf;
+		initialLocation = config.objectLocation();
+		location = config.objectLocation();
+		teamID = config.getTeamID();
+		owner = 0;
+		isOwned = false;
+		type = types.FLAG;
+	}
 	public Flag(AgentLocation loc, int id)
 	{
 		initialLocation = loc;

@@ -14,7 +14,7 @@ package agent.propulsion;
  */
 
 import agent.AgentLocation;
-import config.ConfigAgent;
+import config.ConfigBobject;
 
 /**
  * Propulsion module is responsible for keeping track of
@@ -44,7 +44,7 @@ public abstract class PropulsionModule
     /**
      * Configuration class that specifies all agent properties.
      */
-    protected ConfigAgent agentConfig;
+    protected ConfigBobject objectConfig;
 
     /**
      * Default constructor. Initializes maximum speed and energy (fuel)
@@ -52,12 +52,12 @@ public abstract class PropulsionModule
      *
      * @param config ConfigAgent class that specifies all agent properties
      */
-    protected PropulsionModule( ConfigAgent config )
+    protected PropulsionModule( ConfigBobject config )
     {
-        agentConfig  = config;
+        objectConfig  = config;
         currentSpeed = 0;
-        maxSpeed     = agentConfig.getPropulsionMaxSpeed();
-        energyAmount = agentConfig.getPropulsionEnergyAmount();
+        maxSpeed     = objectConfig.getPropulsionMaxSpeed();
+        energyAmount = objectConfig.getPropulsionEnergyAmount();
     }
 
     /**

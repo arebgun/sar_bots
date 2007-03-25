@@ -13,7 +13,7 @@ package agent.comm;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
-import config.ConfigAgent;
+import config.ConfigBobject;
 
 /**
  * Agent communcation module. Implement inter-agent communication.
@@ -23,15 +23,15 @@ public abstract class CommModule
     /**
      * Configuration class that specifies all agent properties.
      */
-    protected ConfigAgent agentConfig;
+    protected ConfigBobject objectConfig;
 
     /**
      * Default constructor.
      *
      * @param config ConfigAgent class that specifies all agent properties
      */
-    protected CommModule( ConfigAgent config )
+    protected CommModule( ConfigBobject config )
     {
-        agentConfig = config;
+        objectConfig = config;
     }
 }
