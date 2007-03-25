@@ -24,16 +24,16 @@ public class CircleDeploy extends DeploymentStrategy{
 		//how to put xCenter and yCenter in config file (inherited from hash)
 		double xCenter	   =   120;
 		double yCenter     =   120;
-		double circleAngle =    rand.nextDouble() * 360.0;
+		double circleAngle =   0.0;
 		double x           =   -1;
         double y           =   -1;
         int limit          = 1000;
         boolean found      = false;
   
 	
-	/*	while ( !found && --limit > 0 )
+		while ( !found && --limit > 0 )
 	    {
-	        
+			circleAngle =    rand.nextDouble() * 360.0;
 			x = xCenter + (20*Math.sin(circleAngle));
 	        y = yCenter + (20*Math.cos(circleAngle));
 	        boolean good = true;
@@ -54,10 +54,10 @@ public class CircleDeploy extends DeploymentStrategy{
 	        	}
 	        }
 	        found = good;
-	    }*/
-        x = xCenter + (20*Math.sin(circleAngle));
-        y = yCenter + (20*Math.cos(circleAngle));
-        found = true;
+	    }
+       // x = xCenter + (20*Math.sin(circleAngle));
+       // y = yCenter + (20*Math.cos(circleAngle));
+       // found = true;
 	    if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
 		
 		return new AgentLocation( x, y, rand.nextGaussian() );
