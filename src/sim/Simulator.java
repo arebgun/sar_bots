@@ -19,6 +19,7 @@ import env.Environment;
 import ui.GUI;
 import ui.CLI;
 import baseobject.*;
+import agent.*;
 
 
 import java.util.ArrayList;
@@ -72,7 +73,18 @@ public class Simulator
         	}
         	numberWorldObjects = objConfig.getSwarmSize();
         }
-
+        
+        Iterator<Bobject> i = objectIterator();
+        while (i.hasNext())
+        {
+        	Bobject o = i.next();
+        	Agent a = (Agent)o;
+        	AgentLocation loc;
+        	loc = a.deployStrategy.getNextLocation(a);
+        	a.setInitialLocation(loc);
+        	a.setLocation(loc);        	
+        }
+        
         if ( uiType.equalsIgnoreCase( "gui" ) )
         {
             logger.info( "displaying the GUI ..." );
