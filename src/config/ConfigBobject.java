@@ -150,4 +150,19 @@ public class ConfigBobject extends Config
 	{
 		return Integer.parseInt( pTable.get("teamID"));
 	}
+	
+	public double getXCircle()
+	{
+		return Double.parseDouble( pTable.get( "xCircle"));
+	}
+	
+	public double getYCircle()
+	{
+		return Double.parseDouble( pTable.get( "yCircle"));
+	}
+	
+	public double getCircleRadius()
+	{
+		return Double.parseDouble( pTable.get( "circleRadius"));
+	}
 }
