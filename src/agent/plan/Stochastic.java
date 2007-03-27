@@ -85,16 +85,17 @@ public class Stochastic extends PlanModule
 
             boolean good = true;
             //make sure you don't hit an agent
-            Iterator<Agent> iter = a.getAgentsSeen();
+ /*           Iterator<Agent> iter = a.getAgentsSeen();
         	
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
-        		int dist = (int)Math.sqrt(newX * (double)b.getLocation().getX()+
-        				newY * (double)b.getLocation().getY());
+        		int dist = (int)Math.sqrt(Math.pow(newX - (double)b.getLocation().getX(), 2) +
+        				Math.pow(newY - (double)b.getLocation().getY(), 2));
         		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
         				a.getObjectID() != b.getObjectID())
         			good = false;
+
         		
         	}
         	
@@ -109,14 +110,16 @@ public class Stochastic extends PlanModule
         		if (a.getBoundingRadius() + o.getBoundingRadius() <= distO)
         			good = false;
         	}
-        	
+        	*/
         	//check to make sure we are withing the borders
         	// only need to check if the location is a good one so far
         	if (good)
         	{
         		Rectangle2D world = Environment.groundShape();
-        		if (newX > 0 && newX < world.getMaxX() && newY > 0 && newY < world.getMaxY())
+        		if (newX > 15 && newX < (world.getMaxX()-15) && newY > 15 && newY < (world.getMaxY()-15))
         			placed = true;
+        		else
+        			placed = false;
         	}
         	
         }
@@ -127,7 +130,6 @@ public class Stochastic extends PlanModule
             newY     = curY;
             newTheta = a.getLocation().getTheta() + PI/6;
         }
-
-        return new AgentLocation( newX, newY, newTheta );
+       return new AgentLocation( newX, newY, newTheta );
     }
 }

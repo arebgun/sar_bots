@@ -50,8 +50,25 @@ public class Simulator
      */
     public static void run( String configFilePath, String uiType ) throws Exception
     {
-        time   = 0;
-        config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
+       
+        startUp(configFilePath);
+        mainSim(uiType);
+        cleanUp();
+       
+    }
+/*========================================================================
+ * Start Up functions for the simulation
+ *========================================================================*/
+    private static void startUp(String configFilePath) throws Exception
+    {       
+    	time   = 0;
+    	loadObjects(configFilePath);
+    	placeObjects();
+    }
+    
+    private static void loadObjects(String configFilePath) throws Exception
+    {
+    	config = new ConfigSim( ClassLoader.getSystemClassLoader().getResource( configFilePath ).getPath() );
 
         logger.info( "loading ENVIRONMENT data ..." );
         Environment.load( config.getEnvConfigFileName() );
@@ -71,32 +88,58 @@ public class Simulator
         		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
         		worldObjects.get(o).setObjectID(o);
         	}
-        	numberWorldObjects = objConfig.getSwarmSize();
-        }
-        
-        Iterator<Bobject> i = objectIterator();
-        while (i.hasNext())
-        {
-        	Bobject o = i.next();
-        	Agent a = (Agent)o;
-        	AgentLocation loc;
-        	loc = a.deployStrategy.getNextLocation(a);
-        	a.setInitialLocation(loc);
-        	a.setLocation(loc);        	
-        }
-        
-        if ( uiType.equalsIgnoreCase( "gui" ) )
-        {
-            logger.info( "displaying the GUI ..." );
-            GUI.getInstance().show();
-        }
-        else
-        {
-            logger.info( "displaying the CLI ..." );
-            CLI.getInstance().show();
+        	numberWorldObjects += objConfig.getSwarmSize();
         }
     }
-
+    
+    private static void placeObjects()
+    {
+    	Iterator<Bobject> i = objectIterator();
+        while (i.hasNext())
+        {
+        	Bobject b = i.next();
+        	if (b.isAgent())
+        	{
+        		Agent a = (Agent)b;
+        		AgentLocation loc;
+        		loc = a.deployStrategy.getNextLocation(a);
+        		a.setInitialLocation(loc);
+        		a.setLocation(loc);
+        	}
+        	//finish obstacles placement and make one for flag too
+        	if (b.isObstacle())
+        	{
+        		Obstacle o = (Obstacle)b;
+        		AgentLocation loc = o.getInitialLocation();
+        	}
+        }
+     }
+    
+/*================================================================================
+ * MainSim functions
+ *================================================================================*/
+    private static void mainSim(String uiType ) throws Exception
+    {
+    	 if ( uiType.equalsIgnoreCase( "gui" ) )
+         {
+             logger.info( "displaying the GUI ..." );
+             GUI.getInstance().show();
+         }
+         else
+         {
+             logger.info( "displaying the CLI ..." );
+             CLI.getInstance().show();
+         }
+    }
+    
+/*===================================================================================
+ * cleanUp functions
+ *===================================================================================*/
+    private static void cleanUp()
+    {
+    	//i'm sure somehting will go here
+    }
+   
     /**
      * Implements the reset functionality by delegating to the reset method of all of the components.
      */
