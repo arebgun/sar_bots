@@ -61,7 +61,7 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Deployment strategy subsystem (detremines agent initial position).
      */
-    protected DeploymentStrategy deployStrategy;
+    public DeploymentStrategy deployStrategy;
 
     /**
      * Sensor subsystem (sesnor shape).
@@ -242,7 +242,7 @@ public abstract class Agent extends Bobject implements Runnable
         loader     = Class.forName( propulsionClass, true, this.getClass().getClassLoader() );
         propulsion = (PropulsionModule) loader.getConstructor( aC ).newInstance( config );
 
-        location    = deployStrategy.getNextLocation( this );
+      //  location    = deployStrategy.getNextLocation( this );
         //config.getSensorColor() is called for both atm, this needs to be changed
     }
 
