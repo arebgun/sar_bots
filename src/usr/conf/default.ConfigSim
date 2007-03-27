@@ -4,6 +4,6 @@
 envConfigFileName=usr/conf/default.ConfigEnv
 
 # comma-separated list of agent configuration files (path relative to top package directory)
-objectConfigFileNames=usr/conf/default.Defender
+objectConfigFileNames=usr/conf/default.Defender,usr/conf/default.Attacker
 
 

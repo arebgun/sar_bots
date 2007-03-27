@@ -83,10 +83,11 @@ public class Simulator
         	ConfigBobject objConfig = new ConfigBobject( objFile );
         	Class loader = Class.forName(objConfig.getClassName(), true, objConfig.getClass().getClassLoader() );
         	
-        	for ( int o = 0; o < objConfig.getSwarmSize(); o++)
+        	for ( int o = numberWorldObjects; o < objConfig.getSwarmSize() + numberWorldObjects; o++)
         	{
         		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
         		worldObjects.get(o).setObjectID(o);
+        		//numberWorldObjects++;
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
         }

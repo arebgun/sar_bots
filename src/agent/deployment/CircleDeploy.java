@@ -52,6 +52,8 @@ public class CircleDeploy extends DeploymentStrategy{
 	        	}
 		        found = good;
 	        }
+	       // if (found)
+	        //	a.setPlaced(true);
 	    }
 
 	    if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
