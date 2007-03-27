@@ -12,6 +12,9 @@ commRange=100
 #deployment
 deploymentName=agent.deployment.CircleDeploy
 deploymentSeed=0
+xCircle=400
+yCircle=400
+circleRadius=75
 
 #planning
 planName=agent.plan.Stochastic
@@ -28,7 +31,7 @@ sensorHearingName=agent.sensor.Circle
 
 #bot attributes
 health=10
-boundingRadius=5
+boundingRadius=10
 objectColor=0,255,255,255
 
 #sound attributes
