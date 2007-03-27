@@ -11,55 +11,51 @@ import sim.Simulator;
 
 public class CircleDeploy extends DeploymentStrategy{
 	
-	 private static Random rand = null;
+	private static Random rand = null;
+	protected double circleRadius = 20.0;
+	protected double xCenter = 120.0;
+	protected double yCenter = 120.0;
 	
 	public CircleDeploy( ConfigBobject config )
     {
         super( config );
         if ( rand == null ) { rand = new Random( objectConfig.getDeploymentSeed() );}
+        circleRadius = config.getCircleRadius();
+        xCenter = config.getXCircle();
+        yCenter = config.getYCircle();
     }
 	
 	public AgentLocation getNextLocation( Agent a )
     {
 		//how to put xCenter and yCenter in config file (inherited from hash)
-		double xCenter	   =   500;
-		double yCenter     =   120;
 		double circleAngle =   0.0;
-		double x           =   -1;
-        double y           =   -1;
+		double x           =   0;
+        double y           =   0;
         int limit          = 1000;
         boolean found      = false;
-  
 	
 		while ( !found && --limit > 0 )
 	    {
+			boolean good = true;
 			circleAngle =    rand.nextDouble() * 360.0;
-			x = xCenter + (20*Math.sin(circleAngle));
-	        y = yCenter + (20*Math.cos(circleAngle));
-	        boolean good = true;
+			x = xCenter + (circleRadius*Math.sin(circleAngle));
+	        y = yCenter + (circleRadius*Math.cos(circleAngle));
 	        Iterator<Bobject> iter = Simulator.objectIterator();
 	        while ( iter.hasNext())
 	        {
 	        	Bobject b = iter.next();
-	        	if (b.isPlaced())
+	        	if (b.isPlaced() && a.getObjectID() != b.getObjectID())
 	        	{
-	        		double dist = Math.sqrt(x * b.getLocation().getX() +
-	        				y * b.getLocation().getY());
-	        	
-	        		if ((a.getBoundingRadius() + b.getBoundingRadius() <= dist) &&
-	        				(a.getObjectID() != b.getObjectID()));
-	        	
-	        		else
+	        		double dist = Math.sqrt(Math.pow(x-b.getLocation().getX(),2) + Math.pow(y-b.getLocation().getY(), 2));
+	        		if (a.getBoundingRadius() + b.getBoundingRadius() >= dist)
 	        			good = false;
 	        	}
+		        found = good;
 	        }
-	        found = good;
 	    }
-       // x = xCenter + (20*Math.sin(circleAngle));
-       // y = yCenter + (20*Math.cos(circleAngle));
-       // found = true;
+
 	    if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
-		System.out.println("ID " + a.getObjectID());
+		a.setPlaced(true); 
 		return new AgentLocation( x, y, rand.nextGaussian() );
     }
 }
