@@ -311,8 +311,8 @@ class RescueArea extends SimDrawPanel
     			g2.setColor(a.getColor());
     			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX(),
         				(float)a.getLocation().getY(),
-        				(float)a.getBoundingRadius(),
-        				(float)a.getBoundingRadius()));
+        				2f * (float)a.getBoundingRadius(),
+        				2f * (float)a.getBoundingRadius()));
     			a.setSleepTime( delay );
     		}
     		if (b.isFlag())
@@ -321,8 +321,8 @@ class RescueArea extends SimDrawPanel
     			g2.setColor(f.getColor());
     			g2.fill(new Ellipse2D.Float((float)f.getLocation().getX(),
         				(float)f.getLocation().getY(),
-        				(float)f.getBoundingRadius(),
-        				(float)f.getBoundingRadius()));
+        				2f * (float)f.getBoundingRadius(),
+        				2f * (float)f.getBoundingRadius()));
     		}
     		if (b.isObstacle())
     		{

@@ -12,6 +12,7 @@ import sim.Simulator;
 public class CircleDeploy extends DeploymentStrategy{
 	
 	private static Random rand = null;
+	private static double degree = 0;
 	protected double circleRadius = 20.0;
 	protected double xCenter = 120.0;
 	protected double yCenter = 120.0;
@@ -57,7 +58,8 @@ public class CircleDeploy extends DeploymentStrategy{
 	    }
 
 	    if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
-		a.setPlaced(true); 
-		return new AgentLocation( x, y, rand.nextGaussian() );
+		a.setPlaced(true); //degree = (degree + 15.0 ) % 360.0;
+		
+		return new AgentLocation( x, y, rand.nextGaussian()*360.0 );
     }
 }

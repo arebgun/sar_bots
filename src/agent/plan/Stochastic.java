@@ -38,7 +38,7 @@ public class Stochastic extends PlanModule
     public Stochastic( ConfigBobject config )
     {
         super( config );
-
+        //System.currentTimeMillis()
         if ( rand == null )
         {
             rand = new Random( objectConfig.getPlanSeed() );
@@ -65,62 +65,71 @@ public class Stochastic extends PlanModule
      */
     public AgentLocation getGoalLocation( Agent a )
     {
- 
         double curX        = a.getLocation().getX();
         double curY        = a.getLocation().getY();
         
         double newX     = -1;
         double newY     = -1;
         double newTheta = a.getLocation().getTheta();
+        
+        double dist = 0;
+        double bound = 0;
 
         int range = a.getSoundRadius();
         
         int limit      = 1000;
-        boolean placed = false;
-int dist = 0;
-int bound = 0;
-        while ( !placed && --limit > 0 )
+        boolean found = false;
+        boolean good = true;
+        //rand.setSeed(System.currentTimeMillis());
+        while (!found && --limit > 0)
         {
-            newX = curX + range * rand.nextDouble();
-            newY = curY + range * rand.nextDouble();
-
-            boolean good = true;
-            
-            //make sure you don't hit an agent
-            Iterator<Agent> iter = a.getAgentsSeen();
+        	newX = curX + (range * Math.sin(rand.nextDouble()*360));
+        	newY = curY + (range * Math.cos(rand.nextDouble()*360));
         	
+        	good = true;
+        	
+        	//check against agents
+        	Iterator<Agent> iter = a.getAgentsSeen();
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
         		if (a.getObjectID() != b.getObjectID())
         		{
-        			int dist1 = (int)Math.sqrt(Math.pow(newX - (double)b.getLocation().getX(), 2) +
-        					Math.pow(newY - (double)b.getLocation().getY(), 2));
+        			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
         			bound = a.getBoundingRadius() + b.getBoundingRadius();
-        			if (a.getBoundingRadius() + b.getBoundingRadius() >= dist)
-        			{
+        			if ( bound >= dist)
         				good = false;
-        				bound = a.getBoundingRadius() + b.getBoundingRadius();
-        				dist = dist1;
-        			}
-
         		}
         	}
+        	found = good;
         	
-        	//check to make sure we are withing the borders
-        	// only need to check if the location is a good one so far
-        	if (good)
+        	//check against obstacles
+        	Iterator<Obstacle> obs = a.getObstaclesSeen();
+        	while ( obs.hasNext() && good)
         	{
-        		Rectangle2D world = Environment.groundShape();
-        		if (newX > 15 && newX < (world.getMaxX()-15) && newY > 15 && newY < (world.getMaxY()-15))
-        			placed = true;
-        		else
-        			placed = false;
+        		Obstacle o = obs.next();
+        		dist = Math.hypot((newX - o.getLocation().getX()),(newY - o.getLocation().getY()));
+        		bound = a.getBoundingRadius() + o.getBoundingRadius();
+        		if (bound >= dist)
+        			good = false;
         	}
+        	found = good;
+        }
+       
         	
+       	//check to make sure we are withing the borders
+        // only need to check if the location is a good one so far
+        if (good)
+       	{
+        	Rectangle2D world = Environment.groundShape();
+        	if (newX > 15 && newX < (world.getMaxX()-15) && newY > 15 && newY < (world.getMaxY()-15))
+        		found = true;
+        	else
+        		found = false;  	
+        		
         }
 
-        if ( !placed )
+        if ( !found )
         {
             newX     = curX;
             newY     = curY;
