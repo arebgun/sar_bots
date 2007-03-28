@@ -115,7 +115,6 @@ public class Stochastic extends PlanModule
         	}
         	found = good;
         }
-       
         	
        	//check to make sure we are withing the borders
         // only need to check if the location is a good one so far
@@ -126,7 +125,6 @@ public class Stochastic extends PlanModule
         		found = true;
         	else
         		found = false;  	
-        		
         }
 
         if ( !found )
@@ -135,7 +133,6 @@ public class Stochastic extends PlanModule
             newY     = curY;
             newTheta = a.getLocation().getTheta() + PI/6;
         }
-        System.out.println(a.getObjectID() + "   " + dist + "   " + bound);
        return new AgentLocation( newX, newY, newTheta );
     }
 }
