@@ -77,40 +77,36 @@ public class Stochastic extends PlanModule
         
         int limit      = 1000;
         boolean placed = false;
-
+int dist = 0;
+int bound = 0;
         while ( !placed && --limit > 0 )
         {
             newX = curX + range * rand.nextDouble();
             newY = curY + range * rand.nextDouble();
 
             boolean good = true;
+            
             //make sure you don't hit an agent
- /*           Iterator<Agent> iter = a.getAgentsSeen();
+            Iterator<Agent> iter = a.getAgentsSeen();
         	
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
-        		int dist = (int)Math.sqrt(Math.pow(newX - (double)b.getLocation().getX(), 2) +
-        				Math.pow(newY - (double)b.getLocation().getY(), 2));
-        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
-        				a.getObjectID() != b.getObjectID())
-        			good = false;
+        		if (a.getObjectID() != b.getObjectID())
+        		{
+        			int dist1 = (int)Math.sqrt(Math.pow(newX - (double)b.getLocation().getX(), 2) +
+        					Math.pow(newY - (double)b.getLocation().getY(), 2));
+        			bound = a.getBoundingRadius() + b.getBoundingRadius();
+        			if (a.getBoundingRadius() + b.getBoundingRadius() >= dist)
+        			{
+        				good = false;
+        				bound = a.getBoundingRadius() + b.getBoundingRadius();
+        				dist = dist1;
+        			}
 
-        		
+        		}
         	}
         	
-        	//make sure you don't hit an obstacle
-        	Iterator<Obstacle> iterO = a.getObstaclesSeen();
-        	
-        	while ( iterO.hasNext() && good)
-        	{
-        		Obstacle o = iterO.next();
-        		int distO = (int)Math.sqrt(newX * (double)o.getLocation().getX()+
-        				newY * (double)o.getLocation().getY());
-        		if (a.getBoundingRadius() + o.getBoundingRadius() <= distO)
-        			good = false;
-        	}
-        	*/
         	//check to make sure we are withing the borders
         	// only need to check if the location is a good one so far
         	if (good)
@@ -130,6 +126,7 @@ public class Stochastic extends PlanModule
             newY     = curY;
             newTheta = a.getLocation().getTheta() + PI/6;
         }
+        System.out.println(a.getObjectID() + "   " + dist + "   " + bound);
        return new AgentLocation( newX, newY, newTheta );
     }
 }
