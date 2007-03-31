@@ -114,6 +114,22 @@ public class Stochastic extends PlanModule
         			good = false;
         	}
         	found = good;
+        	
+//        	check against agents heard
+        	Iterator<Agent> heard = a.getAgentsHeard();
+        	while ( heard.hasNext() && good)
+        	{
+        		Agent b = heard.next();
+        		if (a.getObjectID() != b.getObjectID())
+        		{
+        			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
+        			bound = a.getBoundingRadius() + b.getBoundingRadius();
+        			if ( bound >= dist)
+        				good = false;
+        		}
+        	}
+        	found = good;
+        	
         }
         	
        	//check to make sure we are withing the borders
@@ -133,6 +149,7 @@ public class Stochastic extends PlanModule
             newY     = curY;
             newTheta = a.getLocation().getTheta() + PI/6;
         }
+        newTheta = 360*rand.nextDouble();
        return new AgentLocation( newX, newY, newTheta );
     }
 }

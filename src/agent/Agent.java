@@ -66,8 +66,8 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Sensor subsystem (sesnor shape).
      */
-    protected SensorModule sensorSight;
-    protected SensorModule sensorHearing;
+    public SensorModule sensorSight;
+    public SensorModule sensorHearing;
 
     /**
      * Planning subsystem (AI algorithm goes here)
@@ -108,10 +108,12 @@ public abstract class Agent extends Bobject implements Runnable
     	agentsHeard = new ArrayList<Agent>();
     	obstaclesSeen = new ArrayList<Obstacle>();
     	flagsSeen = new ArrayList<Flag>();
-    	soundRadius = config.getSoundRadius();
+    	soundRadius = (int)config.getSensorRadius();
     	boundingRadius = config.getBoundingRadius();
     	color = config.getObjectColor();
     	teamID = config.getTeamID();
+    	sightColor = config.getSightColor();
+    	hearColor = config.getSoundColor();
     	type = types.AGENT;
     }
 

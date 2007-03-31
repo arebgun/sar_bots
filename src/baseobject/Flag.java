@@ -2,6 +2,7 @@ package baseobject;
 
 import agent.AgentLocation;
 import config.ConfigBobject;
+import java.awt.*;
 
 public class Flag extends Bobject{
 	protected int owner;
@@ -15,11 +16,16 @@ public class Flag extends Bobject{
 		initialLocation = config.objectLocation();
 		location = config.objectLocation();
 		teamID = config.getTeamID();
+		color = config.getObjectColor();
+		boundingRadius = config.getBoundingRadius();
+		soundRadius = boundingRadius;
 		owner = 0;
 		isOwned = false;
 		type = types.FLAG;
+		System.out.println("in the Flag Constructor");
+		System.out.println("location = " + location.getX() + "   " + location.getY());
 	}
-	public Flag(AgentLocation loc, int id)
+/*	public Flag(AgentLocation loc, int id)
 	{
 		initialLocation = loc;
 		location = loc;
@@ -28,7 +34,7 @@ public class Flag extends Bobject{
 		isOwned = false;
 		type = types.FLAG;
 	}
-	
+	*/
 	public boolean getOwned()
 	{
 		return isOwned;

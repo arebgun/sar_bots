@@ -25,7 +25,8 @@ import baseobject.*;
 public abstract class SensorModule
 {
     protected ConfigBobject objectConfig;
-    
+	protected double arcAngle;
+	protected double length;
     /**
      * Initializes basic sensor module state using the agent configuation object.
      *
@@ -39,4 +40,12 @@ public abstract class SensorModule
     public abstract ArrayList<Obstacle> getSightObstacles(Agent a);
     public abstract ArrayList<Flag> getSightFlags(Agent a);
     public abstract ArrayList<Agent> getHeardAgents(Agent a);
+    public double getArcAngle() {
+		return arcAngle;
+	}
+	
+	public double getlength() {
+		return length;
+	}
+	
 }

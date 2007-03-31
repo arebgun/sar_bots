@@ -12,8 +12,8 @@ import config.ConfigBobject;
 
 public class Cone extends SensorModule{
 
-	protected double arcAngle;
-	protected double length;
+
+	static final double radToDegConvert = 57.298;
 	
 	public Cone( ConfigBobject config )
 	{
@@ -27,13 +27,18 @@ public class Cone extends SensorModule{
     	ArrayList<Agent> temp = null;
     	Iterator<Bobject> iter = Simulator.objectIterator();
     	temp = new ArrayList<Agent>();
+    	double aX = a.getLocation().getX();
+    	double aY = a.getLocation().getY();
+    	double aT = a.getLocation().getTheta();
+    	
     	while ( iter.hasNext())
     	{
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			double dist = Math.sqrt(a.getLocation().getX() * b.getLocation().getX()+
-    				a.getLocation().getY() * b.getLocation().getY());
+    			double bX = b.getLocation().getX();
+    	    	double bY = b.getLocation().getY();
+    			double dist = Math.hypot(aX-bX, aY-bY);
     			//is any part of agent b within the length of my viewing cone?
     			if (length + b.getBoundingRadius() <= dist &&
     				a.getObjectID() != b.getObjectID() )
@@ -41,6 +46,32 @@ public class Cone extends SensorModule{
     				//b is within the length of my viewing cone, now is it within
     				//my viewing arc?
     				//TODO: Add code for determinig if an agent is in the viewing cone (by angle)
+    				double xOffSet = aX - bX;
+    				double yOffSet = aY - bY;
+    				if (xOffSet == 0)
+    					xOffSet = .01;
+    				double coneAngle = Math.atan(yOffSet/xOffSet)*radToDegConvert;
+    				
+    				if(coneAngle < 0) {
+    					if(bY > aY)
+    						coneAngle += 180;
+    					else
+    						coneAngle += 360;
+    				}
+    				else if(coneAngle > 0) {
+    					if(bY < aY)
+    						coneAngle += 180;
+    				}
+    				///// radians???
+    				if(Math.abs(aT-coneAngle) <= arcAngle) {
+    					temp.add((Agent)b);
+    				}
+    				
+    				
+    				
+    				
+    				
+    				
     				
     				//if b is in the viewing cone then add it to the sight array
     				temp.add((Agent)b);

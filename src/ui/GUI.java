@@ -37,6 +37,8 @@ public class GUI
     private static int DEFAULT_WIDTH  = 1024;
     private static int DEFAULT_HEIGHT = 768;
     private static boolean showGrid   = false;
+    private static boolean showSight = false;
+    private static boolean showHearing = false;
     private final Timer tmrSim;
     private final Timer tmrUpdate;
 
@@ -140,10 +142,30 @@ public class GUI
     {
         return showGrid;
     }
+    
+    public static boolean getShowSight()
+    {
+    	return showSight;
+    }
+    
+    public static boolean getShowHearing()
+    {
+    	return showHearing;
+    }
+    
+    public static void setShowSight(boolean show)
+    {
+    	showSight = show;
+    }
 
     public static void setShowGrid( boolean show )
     {
         showGrid = show;
+    }
+    
+    public static void setShowHearing( boolean show )
+    {
+    	showHearing = show;
     }
 
     public static Component getSelectedTabView()
@@ -199,7 +221,7 @@ public class GUI
         main.add( bottom, BorderLayout.PAGE_END );
     }
 
-    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
+   // @SuppressWarnings({ "CloneDoesntCallSuperClone" })
     public Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
@@ -260,6 +282,7 @@ class RescueArea extends SimDrawPanel
     private final String roofTextureFilename = "images/textures/rocks.jpg";
     private TexturePaint soilTexture;
     private TexturePaint roofTexture;
+   
 
     public RescueArea()
     {
@@ -309,10 +332,28 @@ class RescueArea extends SimDrawPanel
     		{
     			Agent a = (Agent)b;
     			g2.setColor(a.getColor());
-    			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX(),
-        				(float)a.getLocation().getY(),
+    			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX() - (float)a.getBoundingRadius(),
+        				(float)a.getLocation().getY() - (float)a.getBoundingRadius(),
         				2f * (float)a.getBoundingRadius(),
         				2f * (float)a.getBoundingRadius()));
+    			if (GUI.getShowSight())
+    			{
+    				g2.setColor(a.getSightColor());
+    				g2.fillArc((int)a.getLocation().getX() - (int)(a.sensorSight.getlength() / 2), 
+    						(int)a.getLocation().getY() - (int)(a.sensorSight.getlength() / 2), 
+    						(int)a.sensorSight.getlength(), (int)a.sensorSight.getlength(),
+    						(int)a.getLocation().getTheta()- (int)(a.sensorSight.getArcAngle() / 2),
+    						(int)a.sensorSight.getArcAngle());
+    			}
+    			
+    			if (GUI.getShowHearing())
+    			{
+    				g2.setColor(a.getHearColor());
+        			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX() - (float)a.getSoundRadius(),
+            				(float)a.getLocation().getY() - (float)a.getSoundRadius(),
+            				2f * (float)a.getSoundRadius(),
+            				2f * (float)a.getSoundRadius()));
+    			}
     			a.setSleepTime( delay );
     		}
     		if (b.isFlag())
@@ -323,6 +364,7 @@ class RescueArea extends SimDrawPanel
         				(float)f.getLocation().getY(),
         				2f * (float)f.getBoundingRadius(),
         				2f * (float)f.getBoundingRadius()));
+    			System.out.println("painting a flag at " + f.getLocation().getX() + "  " + f.getLocation().getY());
     		}
     		if (b.isObstacle())
     		{
@@ -380,6 +422,8 @@ class BottomPanel extends JPanel
 	private final JButton btnSave = new JButton("Save");
 	
 	private final JCheckBox cbShowGrid = new JCheckBox( "Show Grid", false );
+	private final JCheckBox cbShowSight = new JCheckBox( "Show Sight", false );
+	private final JCheckBox cbShowHearing = new JCheckBox( "Show Hearing", false);
 	
 	private final Timer tmrSim;
 
@@ -398,8 +442,29 @@ class BottomPanel extends JPanel
                 GUI.getSelectedTabView().repaint();
             }
         } );
-
         add( cbShowGrid );
+          
+        cbShowSight.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed( ActionEvent e)
+        	{
+        		GUI.setShowSight( cbShowSight.isSelected() );
+        		GUI.getSelectedTabView().repaint();
+        	}
+        } );
+
+        add( cbShowSight);
+        
+        cbShowHearing.addActionListener(new ActionListener()
+        {
+        	public void actionPerformed( ActionEvent e)
+        	{
+        		GUI.setShowHearing( cbShowHearing.isSelected() );
+        		GUI.getSelectedTabView().repaint();
+        	}
+        } );
+
+        add( cbShowHearing);
         
         addConfiguredButton( jpCtrl, btnStartStop, new ActionListener()
         {
