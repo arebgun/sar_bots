@@ -74,7 +74,7 @@ public class GUI
         DEFAULT_HEIGHT = (int) screenSize.getHeight();
         
         // Create main window, size and position it on the screen
-        main = new JFrame( "Search and Rescue Bots" );
+        main = new JFrame( "Capture the Flag" );
         main.setIconImage( icon );
         main.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         main.setMinimumSize( new Dimension( DEFAULT_WIDTH, DEFAULT_HEIGHT ) );
