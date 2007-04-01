@@ -21,7 +21,6 @@ import baseobject.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -31,6 +30,8 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class GUI
 {
@@ -103,7 +104,7 @@ public class GUI
             }
         } );
 
-        tmrUpdate = new Timer( 100, new ActionListener()
+        tmrUpdate = new Timer( 33, new ActionListener()
         {
             public void actionPerformed( ActionEvent e )
             {
@@ -331,49 +332,18 @@ class RescueArea extends SimDrawPanel
     		if (b.isAgent())
     		{
     			Agent a = (Agent)b;
-    			g2.setColor(a.getColor());
-    			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX() - (float)a.getBoundingRadius(),
-        				(float)a.getLocation().getY() - (float)a.getBoundingRadius(),
-        				2f * (float)a.getBoundingRadius(),
-        				2f * (float)a.getBoundingRadius()));
-    			if (GUI.getShowSight())
-    			{
-    				g2.setColor(a.getSightColor());
-    				g2.fillArc((int)a.getLocation().getX() - (int)(a.sensorSight.getlength() / 2), 
-    						(int)a.getLocation().getY() - (int)(a.sensorSight.getlength() / 2), 
-    						(int)a.sensorSight.getlength(), (int)a.sensorSight.getlength(),
-    						(int)a.getLocation().getTheta()- (int)(a.sensorSight.getArcAngle() / 2),
-    						(int)a.sensorSight.getArcAngle());
-    			}
-    			
-    			if (GUI.getShowHearing())
-    			{
-    				g2.setColor(a.getHearColor());
-        			g2.fill(new Ellipse2D.Float((float)a.getLocation().getX() - (float)a.getSoundRadius(),
-            				(float)a.getLocation().getY() - (float)a.getSoundRadius(),
-            				2f * (float)a.getSoundRadius(),
-            				2f * (float)a.getSoundRadius()));
-    			}
+    			a.draw(g2, GUI.getShowSight(), GUI.getShowHearing());
     			a.setSleepTime( delay );
     		}
     		if (b.isFlag())
     		{
     			Flag f = (Flag)b;
-    			g2.setColor(f.getColor());
-    			g2.fill(new Ellipse2D.Float((float)f.getLocation().getX(),
-        				(float)f.getLocation().getY(),
-        				2f * (float)f.getBoundingRadius(),
-        				2f * (float)f.getBoundingRadius()));
-    			System.out.println("painting a flag at " + f.getLocation().getX() + "  " + f.getLocation().getY());
-    		}
+    			f.draw(g2);
+     		}
     		if (b.isObstacle())
     		{
     			Obstacle o = (Obstacle)b;
-    			g2.setColor(o.getColor());
-    			g2.fill(new Ellipse2D.Float((float)o.getLocation().getX(),
-        				(float)o.getLocation().getY(),
-        				(float)o.getBoundingRadius(),
-        				(float)o.getBoundingRadius()));
+    			o.draw(g2);
     		}    	
     	}
     }
@@ -425,12 +395,35 @@ class BottomPanel extends JPanel
 	private final JCheckBox cbShowSight = new JCheckBox( "Show Sight", false );
 	private final JCheckBox cbShowHearing = new JCheckBox( "Show Hearing", false);
 	
+	private final JSlider sldSpeed     = new JSlider( 100, 500, 100 );
+	   
 	private final Timer tmrSim;
 
     public BottomPanel( Timer tmr )
     {
         tmrSim = tmr;
         setBorder( BorderFactory.createEmptyBorder( 5, 2, 5, 2 ) );
+        sldSpeed.setMajorTickSpacing( 50 );
+        sldSpeed.setPaintTicks( true );
+
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put( 100, new JLabel( "Fast" ) );
+        labelTable.put( 250, new JLabel( "Medium" ) );
+        labelTable.put( 500, new JLabel( "Slow" ) );
+
+        sldSpeed.setLabelTable( labelTable );
+        sldSpeed.setPaintLabels( true );
+        sldSpeed.setInverted( true );
+
+        sldSpeed.addChangeListener( new ChangeListener()
+        {
+            public void stateChanged( ChangeEvent e )
+            {
+                if ( !sldSpeed.getValueIsAdjusting() ) { tmrSim.setDelay( sldSpeed.getValue() ); }
+            }
+        } );
+
+        add( sldSpeed );
         JPanel jpCtrl = new JPanel();
         jpCtrl.setLayout( new BoxLayout( jpCtrl, BoxLayout.X_AXIS ) );
 
