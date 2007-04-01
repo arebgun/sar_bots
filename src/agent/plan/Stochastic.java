@@ -80,11 +80,12 @@ public class Stochastic extends PlanModule
         int limit      = 1000;
         boolean found = false;
         boolean good = true;
+        double arc = a.sensorSight.getArcAngle();
         //rand.setSeed(System.currentTimeMillis());
         while (!found && --limit > 0)
         {
-        	newX = curX + (range * Math.sin(rand.nextDouble()*360));
-        	newY = curY + (range * Math.cos(rand.nextDouble()*360));
+        	newX = curX + (range * Math.sin(rand.nextDouble()* arc - arc/2));
+        	newY = curY + (range * Math.cos(rand.nextDouble()* arc - arc/2));
         	
         	good = true;
         	
@@ -149,7 +150,23 @@ public class Stochastic extends PlanModule
             newY     = curY;
             newTheta = a.getLocation().getTheta() + PI/6;
         }
-        newTheta = 360*rand.nextDouble();
-       return new AgentLocation( newX, newY, newTheta );
+        double xOffSet = newX - curX;
+		double yOffSet = newY - curY;
+		if (xOffSet == 0)
+			xOffSet = .01;
+		double coneAngle = Math.atan(yOffSet/xOffSet)*57.298;
+		
+		if(coneAngle < 0) {
+			if(curY > newY)
+				coneAngle += 180;
+			else
+				coneAngle += 360;
+		}
+		else if(coneAngle > 0) {
+			if(curY < newY)
+				coneAngle += 180;
+		}
+        //newTheta = Math.atan((newY-curY)/(newX-curX))*(180/Math.PI);
+       return new AgentLocation( newX, newY, coneAngle );
     }
 }

@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Attacker
-swarmSize=10
+swarmSize=2
 teamID=2
 
 #communications

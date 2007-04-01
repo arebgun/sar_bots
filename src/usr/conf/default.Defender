@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Defender
-swarmSize=10
+swarmSize=2
 teamID=1
 
 #communications
@@ -35,7 +35,7 @@ boundingRadius=5
 objectColor=0,255,255,255
 
 #sound attributes
-soundRadius=10
+soundRadius=4
 sensorRadius=20
 soundColor=50,170,155,100
 
