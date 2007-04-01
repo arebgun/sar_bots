@@ -44,7 +44,25 @@ public class Stochastic extends PlanModule
             rand = new Random( objectConfig.getPlanSeed() );
         }
     }
-
+    private double getAngle(double arc, double theta, double curY, double newY)
+    {
+    	double newTheta = theta;
+    	newTheta = rand.nextDouble() * arc + (theta - arc/2);
+    	newTheta *= 57.298;
+    	if(newTheta < 0) {
+			if(curY > newY)
+				newTheta += 180;
+			else
+				newTheta += 360;
+		}
+		else if(newTheta > 0) {
+			if(curY < newY)
+				newTheta += 180;
+		}
+		if (Math.abs(newTheta - theta) > arc/2)
+			newTheta = 360 - newTheta;
+		return Math.toRadians(newTheta);
+    }
     /**
      * For stochastic navigation, the UAV agent selects a random point inside its
      * sensor view, and then performs a reachability test to ensure that it can
@@ -67,10 +85,11 @@ public class Stochastic extends PlanModule
     {
         double curX        = a.getLocation().getX();
         double curY        = a.getLocation().getY();
+        double curTheta    = a.getLocation().getTheta() ;
         
         double newX     = -1;
         double newY     = -1;
-        double newTheta = a.getLocation().getTheta();
+        double newTheta = a.getLocation().getTheta() ;
         
         double dist = 0;
         double bound = 0;
@@ -81,11 +100,16 @@ public class Stochastic extends PlanModule
         boolean found = false;
         boolean good = true;
         double arc = a.sensorSight.getArcAngle();
+        
         //rand.setSeed(System.currentTimeMillis());
         while (!found && --limit > 0)
         {
-        	newX = curX + (range * Math.sin(rand.nextDouble()* arc - arc/2));
-        	newY = curY + (range * Math.cos(rand.nextDouble()* arc - arc/2));
+        	double arcX = Math.sin(getAngle(arc, newTheta, curY, newY));
+            double arcY = Math.cos(getAngle(arc, newTheta, curY, newY));
+        	newX = curX + range * arcX;
+        	newY = curY + range * arcY;
+  //      	if (a.getObjectID() == 0)
+    //    		System.out.println("agent " + range + "  " +(int)curX + "  " + (int)curY + "  " + (int)newX + "  " + (int)newY + "  " + arcX + "  " + arcY);
         	
         	good = true;
         	
@@ -133,7 +157,7 @@ public class Stochastic extends PlanModule
         	
         }
         	
-       	//check to make sure we are withing the borders
+       	//check to make sure we are within the borders
         // only need to check if the location is a good one so far
         if (good)
        	{
@@ -148,13 +172,15 @@ public class Stochastic extends PlanModule
         {
             newX     = curX;
             newY     = curY;
-            newTheta = a.getLocation().getTheta() + PI/6;
+            newTheta += PI/6;
         }
         double xOffSet = newX - curX;
 		double yOffSet = newY - curY;
 		if (xOffSet == 0)
 			xOffSet = .01;
 		double coneAngle = Math.atan(yOffSet/xOffSet)*57.298;
+
+			
 		
 		if(coneAngle < 0) {
 			if(curY > newY)
@@ -166,7 +192,14 @@ public class Stochastic extends PlanModule
 			if(curY < newY)
 				coneAngle += 180;
 		}
-        //newTheta = Math.atan((newY-curY)/(newX-curX))*(180/Math.PI);
-       return new AgentLocation( newX, newY, coneAngle );
+		if (Math.abs(coneAngle - curTheta) > arc/2)
+			coneAngle = 360 - coneAngle;
+		
+		if (a.getObjectID() == 0)
+			System.out.println("heading " + (int)coneAngle + " previous headig " + (int)newTheta);
+		
+		return new AgentLocation( newX, newY, coneAngle );
     }
+    
+ 
 }

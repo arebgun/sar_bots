@@ -24,6 +24,14 @@ import java.util.ArrayList;
 import java.util.Iterator; 
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import ui.GUI;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -34,7 +42,6 @@ public abstract class Agent extends Bobject implements Runnable
 	protected ArrayList<Agent> agentsHeard = null;
 	protected ArrayList<Obstacle> obstaclesSeen = null;
 	protected ArrayList<Flag> flagsSeen = null;
-	
 	int teamID;
     /**
      * Used to identify an agent thread. This becomes thread name.
@@ -50,7 +57,7 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Agent's current speed. Currently not used.
      */
-    protected double velocity;
+    protected double velocity = 0;
     
     /**
      * Agent's "hit points" - might be used to keep track of damage.
@@ -108,13 +115,14 @@ public abstract class Agent extends Bobject implements Runnable
     	agentsHeard = new ArrayList<Agent>();
     	obstaclesSeen = new ArrayList<Obstacle>();
     	flagsSeen = new ArrayList<Flag>();
-    	soundRadius = (int)config.getSensorRadius();
+    	soundRadius = (int)config.getSoundRadius();
     	boundingRadius = config.getBoundingRadius();
     	color = config.getObjectColor();
     	teamID = config.getTeamID();
     	sightColor = config.getSightColor();
     	hearColor = config.getSoundColor();
     	type = types.AGENT;
+    	
     }
 
    
@@ -255,6 +263,33 @@ public abstract class Agent extends Bobject implements Runnable
      * @param oneStep specifies if an agnet should perform only one step of execution,
      * i.e. move only once
      */
+    
+    public void draw (Graphics2D g2, boolean sight, boolean hearing)
+    {
+    	g2.setColor(this.color);
+		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
+				(float)location.getY() - (float)boundingRadius,
+				2f * (float)boundingRadius,
+				2f * (float)boundingRadius));
+		if (sight)
+		{
+			g2.setColor(this.sightColor);
+			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength() / 2), 
+					(int)location.getY() - (int)(sensorSight.getlength() / 2), 
+					(int)sensorSight.getlength(), (int)sensorSight.getlength(),
+					(int)location.getTheta()- (int)(sensorSight.getArcAngle() / 2),
+					(int)sensorSight.getArcAngle());
+		}
+		
+		if (hearing)
+		{
+			g2.setColor(this.hearColor);
+			g2.fill(new Ellipse2D.Float((float)location.getX() - (float)sensorHearing.getHearingRadius(),
+    				(float)location.getY() - (float)sensorHearing.getHearingRadius(),
+    				2f * (float)sensorHearing.getHearingRadius(),
+    				2f * (float)sensorHearing.getHearingRadius()));
+		}
+    }
     public void start( boolean oneStep )
     {
         if ( agentThread == null ) { agentThread = new Thread( this, idString ); }
@@ -279,13 +314,13 @@ public abstract class Agent extends Bobject implements Runnable
         if( oneStep && agentThread != null )
         {
             move();
-            stop();
+        	stop();
         }
         else
         {
             while( agentThread != null )
             {
-                move();
+            	move();
 
                 try
                 {

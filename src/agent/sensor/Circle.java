@@ -27,13 +27,13 @@ import sim.Simulator;
  */
 public class Circle extends SensorModule
 {
-	protected double radius;
 	
     public Circle( ConfigBobject config )
     {
         super( config );
         radius      = objectConfig.getSensorRadius();
     }
+
 
      public ArrayList<Agent> getSightAgents(Agent a)
     {

@@ -27,6 +27,8 @@ public abstract class SensorModule
     protected ConfigBobject objectConfig;
 	protected double arcAngle;
 	protected double length;
+	protected double radius;
+
     /**
      * Initializes basic sensor module state using the agent configuation object.
      *
@@ -47,5 +49,9 @@ public abstract class SensorModule
 	public double getlength() {
 		return length;
 	}
-	
+    public double getHearingRadius()
+    {
+    	return radius;
+    }
+    
 }

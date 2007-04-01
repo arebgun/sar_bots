@@ -55,7 +55,11 @@ public class AgentLocation
      * @return x coordinate of the agent (in radians)
      */
     public double getTheta()
-    {
+    { 
+    	while (theta > 360)
+    		theta -= 360;
+    	while (theta < 0)
+    		theta += 360;
         return theta;
     }
 

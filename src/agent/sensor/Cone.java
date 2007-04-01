@@ -52,7 +52,7 @@ public class Cone extends SensorModule{
     					xOffSet = .01;
     				double coneAngle = Math.atan(yOffSet/xOffSet)*radToDegConvert;
     				
-    				if(coneAngle < 0) {
+    		/*		if(coneAngle < 0) {
     					if(bY > aY)
     						coneAngle += 180;
     					else
@@ -63,7 +63,8 @@ public class Cone extends SensorModule{
     						coneAngle += 180;
     				}
     				///// radians???
-    				if(Math.abs(aT-coneAngle) <= arcAngle) {
+    				coneAngle = coneAngle % 360;*/
+    				if(Math.abs(aT-coneAngle) <= arcAngle/2) {
     					temp.add((Agent)b);
     				}
     				
