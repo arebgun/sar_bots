@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Attacker
-swarmSize=2
+swarmSize=5
 teamID=2
 
 #communications
@@ -17,7 +17,7 @@ yCircle=200
 circleRadius=90
 
 #planning
-planName=agent.plan.Stochastic
+planName=agent.plan.StochasticView
 planSeed=0
 
 #propulsion
@@ -40,8 +40,8 @@ sensorRadius=20
 soundColor=0,170,155,100
 
 #sight attributes
-sensorArcAngle=100
-sensorLength=100
+sensorArcAngle=50
+sensorLength=150
 sightColor=255,0,0,100
 
 

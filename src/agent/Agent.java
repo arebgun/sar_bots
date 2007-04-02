@@ -22,16 +22,8 @@ import config.ConfigBobject;
 import baseobject.*;
 import java.util.ArrayList;
 import java.util.Iterator; 
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
-import ui.GUI;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -176,20 +168,20 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	checkSensors();
         AgentLocation goal = plan.getGoalLocation( this );
-        location           = propulsion.move( location, goal );
+        location           = goal;// propulsion.move( location, goal );
     }
 
     private void checkSensors()
     {
     	//wipe all sensor arrays then fill them again (no memory for the agents)
     	agentsSeen.clear();
-    	//agentsHeard.clear();
+    	agentsHeard.clear();
     	obstaclesSeen.clear();
     	//flagsSeen.clear();
     	
     	//fill arraylists with all sensor information
     	agentsSeen.addAll(sensorSight.getSightAgents(this));
-    	//agentsHeard = sensorHearing.getHeardAgents(this);
+    	agentsHeard = sensorHearing.getHeardAgents(this);
     	obstaclesSeen.addAll(sensorSight.getSightObstacles(this));
     	//flagsSeen = sensorSight.getSightFlags(this);
     }

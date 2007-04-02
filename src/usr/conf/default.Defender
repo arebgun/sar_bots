@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Defender
-swarmSize=2
+swarmSize=15
 teamID=1
 
 #communications
@@ -17,12 +17,12 @@ yCircle=400
 circleRadius=75
 
 #planning
-planName=agent.plan.Stochastic
+planName=agent.plan.StochasticView
 planSeed=0
 
 #propulsion
 propulsionName=agent.propulsion.Thruster
-propulsionMaxSpeed=21.5
+propulsionMaxSpeed=1
 propulsionEnergyAmount=9999.9
 
 #base sensors
@@ -35,12 +35,12 @@ boundingRadius=5
 objectColor=0,255,255,255
 
 #sound attributes
-soundRadius=4
+soundRadius=10
 sensorRadius=20
 soundColor=50,170,155,100
 
 #sight attributes
-sensorArcAngle=60
+sensorArcAngle=30
 sensorLength=100
 sightColor=0,255,170,155
 

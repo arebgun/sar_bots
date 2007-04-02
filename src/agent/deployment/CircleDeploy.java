@@ -39,8 +39,8 @@ public class CircleDeploy extends DeploymentStrategy{
 	    {
 			boolean good = true;
 			circleAngle =    rand.nextDouble() * 360.0;
-			x = xCenter + (circleRadius*Math.sin(circleAngle));
-	        y = yCenter + (circleRadius*Math.cos(circleAngle));
+			x = xCenter + (circleRadius*Math.cos(circleAngle));
+	        y = yCenter + (circleRadius*Math.sin(circleAngle));
 	        Iterator<Bobject> iter = Simulator.objectIterator();
 	        while ( iter.hasNext())
 	        {
