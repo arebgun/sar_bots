@@ -64,22 +64,25 @@ public class Stochastic extends DeploymentStrategy
         	while ( iter.hasNext())
         	{
         		Bobject b = iter.next();
-        		double dist = Math.sqrt(x * b.getLocation().getX() +
-        				y * b.getLocation().getY());
-        		//if object b is not within the bounding radius of a, do nothing.
-        		//if object b is within the bounding radius of a, then good = false
-        		//and this location is not a good one to start with
-        		if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
-        				a.getObjectID() != b.getObjectID())
-        			;
-        		else
-        			good = false;
+        		if(b.isPlaced())
+        		{
+        			double dist = Math.sqrt(x * b.getLocation().getX() +
+        					y * b.getLocation().getY());
+        			//if object b is not within the bounding radius of a, do nothing.
+        			//if object b is within the bounding radius of a, then good = false
+        			//and this location is not a good one to start with
+        			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+        					a.getObjectID() != b.getObjectID())
+        				;
+        			else
+        				good = false;
+        		}
         	}
         	found = good; 
         }
 
         if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
 
-        return new AgentLocation( x, y, rand.nextGaussian() );
+        return new AgentLocation( x, y, rand.nextDouble() * 360 );
     }
 }

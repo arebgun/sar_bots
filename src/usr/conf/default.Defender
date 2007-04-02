@@ -10,7 +10,7 @@ commName=agent.comm.None
 commRange=100
 
 #deployment
-deploymentName=agent.deployment.CircleDeploy
+deploymentName=agent.deployment.Stochastic
 deploymentSeed=55
 xCircle=400
 yCircle=400

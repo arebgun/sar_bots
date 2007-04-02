@@ -150,7 +150,10 @@ public class ConfigBobject extends Config
 	{
 		return Integer.parseInt( pTable.get("teamID"));
 	}
+//DeploymentStrategy variables
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	
+	//circle deployment
 	public double getXCircle()
 	{
 		return Double.parseDouble( pTable.get( "xCircle"));
@@ -164,5 +167,31 @@ public class ConfigBobject extends Config
 	public double getCircleRadius()
 	{
 		return Double.parseDouble( pTable.get( "circleRadius"));
+	}
+	
+	//line deployment
+	public double getStartX()
+	{
+		return Double.parseDouble( pTable.get( "startX"));
+	}
+	
+	public double getStartY()
+	{
+		return Double.parseDouble( pTable.get( "startY"));
+	}
+	
+	public double getEndX()
+	{
+		return Double.parseDouble( pTable.get( "endX"));
+	}
+	
+	public double getEndY()
+	{
+		return Double.parseDouble( pTable.get( "endY"));
+	}
+	
+	public double getInitialHeading()
+	{
+		return Double.parseDouble( pTable.get( "initialHeading"));
 	}
 }

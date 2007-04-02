@@ -12,7 +12,7 @@ commRange=100
 #deployment
 deploymentName=agent.deployment.CircleDeploy
 deploymentSeed=85
-xCircle=200
+xCircle=600
 yCircle=200
 circleRadius=90
 
