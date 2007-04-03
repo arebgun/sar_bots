@@ -3,11 +3,12 @@ package agent.sensor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import obstacle.Obstacle;
+
 import sim.Simulator;
 import agent.Agent;
 import baseobject.Bobject;
 import baseobject.Flag;
-import baseobject.Obstacle;
 import config.ConfigBobject;
 
 public class Cone extends SensorModule{

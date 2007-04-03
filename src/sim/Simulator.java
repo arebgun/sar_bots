@@ -25,6 +25,8 @@ import agent.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
+
+import obstacle.Obstacle;
 /**
  * The main entrypoint for the UAV Search and Rescue Bot simulator.  This object keeps track of the main components,
  * such as the agents, the enviroment, and configuration.

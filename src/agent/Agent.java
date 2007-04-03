@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
+import obstacle.Obstacle;
+
 
 public abstract class Agent extends Bobject implements Runnable
 {
@@ -168,7 +170,7 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	checkSensors();
         AgentLocation goal = plan.getGoalLocation( this );
-        location           = goal;// propulsion.move( location, goal );
+        location           =  goal;//propulsion.move( location, goal ); //
     }
 
     private void checkSensors()

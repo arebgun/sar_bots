@@ -15,6 +15,8 @@ package agent.sensor;
 
 import config.ConfigBobject;
 import java.util.ArrayList;
+
+import obstacle.Obstacle;
 import agent.Agent;
 import baseobject.*;
 

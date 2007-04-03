@@ -47,29 +47,11 @@ public class Thruster extends PropulsionModule
         double goalX    = goal.getX();
         double goalY    = goal.getY();
         double goalDist = hypot( goalX - curX, goalY - curY );
- 		double theta = goal.getTheta();
-        if ( goalDist > maxSpeed )
+        double theta = goal.getTheta();
+ 		if ( goalDist > maxSpeed )
         {
-            //double theta = atan2( goalY - curY, goalX - curX );
-        	double xOffSet = goalX - curX;
-    		double yOffSet = goalY - curY;
-    		if (xOffSet == 0)
-    			xOffSet = .001;
-    	    theta = Math.atan(yOffSet/xOffSet)*57.298;
-
-    /*		if(theta < 0) {
-    			if(curY > goalY)
-    				theta += 180;
-    			else
-    				theta += 360;
-    		}
-    		else if(theta > 0) {
-    			if(curY < goalY)
-    				theta += 180;
-    		}
-    		theta = theta % 360;*/
             goalX = curX + maxSpeed * cos( theta );
-            goalY = curY + maxSpeed * sin( theta );
+            goalY = curY - maxSpeed * sin( theta );
         }
 
         return new AgentLocation( goalX, goalY, theta);

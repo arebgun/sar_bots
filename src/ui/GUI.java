@@ -33,6 +33,8 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import obstacle.Obstacle;
+
 public class GUI
 {
     private static int DEFAULT_WIDTH  = 1024;

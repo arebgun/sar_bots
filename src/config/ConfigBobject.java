@@ -194,4 +194,28 @@ public class ConfigBobject extends Config
 	{
 		return Double.parseDouble( pTable.get( "initialHeading"));
 	}
+	
+//===================================================================
+//CONFIG FOR OBSTACLES
+//===================================================================
+	//deployment for obstacles
+	public int getObsMinX()
+	{
+		return Integer.parseInt( pTable.get( "obsMinX"));
+	}
+	
+	public int getObsMaxX()
+	{
+		return Integer.parseInt( pTable.get( "obsMaxX"));
+	}
+	
+	public int getObsMinY()
+	{
+		return Integer.parseInt( pTable.get( "obsMinY"));
+	}
+	
+	public int getObsMaxY()
+	{
+		return Integer.parseInt( pTable.get( "obsMaxY"));
+	}
 }

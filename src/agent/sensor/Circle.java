@@ -20,6 +20,8 @@ import baseobject.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import obstacle.Obstacle;
+
 import sim.Simulator;
 /**
  * Implements a circular shaped agent sensor.

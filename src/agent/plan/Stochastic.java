@@ -8,6 +8,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.Random;
 
+import obstacle.Obstacle;
+
 
 public class Stochastic extends PlanModule
 {
