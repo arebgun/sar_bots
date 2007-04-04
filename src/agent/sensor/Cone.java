@@ -15,12 +15,79 @@ public class Cone extends SensorModule{
 
 
 	static final double radToDegConvert = 57.298;
+	protected double halfAngle = 0;
 	
 	public Cone( ConfigBobject config )
 	{
 		super ( config );
 		arcAngle = config.getSensorArcAngle();
-		length = config.getSensorLength();		
+		length = config.getSensorLength();
+		halfAngle = arcAngle / 2.0;
+		
+	}
+	
+	private boolean inAngle( Agent a, double x, double y)
+	{
+		boolean isIn = false;
+		double aX = a.getLocation().getX();
+		double aY = a.getLocation().getY();
+		double aT = a.getLocation().getTheta();
+		double xOffSet = aX - x;
+		double yOffSet = aY - y;
+		if (xOffSet == 0)
+			xOffSet = .01;
+		double angle = Math.atan(yOffSet/xOffSet);
+		angle = Math.toDegrees(angle);
+		if ( aX <= x)
+		{
+			if ( aY >= y)
+			{
+				//quad 1
+				angle = Math.abs(angle);
+				if((Math.abs(aT - angle) <= halfAngle) ||
+						(Math.abs(aT - (360 + angle)) <= halfAngle))
+				{
+				//	System.out.println("Quad 1 : " + (int)angle + "  Heading : " + (int)aT);
+					isIn = true;
+				}
+			}
+			else
+			{
+				//quad 4
+				angle = 360 - angle;
+				if((Math.abs(aT - angle) <= halfAngle) ||
+						(Math.abs((aT + 360) - angle) <= halfAngle))
+				{
+				//	System.out.println("Quad 4 : " + (int)angle + "  Heading : " + (int)aT);
+					isIn = true;
+				}
+			}
+		}
+		else
+		{
+			if (aY >= y)
+			{
+				//quad 2
+				angle = 180 - angle;
+				if(Math.abs(aT - angle) <= halfAngle)
+				{
+				//	System.out.println("Quad 2 : " + (int)angle + "  Heading : " + (int)aT);
+					isIn = true;
+				}
+			}
+			else
+			{
+				//quad 3
+				angle = Math.abs(angle);
+				angle = 180 + angle;
+				if(Math.abs(aT - angle) <= halfAngle)
+				{
+				//	System.out.println("Quad 3 : " + (int)angle + "  Heading : " + (int)aT);
+					isIn = true;
+				}
+			}
+		}
+		return isIn;
 	}
 	
     public ArrayList<Agent> getSightAgents(Agent a)
@@ -30,7 +97,6 @@ public class Cone extends SensorModule{
     	temp = new ArrayList<Agent>();
     	double aX = a.getLocation().getX();
     	double aY = a.getLocation().getY();
-    	double aT = a.getLocation().getTheta();
     	
     	while ( iter.hasNext())
     	{
@@ -41,45 +107,18 @@ public class Cone extends SensorModule{
     	    	double bY = b.getLocation().getY();
     			double dist = Math.hypot(aX-bX, aY-bY);
     			//is any part of agent b within the length of my viewing cone?
-    			if (length + b.getBoundingRadius() <= dist &&
+    			if (length + b.getBoundingRadius() >= dist &&
     				a.getObjectID() != b.getObjectID() )
     			{
+    				
     				//b is within the length of my viewing cone, now is it within
     				//my viewing arc?
-    				//TODO: Add code for determinig if an agent is in the viewing cone (by angle)
-    				double xOffSet = aX - bX;
-    				double yOffSet = aY - bY;
-    				if (xOffSet == 0)
-    					xOffSet = .01;
-    				double coneAngle = Math.atan(yOffSet/xOffSet)*radToDegConvert;
-    				
-    		/*		if(coneAngle < 0) {
-    					if(bY > aY)
-    						coneAngle += 180;
-    					else
-    						coneAngle += 360;
-    				}
-    				else if(coneAngle > 0) {
-    					if(bY < aY)
-    						coneAngle += 180;
-    				}
-    				///// radians???
-    				coneAngle = coneAngle % 360;*/
-    				if(Math.abs(aT-coneAngle) <= arcAngle/2) {
+    				if(inAngle(a,bX,bY)) 
+    				{
     					temp.add((Agent)b);
     				}
-    				
-    				
-    				
-    				
-    				
-    				
-    				
-    				//if b is in the viewing cone then add it to the sight array
-    				temp.add((Agent)b);
     			}
     		}
-
     	}
     	return temp;
     }
@@ -89,23 +128,26 @@ public class Cone extends SensorModule{
     	ArrayList<Obstacle> temp = null;
     	Iterator<Bobject> iter = Simulator.objectIterator();
     	temp = new ArrayList<Obstacle>();
+    	double aX = a.getLocation().getX();
+    	double aY = a.getLocation().getY();
     	while ( iter.hasNext())
     	{
     		Bobject b = iter.next();
     		if (b.isObstacle())
     		{
-    			double dist = Math.sqrt(a.getLocation().getX() * b.getLocation().getX()+
-    				a.getLocation().getY() * b.getLocation().getY());
+    			double bX = b.getLocation().getX();
+    	    	double bY = b.getLocation().getY();
+    			double dist = Math.hypot(aX-bX, aY-bY);
     			//is any part of agent b within the length of my viewing cone?
-    			if (length + b.getBoundingRadius() <= dist &&
+    			if (length + b.getBoundingRadius() >= dist &&
     				a.getObjectID() != b.getObjectID() )
     			{
-    				//b is within the length of my viewing cone, now is it within
+//    				//b is within the length of my viewing cone, now is it within
     				//my viewing arc?
-    				//TODO: Add code for determinig if an agent is in the viewing cone (by angle)
-    				
-    				//if b is in the viewing cone then add it to the sight array
-    				temp.add((Obstacle)b);
+    				if(inAngle(a,bX,bY)) 
+    				{
+    					temp.add((Obstacle)b);
+    				}
     			}
     		}
 
@@ -118,26 +160,29 @@ public class Cone extends SensorModule{
     	ArrayList<Flag> temp = null;
     	Iterator<Bobject> iter = Simulator.objectIterator();
     	temp = new ArrayList<Flag>();
+    	double aX = a.getLocation().getX();
+    	double aY = a.getLocation().getY();
     	while ( iter.hasNext())
     	{
     		Bobject b = iter.next();
-    		if (b.isAgent())
+    		if (b.isFlag())
     		{
-    			double dist = Math.sqrt(a.getLocation().getX() * b.getLocation().getX()+
-    				a.getLocation().getY() * b.getLocation().getY());
+    			double bX = b.getLocation().getX();
+    	    	double bY = b.getLocation().getY();
+    			double dist = Math.hypot(aX-bX, aY-bY);
     			//is any part of agent b within the length of my viewing cone?
-    			if (length + b.getBoundingRadius() <= dist &&
+    			if (length + b.getBoundingRadius() >= dist &&
     				a.getObjectID() != b.getObjectID() )
     			{
-    				//b is within the length of my viewing cone, now is it within
+//    				//b is within the length of my viewing cone, now is it within
     				//my viewing arc?
-    				//TODO: Add code for determinig if an agent is in the viewing cone (by angle)
-    				
-    				//if b is in the viewing cone then add it to the sight array
-    				temp.add((Flag)b);
+    				if(inAngle(a,bX,bY)) 
+    				{
+    				//	System.out.println("Flag added to seen : X : " + (int)aX + " Y : " + (int)aY);
+    					temp.add((Flag)b);
+    				}
     			}
     		}
-
     	}
     	return temp;
     }
@@ -147,23 +192,26 @@ public class Cone extends SensorModule{
     	ArrayList<Agent> temp = null;
     	Iterator<Bobject> iter = Simulator.objectIterator();
     	temp = new ArrayList<Agent>();
+    	double aX = a.getLocation().getX();
+    	double aY = a.getLocation().getY();
     	while ( iter.hasNext())
     	{
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			double dist = Math.sqrt(a.getLocation().getX() * b.getLocation().getX()+
-    				a.getLocation().getY() * b.getLocation().getY());
+    			double bX = b.getLocation().getX();
+    	    	double bY = b.getLocation().getY();
+    			double dist = Math.hypot(aX-bX, aY-bY);
     			//is any part of agent b within the length of my viewing cone?
     			if (length + b.getBoundingRadius() <= dist &&
     				a.getObjectID() != b.getObjectID() )
     			{
-    				//b is within the length of my viewing cone, now is it within
+//    				b is within the length of my viewing cone, now is it within
     				//my viewing arc?
-    				//TODO: Add code for determinig if an agent is in the viewing cone (by angle)
-    				
-    				//if b is in the viewing cone then add it to the sight array
-    				temp.add((Agent)b);
+    				if(inAngle(a,bX,bY)) 
+    				{
+    					temp.add((Agent)b);
+    				}
     			}
     		}
 

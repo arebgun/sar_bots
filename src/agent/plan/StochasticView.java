@@ -52,50 +52,6 @@ public class StochasticView extends PlanModule
     	return isSafe;
     }
     
-    private boolean inWorld(double x, double y, double t)
-    {
-    	Rectangle2D world = Environment.groundShape();
-		boolean isSafe = true;
-		
-    	//make sure if the agent is against the world boundry that it
-    	//is heading back into the world proper
-    	//checking left side of the world first
-    	if ( x <= 15)
-    	{
-    		if (y <= 15 && t <= 290)
-    			isSafe = false;
-    		else if (y >= (world.getMaxY()-15) && (t < 20 || t > 70))
-    			isSafe = false;
-    		else if (t > 70 && t < 290)
-    			isSafe = false;
-    	}
-    	
-    	//checking right side of the world
-    	else if (x >= (world.getMaxX()-15))
-    	{
-    		if (y <= 15 && (t < 200 || t > 250))
-    			isSafe = false;
-    		else if (y >= (world.getMaxY()-15) && (t < 110 || t > 160))
-    			isSafe = false;
-    		else if (t < 110 || t > 250)
-    			isSafe = false;
-    	}
-    	
-    	//checking top of the world
-    	else if (y <= 15 && (t > 200 || t > 340))
-    		isSafe = false;
-    	
-    	//checking bottom of the world
-    	else if (y >= (world.getMaxY()-15) && (t < 20 || t > 160))
-    		isSafe = false;
-    	
-    	//if it gets to this else then the co-ords are inside the world boundries
-    	else
-    		isSafe = true;
-    		
-    	return isSafe;
-    }
- 
     public AgentLocation getGoalLocation( Agent a )
     {
         double curX        = a.getLocation().getX();
@@ -131,7 +87,7 @@ public class StochasticView extends PlanModule
         	//radi for both agents. if the distance is less then the bounding distance the there 
         	//is a collision and this new position is invalid. 
         	//check against obstacles and agents heard is done the same way.
-        	Iterator<Agent> iter = a.getAgentsSeen();
+ /*       	Iterator<Agent> iter = a.getAgentsSeen();
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
@@ -156,7 +112,7 @@ public class StochasticView extends PlanModule
         			good = false;
         	}
         	found = good;
-        	
+  */       	
 //        	check against agents heard
         	Iterator<Agent> heard = a.getAgentsHeard();
         	while ( heard.hasNext() && good)
@@ -171,9 +127,26 @@ public class StochasticView extends PlanModule
         		}
         	}
         	found = good;
-        	
-        
-        	
+       	
+        	//check against flags seen
+        	Iterator<Flag> flag = a.getFlagsSeen();
+        	while (flag.hasNext() && good)
+        	{
+        		Flag f = flag.next();
+        		if (a.getObjectID() != f.getObjectID())
+        		{
+        			dist = Math.hypot((newX - f.getLocation().getX()),(newY - f.getLocation().getY()));
+        			bound = a.getBoundingRadius() + f.getBoundingRadius();
+        		//	System.out.println("flag checked for collision" + " dist : " + (int)dist + " bound : " + (int)bound);
+        		//	System.out.println("newX : " + (int)newX + " x : " + (int)f.getLocation().getX() +
+        		//			" newY : " + (int)newY + " y : " + (int)f.getLocation().getY());
+        			if (bound >= dist)
+        			{
+        				good = false;
+        			}
+        		}
+        	}
+        	found = good;
        }
         
         //ok we have new location now, check to see if this location is within the world boundry

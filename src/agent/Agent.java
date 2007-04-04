@@ -179,13 +179,13 @@ public abstract class Agent extends Bobject implements Runnable
     	agentsSeen.clear();
     	agentsHeard.clear();
     	obstaclesSeen.clear();
-    	//flagsSeen.clear();
+    	flagsSeen.clear();
     	
     	//fill arraylists with all sensor information
-    	agentsSeen.addAll(sensorSight.getSightAgents(this));
-    	agentsHeard = sensorHearing.getHeardAgents(this);
-    	obstaclesSeen.addAll(sensorSight.getSightObstacles(this));
-    	//flagsSeen = sensorSight.getSightFlags(this);
+    	//agentsSeen.addAll(sensorSight.getSightAgents(this));
+    	agentsHeard.addAll(sensorHearing.getHeardAgents(this));
+    	//obstaclesSeen.addAll(sensorSight.getSightObstacles(this));
+    	flagsSeen.addAll(sensorSight.getSightFlags(this));
     }
     public Iterator<Agent> getAgentsSeen()
     {

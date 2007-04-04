@@ -1,6 +1,5 @@
 package baseobject;
 
-import agent.AgentLocation;
 import config.ConfigBobject;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -26,16 +25,6 @@ public class Flag extends Bobject{
 		System.out.println("in the Flag Constructor");
 		System.out.println("location = " + location.getX() + "   " + location.getY());
 	}
-/*	public Flag(AgentLocation loc, int id)
-	{
-		initialLocation = loc;
-		location = loc;
-		teamID = id;
-		owner = 0;
-		isOwned = false;
-		type = types.FLAG;
-	}
-	*/
 	public boolean getOwned()
 	{
 		return isOwned;
@@ -73,8 +62,8 @@ public class Flag extends Bobject{
 	public void draw(Graphics2D g2)
 	{
 		g2.setColor(color);
-		g2.fill(new Ellipse2D.Float((float)location.getX(),
-				(float)location.getY(),
+		g2.fill(new Ellipse2D.Float((float)location.getX() - boundingRadius,
+				(float)location.getY() - boundingRadius,
 				2f * (float)boundingRadius,
 				2f * (float)boundingRadius));
 	}
