@@ -4,6 +4,6 @@
 className=baseobject.Flag
 swarmSize=1
 teamID=1
-boundingRadius=50
-objectColor=0,0,0,255
+boundingRadius=100
+objectColor=0,0,0,100
 objectLocation=400,300,0

@@ -160,7 +160,7 @@ public class StochasticView extends PlanModule
         {
             newX     = curX;
             newY     = curY;
-            newTheta = curTheta + Math.PI;
+            newTheta = curTheta + a.sensorSight.getHalfAngle();
         }
  		
 		return new AgentLocation( newX, newY, newTheta );

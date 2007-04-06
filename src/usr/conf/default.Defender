@@ -42,7 +42,7 @@ soundColor=50,170,155,100
 #sight attributes
 sensorArcAngle=30
 sensorLength=100
-sightColor=0,255,170,155
+sightColor=0,255,0,100
 
 
 
