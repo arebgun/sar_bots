@@ -194,6 +194,23 @@ public abstract class Agent extends Bobject implements Runnable
     	Color tempSight = sightColor;
     	Color tempHear = hearColor;
     	Color tempAgent = color;
+    	sightColor = sightColor.orange;
+    	hearColor = hearColor.red;
+    	color = color.MAGENTA;
+    	for (int j = 0; j < 3; j++)
+	    	{
+	    	for(int i = 0; i<= 50; i++)
+	    	{
+	    		sightColor = sightColor.brighter();
+	    	}
+	    	for(int i = 0; i<= 50; i++)
+	    	{
+	    		sightColor = sightColor.darker();
+	    	}
+    	}
+    	sightColor = tempSight;
+    	hearColor = tempHear;
+    	color = tempAgent;
     }
     
     public void checkSensors()
