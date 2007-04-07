@@ -87,7 +87,7 @@ public class StochasticView extends PlanModule
         	//radi for both agents. if the distance is less then the bounding distance the there 
         	//is a collision and this new position is invalid. 
         	//check against obstacles and agents heard is done the same way.
- /*       	Iterator<Agent> iter = a.getAgentsSeen();
+        	Iterator<Agent> iter = a.getAgentsSeen();
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
@@ -112,7 +112,7 @@ public class StochasticView extends PlanModule
         			good = false;
         	}
         	found = good;
-  */       	
+         	
 //        	check against agents heard
         	Iterator<Agent> heard = a.getAgentsHeard();
         	while ( heard.hasNext() && good)
@@ -133,17 +133,11 @@ public class StochasticView extends PlanModule
         	while (flag.hasNext() && good)
         	{
         		Flag f = flag.next();
-        		if (a.getObjectID() != f.getObjectID())
+        		dist = Math.hypot((newX - f.getLocation().getX()),(newY - f.getLocation().getY()));
+        		bound = a.getBoundingRadius() + f.getBoundingRadius();
+        		if (bound >= dist)
         		{
-        			dist = Math.hypot((newX - f.getLocation().getX()),(newY - f.getLocation().getY()));
-        			bound = a.getBoundingRadius() + f.getBoundingRadius();
-        		//	System.out.println("flag checked for collision" + " dist : " + (int)dist + " bound : " + (int)bound);
-        		//	System.out.println("newX : " + (int)newX + " x : " + (int)f.getLocation().getX() +
-        		//			" newY : " + (int)newY + " y : " + (int)f.getLocation().getY());
-        			if (bound >= dist)
-        			{
-        				good = false;
-        			}
+        			good = false;
         		}
         	}
         	found = good;
