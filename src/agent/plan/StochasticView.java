@@ -167,7 +167,7 @@ public class StochasticView extends PlanModule
     		Agent b = iter.next();
     		if (a.getObjectID() != b.getObjectID() && a.getTeamID() != b.getTeamID())
     		{
-    			
+    			b.decrementHealth(1);
     		}
     	}
 		return new AgentLocation( newX, newY, newTheta );

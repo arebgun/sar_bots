@@ -115,6 +115,7 @@ public abstract class Agent extends Bobject implements Runnable
     	teamID = config.getTeamID();
     	sightColor = config.getSightColor();
     	hearColor = config.getSoundColor();
+    	health = config.getHealth();
     	type = types.AGENT;
     	
     }
@@ -172,14 +173,21 @@ public abstract class Agent extends Bobject implements Runnable
      */
     public void move()
     {
+    	if (health > 0)
+    	{
     	checkSensors();
         AgentLocation goal = plan.getGoalLocation( this );
         location           =  goal;//propulsion.move( location, goal ); //
+    	}
     }
 
     abstract public void pickUpFlag(Flag f);
     
-
+    public int getHealth()
+    {
+    	return health;
+    }
+    
     public void decrementHealth(int d)
     {
     	this.health -= d;
@@ -229,6 +237,7 @@ public abstract class Agent extends Bobject implements Runnable
     public void reset()
     {
         location = initialLocation;
+        health = config.getHealth();
     }
 
     /**
@@ -278,6 +287,8 @@ public abstract class Agent extends Bobject implements Runnable
     
     public void draw (Graphics2D g2, boolean sight, boolean hearing)
     {
+    	if (health > 0)
+    	{
     	g2.setColor(this.color);
 		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
 				(float)location.getY() - (float)boundingRadius,
@@ -301,6 +312,7 @@ public abstract class Agent extends Bobject implements Runnable
     				2f * (float)sensorHearing.getHearingRadius(),
     				2f * (float)sensorHearing.getHearingRadius()));
 		}
+    	}
     }
     public void start( boolean oneStep )
     {

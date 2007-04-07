@@ -100,20 +100,24 @@ public class Cone extends SensorModule{
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			double bX = b.getLocation().getX();
-    	    	double bY = b.getLocation().getY();
-    	    	double bR = b.getBoundingRadius();
-    			double dist = Math.hypot(aX-bX, aY-bY);
-    			//is any part of agent b within the length of my viewing cone?
-    			if (length + b.getBoundingRadius() >= dist &&
-    				a.getObjectID() != b.getObjectID() )
+    			Agent x = (Agent)b;
+    			if (x.getHealth() > 0)
     			{
-    				
-    				//b is within the length of my viewing cone, now is it within
-    				//my viewing arc?
-    				if(inAngle(a,bX,bY,bR)) 
+    				double bX = b.getLocation().getX();
+    				double bY = b.getLocation().getY();
+    				double bR = b.getBoundingRadius();
+    				double dist = Math.hypot(aX-bX, aY-bY);
+    				//is any part of agent b within the length of my viewing cone?
+    				if (length + b.getBoundingRadius() >= dist &&
+    						a.getObjectID() != b.getObjectID() )
     				{
-    					temp.add((Agent)b);
+    				
+    					//b is within the length of my viewing cone, now is it within
+    					//my viewing arc?
+    					if(inAngle(a,bX,bY,bR)) 
+    					{
+    						temp.add((Agent)b);
+    					}
     				}
     			}
     		}
@@ -199,19 +203,23 @@ public class Cone extends SensorModule{
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			double bX = b.getLocation().getX();
-    	    	double bY = b.getLocation().getY();
-    	    	double bR = b.getBoundingRadius();
-    			double dist = Math.hypot(aX-bX, aY-bY);
-    			//is any part of agent b within the length of my viewing cone?
-    			if (length + b.getBoundingRadius() <= dist &&
-    				a.getObjectID() != b.getObjectID() )
+    			Agent x = (Agent)b;
+    			if (x.getHealth() > 0)
     			{
-//    				b is within the length of my viewing cone, now is it within
-    				//my viewing arc?
-    				if(inAngle(a,bX,bY,bR)) 
+    				double bX = b.getLocation().getX();
+    				double bY = b.getLocation().getY();
+    				double bR = b.getBoundingRadius();
+    				double dist = Math.hypot(aX-bX, aY-bY);
+    				//is any part of agent b within the length of my viewing cone?
+    				if (length + b.getBoundingRadius() <= dist &&
+    						a.getObjectID() != b.getObjectID() )
     				{
-    					temp.add((Agent)b);
+//    					b is within the length of my viewing cone, now is it within
+    					//my viewing arc?
+    					if(inAngle(a,bX,bY,bR)) 
+    					{
+    						temp.add((Agent)b);
+    					}
     				}
     			}
     		}
