@@ -340,6 +340,7 @@ class RescueArea extends SimDrawPanel
     		if (b.isFlag())
     		{
     			Flag f = (Flag)b;
+    			f.setLocation();
     			f.draw(g2);
      		}
     		if (b.isObstacle())

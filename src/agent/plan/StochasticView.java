@@ -135,9 +135,13 @@ public class StochasticView extends PlanModule
         		Flag f = flag.next();
         		dist = Math.hypot((newX - f.getLocation().getX()),(newY - f.getLocation().getY()));
         		bound = a.getBoundingRadius() + f.getBoundingRadius();
-        		if (bound >= dist)
+        		if (bound >= dist && (f.getOwner() != a.getObjectID()))
         		{
         			good = false;
+        			if (!f.getOwned())
+        			{
+        				a.pickUpFlag(f);
+        			}
         		}
         	}
         	found = good;
