@@ -131,6 +131,10 @@ public abstract class Agent extends Bobject implements Runnable
         this.sleepTime = sleepTime;
     }
     
+    public int getTeamID()
+    {
+    	return teamID;
+    }
     /**
      * Gets the velocity of the agent.
      * @author jeff
@@ -175,7 +179,7 @@ public abstract class Agent extends Bobject implements Runnable
 
     abstract public void pickUpFlag(Flag f);
     
-    private void checkSensors()
+    public void checkSensors()
     {
     	//wipe all sensor arrays then fill them again (no memory for the agents)
     	agentsSeen.clear();

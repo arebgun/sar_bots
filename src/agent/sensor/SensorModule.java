@@ -28,9 +28,10 @@ public abstract class SensorModule
 {
     protected ConfigBobject objectConfig;
 	protected double arcAngle;
+	
 	protected double length;
 	protected double radius;
-	protected double halfAngle;
+	protected double halfAngle = 0;
 
     /**
      * Initializes basic sensor module state using the agent configuation object.
@@ -56,9 +57,8 @@ public abstract class SensorModule
     {
     	return radius;
     }
-    public double getHalfAngle()
-    {
-    	return halfAngle;
-    }
-    
+	public double getHalfAngle()
+	{
+		return halfAngle;
+	}
 }
