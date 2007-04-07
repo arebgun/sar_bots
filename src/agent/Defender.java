@@ -1,4 +1,5 @@
 package agent;
+import baseobject.*;
 
 import config.ConfigBobject;
 
@@ -9,4 +10,12 @@ public class Defender extends Agent
 		super (config);
 	}
 
+	public void pickUpFlag(Flag f)
+	{
+		if (f.getOwned() == false)
+		{
+			f.setOwner(-1);
+			f.reset();
+		}
+	}
 }

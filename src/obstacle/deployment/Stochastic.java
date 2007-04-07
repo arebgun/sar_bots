@@ -49,8 +49,8 @@ public class Stochastic extends DeploymentStrategy
         		Bobject b = iter.next();
         		if(b.isPlaced())
         		{
-        			double dist = Math.sqrt(x * b.getLocation().getX() +
-        					y * b.getLocation().getY());
+        			double dist = Math.hypot(x - b.getLocation().getX() ,
+        					y - b.getLocation().getY());
         			//if object b is not within the bounding radius of a, do nothing.
         			//if object b is within the bounding radius of a, then good = false
         			//and this location is not a good one to start with

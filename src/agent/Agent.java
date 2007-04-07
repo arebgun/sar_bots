@@ -173,6 +173,8 @@ public abstract class Agent extends Bobject implements Runnable
         location           =  goal;//propulsion.move( location, goal ); //
     }
 
+    abstract public void pickUpFlag(Flag f);
+    
     private void checkSensors()
     {
     	//wipe all sensor arrays then fill them again (no memory for the agents)

@@ -182,6 +182,12 @@ public class Simulator
     {
     	return worldObjects.iterator();
     }
+    
+    public static Bobject getObjectByID(int id)
+    {
+    	return worldObjects.get(id);
+    }
+    
     /**
      * Initializes the simulator state, sets up the logging facilities, and parses the command line arguments.
      *

@@ -1,4 +1,5 @@
 package baseobject;
+import sim.Simulator;
 
 import config.ConfigBobject;
 import java.awt.*;
@@ -55,6 +56,12 @@ public class Flag extends Bobject{
 	public void reset()
 	{
 		location = initialLocation;
+	}
+	
+	public void setLocation()
+	{
+		if(this.isOwned)
+			this.location = Simulator.getObjectByID(this.getOwner()).location;
 	}
 	
 	public void draw(Graphics2D g2)
