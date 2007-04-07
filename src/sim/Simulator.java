@@ -113,7 +113,10 @@ public class Simulator
         	if (b.isObstacle())
         	{
         		Obstacle o = (Obstacle)b;
-        		AgentLocation loc = o.getInitialLocation();
+        		AgentLocation loc;
+        		loc = o.deployStrategy.getNextLocation(o);
+        		o.setInitialLocation(loc);
+        		o.setLocation(loc);
         	}
         }
      }

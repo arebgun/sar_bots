@@ -22,8 +22,6 @@ public class Flag extends Bobject{
 		owner = 0;
 		isOwned = false;
 		type = types.FLAG;
-		System.out.println("in the Flag Constructor");
-		System.out.println("location = " + location.getX() + "   " + location.getY());
 	}
 	public boolean getOwned()
 	{

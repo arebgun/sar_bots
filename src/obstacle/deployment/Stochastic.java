@@ -66,6 +66,8 @@ public class Stochastic extends DeploymentStrategy
 
         if ( !found ) { throw new IllegalStateException( "unable to deploy obstacle #" + o.getObjectID() ); }
 
+        o.setPlaced(true);
+        
         return new AgentLocation( x, y, rand.nextDouble() * 360 );
 	}
 }

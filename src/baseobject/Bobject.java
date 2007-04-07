@@ -13,7 +13,9 @@ public abstract class Bobject {
 	protected int soundRadius;
 	protected Color color;
 	protected enum types {AGENT,FLAG,OBSTACLE}
+	protected enum shapes {CIRCLE,POLYGON} 
 	protected types type;
+	protected shapes boundingShape;
 	protected boolean placed = false;
     protected ConfigBobject config;
 	
