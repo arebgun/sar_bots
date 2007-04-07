@@ -179,7 +179,17 @@ public abstract class Agent extends Bobject implements Runnable
 
     abstract public void pickUpFlag(Flag f);
     
+
+    public void decrementHealth(int d)
+    {
+    	this.health -= d;
+    	Color tempSight = sightColor;
+    	Color tempHear = hearColor;
+    	Color tempAgent = color;
+    }
+    
     public void checkSensors()
+
     {
     	//wipe all sensor arrays then fill them again (no memory for the agents)
     	agentsSeen.clear();
