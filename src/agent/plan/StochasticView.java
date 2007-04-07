@@ -160,12 +160,14 @@ public class StochasticView extends PlanModule
             newY     = curY;
             newTheta = curTheta + a.sensorSight.getHalfAngle();
         }
+        AgentLocation newAgentLocation = new AgentLocation(newX, newY, newTheta); 
+        a.setLocation(newAgentLocation);
  		a.checkSensors();
  		Iterator<Agent> iter = a.getAgentsSeen();
     	while ( iter.hasNext() && good)
     	{
     		Agent b = iter.next();
-    		if (a.getObjectID() != b.getObjectID() && a.getTeamID() != b.getTeamID())
+    		if (a.getTeamID() != b.getTeamID())
     		{
     			b.decrementHealth(1);
     		}
