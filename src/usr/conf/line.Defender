@@ -32,7 +32,7 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=1000
+health=300
 boundingRadius=5
 objectColor=0,255,255,255
 

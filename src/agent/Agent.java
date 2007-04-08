@@ -192,15 +192,37 @@ public abstract class Agent extends Bobject implements Runnable
     
     public void decrementHealth(int d)
     {
+    	int sightRed = sightColor.getRed();
+    	int sightGreen = sightColor.getGreen();
+    	int sightBlue = sightColor.getBlue();
+    	int hearRed = hearColor.getRed();
+    	int hearGreen = hearColor.getGreen();
+    	int hearBlue = hearColor.getBlue();
+    	
+    	System.out.println("Agent health before dec for agent " + this.objectID + "= " + health);
     	if(health > 0)
     	{
 	    	health = health - d;
-	    	sightColor = new Color(sightColor.getRed()+d,sightColor.getGreen()-d,sightColor.getBlue()-d,sightColor.getAlpha());
-	    	hearColor = new Color(hearColor.getRed()+d,hearColor.getGreen()-d,hearColor.getBlue()-d,hearColor.getAlpha());
+	    	if(sightColor.getRed()+d <= 255)
+	    		sightRed = sightColor.getRed() + d;
+	    	if(sightColor.getGreen()-d >= 0)
+	    		sightGreen = sightColor.getGreen() - d;
+	    	if(sightColor.getBlue()-d >= 0)
+	    		sightBlue = sightColor.getBlue() - d;
+	    	if(hearColor.getRed()+d <= 255)
+	    		hearRed = hearColor.getRed() + d;
+	    	if(hearColor.getGreen()-d >= 0)
+	    		hearGreen = hearColor.getGreen() - d;
+	    	if(hearColor.getBlue()-d >= 0)
+	    		hearBlue = hearColor.getBlue() - d;
+	    	
+	    	sightColor = new Color(sightRed,sightGreen,sightBlue,sightColor.getAlpha());
+	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
 	    	//drop the flag if your dead
 	    	if (health <= 0 && hasFlag)
 	    		hasFlag = false;
     	}
+    	System.out.println("Agent health after dec for agent " + this.objectID + "= " + health);
     }
     
     public void checkSensors()
