@@ -17,6 +17,7 @@ public class Attacker extends Agent
 			f.setOwned(true);
 			f.setOwner(this.objectID);
 			f.setLocation(this.location);
+			hasFlag = true;
 		}
 		else
 			System.out.println("Agent "+this.objectID+" is trying to pick up already owned flag!");

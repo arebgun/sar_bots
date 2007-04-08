@@ -164,7 +164,7 @@ public class StochasticView extends PlanModule
         a.setLocation(newAgentLocation);
  		a.checkSensors();
  		Iterator<Agent> iter = a.getAgentsSeen();
-    	while ( iter.hasNext() && good)
+    	while ( iter.hasNext())
     	{
     		Agent b = iter.next();
     		if (a.getTeamID() != b.getTeamID())

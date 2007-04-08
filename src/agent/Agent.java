@@ -53,6 +53,8 @@ public abstract class Agent extends Bobject implements Runnable
      */
     protected double velocity = 0;
     
+    protected boolean hasFlag = false;
+    
     /**
      * Agent's "hit points" - might be used to keep track of damage.
      * Currently not used.
@@ -190,27 +192,15 @@ public abstract class Agent extends Bobject implements Runnable
     
     public void decrementHealth(int d)
     {
-    	this.health -= d;
-    	Color tempSight = sightColor;
-    	Color tempHear = hearColor;
-    	Color tempAgent = color;
-    	sightColor = sightColor.orange;
-    	hearColor = hearColor.red;
-    	color = color.MAGENTA;
-    	for (int j = 0; j < 3; j++)
-	    	{
-	    	for(int i = 0; i<= 50; i++)
-	    	{
-	    		sightColor = sightColor.brighter();
-	    	}
-	    	for(int i = 0; i<= 50; i++)
-	    	{
-	    		sightColor = sightColor.darker();
-	    	}
+    	if(health > 0)
+    	{
+	    	health = health - d;
+	    	sightColor = new Color(sightColor.getRed()+d,sightColor.getGreen()-d,sightColor.getBlue()-d,sightColor.getAlpha());
+	    	hearColor = new Color(hearColor.getRed()+d,hearColor.getGreen()-d,hearColor.getBlue()-d,hearColor.getAlpha());
+	    	//drop the flag if your dead
+	    	if (health <= 0 && hasFlag)
+	    		hasFlag = false;
     	}
-    	sightColor = tempSight;
-    	hearColor = tempHear;
-    	color = tempAgent;
     }
     
     public void checkSensors()
