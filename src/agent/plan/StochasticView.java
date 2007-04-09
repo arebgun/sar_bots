@@ -71,8 +71,19 @@ public class StochasticView extends PlanModule
         boolean found = false;
         boolean good = true;
         double arc = a.sensorSight.getArcAngle();
-        
-  		        
+        boolean shoot = false;
+        Iterator<Agent> it = a.getAgentsSeen();
+    	while ( it.hasNext())
+    	{
+    		Agent b = it.next();
+    		if (a.getTeamID() != b.getTeamID())
+    		{
+    			shoot = true;
+    			b.decrementHealth(1);
+    		}
+    	}    
+    	if (shoot)
+    		return a.getLocation();
         while (!found && --limit > 0)
         {
         	double ang = getAngle(arc, curTheta);
@@ -160,18 +171,7 @@ public class StochasticView extends PlanModule
             newY     = curY;
             newTheta = curTheta + a.sensorSight.getHalfAngle();
         }
-        AgentLocation newAgentLocation = new AgentLocation(newX, newY, newTheta); 
-        a.setLocation(newAgentLocation);
- 		a.checkSensors();
- 		Iterator<Agent> iter = a.getAgentsSeen();
-    	while ( iter.hasNext())
-    	{
-    		Agent b = iter.next();
-    		if (a.getTeamID() != b.getTeamID())
-    		{
-    			b.decrementHealth(1);
-    		}
-    	}
+        
 		return new AgentLocation( newX, newY, newTheta );
     }
     

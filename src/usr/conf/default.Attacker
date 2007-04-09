@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Attacker
-swarmSize=15
+swarmSize=5
 teamID=2
 
 #communications
@@ -41,7 +41,7 @@ soundColor=0,170,155,100
 
 #sight attributes
 sensorArcAngle=50
-sensorLength=150
+sensorLength=50
 sightColor=0,255,170,155
 
 

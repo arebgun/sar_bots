@@ -16,6 +16,8 @@ public class Cone extends SensorModule{
 
 
 	protected double topLength = 0;
+	private static final double DEGTORAD = .0174532925;
+	private static final double RADTODEG = 57.29577951;
 	
 	public Cone( ConfigBobject config )
 	{
@@ -23,9 +25,36 @@ public class Cone extends SensorModule{
 		arcAngle = config.getSensorArcAngle();
 		length = config.getSensorLength();
 		halfAngle = arcAngle / 2.0;
-		topLength = 2.0 * length * Math.sin(Math.toRadians(halfAngle));
+		topLength = 2.0 * length * Math.sin(halfAngle * DEGTORAD);
 		
 	}
+	
+	private boolean inFront(double heading, double myX, double myY, double circleX, double circleY)
+	{
+		while (heading >= 360)
+			heading -= 360;
+		while (heading < 0)
+			heading += 360;
+		
+		if (myX <= circleX)
+		{
+			if (myY >= circleY)
+			{
+				System.out.println("heading : " + (int)heading + " x:"+(int)myX+"<=cX:"+(int)circleX+" and y:"+(int)myY+">=cY:"+(int)circleY);
+				return (heading >= 0 && heading <= 90);
+			}
+			else
+				return (heading >= 270);
+		}
+		else
+		{
+			if (myY >= circleY)
+				return (heading >= 90 && heading <= 180);
+			else
+				return (heading >= 180 && heading <= 270);				
+		}
+	}
+	
 	//angle is the angle of the arc and must be in radians and is the heading plus the angle into the sight cone
 	private boolean lineCircle(double startX, double startY, double angle, double circleX, double circleY, double radius)
 	{
@@ -33,6 +62,9 @@ public class Cone extends SensorModule{
 		//end of the ray from the origin
 		double endX = startX + length * Math.cos(angle);
 		double endY = startY - length * Math.sin(angle);
+	//	double distExEy = Math.hypot(endX - startX, endY - startY);
+	//	double dirX = (endX - startX)/distExEy;
+	//	double dirY = (endY - startY)/distExEy;
 		//radius of the circle squared
 		double radiusSquared = radius * radius;
 		
@@ -43,8 +75,8 @@ public class Cone extends SensorModule{
 		
 		//the determinant
 		double determinant = B * B - 4 * A * C;
-		if (determinant > 0)
-			isIn = true;
+		if (determinant > 0 )
+			isIn = inFront((angle * RADTODEG), startX, startY, circleX, circleY);
 		return isIn;
 	}
 	
@@ -55,11 +87,17 @@ public class Cone extends SensorModule{
 		double startX = a.getLocation().getX();
 		double startY = a.getLocation().getY();
 		double heading = a.getLocation().getTheta();
+		
+		
 		double startArc = heading - halfAngle;
+		while (startArc < 360)
+			startArc += 360;
+		while (startArc > 360)
+			startArc -= 360;
 		
 		//angle increment is the arcsin of diamterMinusOne/length
 		double incrementAngle = Math.asin(diameterMinusOne/length);
-		incrementAngle = Math.toDegrees(incrementAngle);
+		incrementAngle *= RADTODEG;
 		
 		//iterations are the number of steps to take within the sight cone + 1 for the initial edge case
 		int iterations = (int)(topLength/diameterMinusOne);
@@ -69,7 +107,7 @@ public class Cone extends SensorModule{
 		while (!isIn && steps <= iterations)
 		{
 			double newAngle = startArc + steps * incrementAngle;
-			newAngle = Math.toRadians(newAngle);
+			newAngle *= DEGTORAD; 
 			
 			isIn = lineCircle(startX,startY,newAngle,circleX,circleY,radius);
 			steps++;
@@ -79,7 +117,7 @@ public class Cone extends SensorModule{
 		if (!isIn)
 		{
 			double newAngle = startArc + arcAngle;
-			newAngle = Math.toRadians(newAngle);
+			newAngle *= DEGTORAD;
 			
 			isIn = lineCircle(startX, startY, newAngle, circleX, circleY, radius);
 		}

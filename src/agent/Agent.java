@@ -199,7 +199,6 @@ public abstract class Agent extends Bobject implements Runnable
     	int hearGreen = hearColor.getGreen();
     	int hearBlue = hearColor.getBlue();
     	
-    	System.out.println("Agent health before dec for agent " + this.objectID + "= " + health);
     	if(health > 0)
     	{
 	    	health = health - d;
@@ -222,7 +221,6 @@ public abstract class Agent extends Bobject implements Runnable
 	    	if (health <= 0 && hasFlag)
 	    		hasFlag = false;
     	}
-    	System.out.println("Agent health after dec for agent " + this.objectID + "= " + health);
     }
     
     public void checkSensors()
@@ -326,9 +324,9 @@ public abstract class Agent extends Bobject implements Runnable
 		if (sight)
 		{
 			g2.setColor(this.sightColor);
-			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength() / 2), 
-					(int)location.getY() - (int)(sensorSight.getlength() / 2), 
-					(int)sensorSight.getlength(), (int)sensorSight.getlength(),
+			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength()), 
+					(int)location.getY() - (int)(sensorSight.getlength()), 
+					2 *(int)sensorSight.getlength(), 2* (int)sensorSight.getlength(),
 					(int)location.getTheta()- (int)(sensorSight.getArcAngle() / 2),
 					(int)sensorSight.getArcAngle());
 		}
