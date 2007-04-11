@@ -1,0 +1,49 @@
+#Config files for Attacker Bots
+
+#classname
+className=agent.Attacker
+swarmSize=5
+teamID=2
+
+#communications
+commName=agent.comm.None
+commRange=100
+
+#deployment
+deploymentName=agent.deployment.CircleDeploy
+deploymentSeed=85
+xCircle=600
+yCircle=200
+circleRadius=90
+
+#planning
+planName=agent.plan.StochasticView
+planSeed=0
+
+#propulsion
+propulsionName=agent.propulsion.Thruster
+propulsionMaxSpeed=21.5
+propulsionEnergyAmount=9999.9
+
+#base sensors
+sensorSightName=agent.sensor.Cone
+sensorHearingName=agent.sensor.Circle
+
+#bot attributes
+health=300
+boundingRadius=5
+objectColor=0,255,0,255
+
+#sound attributes
+soundRadius=10
+sensorRadius=20
+soundColor=0,170,155,100
+
+#sight attributes
+sensorArcAngle=50
+sensorLength=50
+sightColor=0,255,170,155
+
+
+
+

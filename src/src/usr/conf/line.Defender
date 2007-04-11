@@ -1,0 +1,47 @@
+#Config files for Defender Bots in a line
+
+#classname
+className=agent.Defender
+swarmSize=5
+teamID=1
+
+#communications
+commName=agent.comm.None
+commRange=100
+
+#deployment
+deploymentName=agent.deployment.LineDeploy
+deploymentSeed=55
+startX=50
+endX=50
+startY=30
+endY=500
+initialHeading=0
+
+#planning
+planName=agent.plan.StochasticView
+planSeed=0
+
+#propulsion
+propulsionName=agent.propulsion.Thruster
+propulsionMaxSpeed=5
+propulsionEnergyAmount=9999.9
+
+#base sensors
+sensorSightName=agent.sensor.Cone
+sensorHearingName=agent.sensor.Circle
+
+#bot attributes
+health=300
+boundingRadius=5
+objectColor=0,255,255,255
+
+#sound attributes
+soundRadius=10
+sensorRadius=20
+soundColor=50,170,155,100
+
+#sight attributes
+sensorArcAngle=50
+sensorLength=50
+sightColor=0,255,170,155

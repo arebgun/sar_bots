@@ -1,0 +1,9 @@
+# S&R Bots Simulator default configuration
+
+# configuration file for the simulated environment (path relative to top package directory)
+envConfigFileName=usr/conf/biggerGrid.ConfigEnv
+
+# comma-separated list of agent configuration files (path relative to top package directory)
+agentConfigFileNames=usr/conf/biggerGridScout.ConfigAgent,usr/conf/biggerGridWorker.ConfigAgent
+
+
