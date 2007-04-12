@@ -34,7 +34,7 @@ sensorHearingName=agent.sensor.Circle
 #bot attributes
 health=300
 boundingRadius=5
-objectColor=0,255,255,255
+objectColor=255,255,0,255
 
 #sound attributes
 soundRadius=10
@@ -44,4 +44,4 @@ soundColor=50,170,155,100
 #sight attributes
 sensorArcAngle=50
 sensorLength=50
-sightColor=0,255,170,155
+sightColor=0,255,170,100
