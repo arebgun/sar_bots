@@ -1,0 +1,9 @@
+#Config file for the default flag for team 1
+
+#classname
+className=baseobject.Flag
+swarmSize=1
+teamID=1
+boundingRadius=5
+objectColor=0,0,0,100
+objectLocation=10,300,0
