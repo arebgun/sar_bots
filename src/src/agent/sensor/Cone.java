@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import obstacle.Obstacle;
-
+import env.Environment;
 import sim.Simulator;
 import agent.Agent;
 import baseobject.Bobject;
@@ -29,99 +29,122 @@ public class Cone extends SensorModule{
 		
 	}
 	
-	private boolean inFront(double heading, double myX, double myY, double circleX, double circleY)
+	private boolean inFront(double startX, double startY, double endX, double endY, double heading, double x, double y)
 	{
+		heading *= 57.29577951;
 		while (heading >= 360)
 			heading -= 360;
 		while (heading < 0)
 			heading += 360;
-		
-		if (myX <= circleX)
+		double atangent = Math.atan((startX-x)/(startY-y)) * 57.29577951;
+		if (startX <= x)
 		{
-			if (myY >= circleY)
+			if (startY <= y)
 			{
-				System.out.println("heading : " + (int)heading + " x:"+(int)myX+"<=cX:"+(int)circleX+" and y:"+(int)myY+">=cY:"+(int)circleY);
-				return (heading >= 0 && heading <= 90);
+				atangent = 90 - Math.abs(atangent);
+				if (Math.abs(heading - atangent) <= halfAngle ||
+					(Math.abs(heading - (atangent + 360)) <= halfAngle))
+					return true;
 			}
 			else
-				return (heading >= 270);
+			{
+				atangent = 270 + Math.abs(atangent);
+				if (Math.abs(heading - atangent) <= halfAngle ||
+					(Math.abs((heading + 360) - atangent) <= halfAngle ))
+					return true;
+			}
 		}
 		else
 		{
-			if (myY >= circleY)
-				return (heading >= 90 && heading <= 180);
+			if (startY <= y)
+			{
+				atangent = 90 + Math.abs(atangent);
+				if (Math.abs(heading - atangent) <= halfAngle)
+					return true;
+			}
 			else
-				return (heading >= 180 && heading <= 270);				
+			{
+				atangent = Math.abs(atangent);
+				atangent = 270 - atangent;
+				if (Math.abs(heading - atangent) <= halfAngle)
+					return true;
+			}
+
 		}
+		return false;
 	}
-	
-	//angle is the angle of the arc and must be in radians and is the heading plus the angle into the sight cone
+	private int sign(double x)
+	{
+		if (x < 0)
+			return -1;
+		else
+			return 1;
+	}
 	private boolean lineCircle(double startX, double startY, double angle, double circleX, double circleY, double radius)
 	{
 		boolean isIn = false;
-		//end of the ray from the origin
+		startX -= circleX;
+		startY -= circleY;
+		
 		double endX = startX + length * Math.cos(angle);
-		double endY = startY - length * Math.sin(angle);
-	//	double distExEy = Math.hypot(endX - startX, endY - startY);
-	//	double dirX = (endX - startX)/distExEy;
-	//	double dirY = (endY - startY)/distExEy;
-		//radius of the circle squared
-		double radiusSquared = radius * radius;
+		double endY = startY + length * Math.sin(angle);
 		
-		//A B and C for the determinant
-		double A = endX * endX + endY * endY;
-		double B = 2 * (endX * endX * (startX - circleX) + endY * endY * (startY - circleY));
-		double C = ((startX - circleX) * (startX - circleX) + (startY - circleY) * (startY - circleY)) - radiusSquared;
+		double dX = endX - startX;
+		double dY = endY - startY;
+		double dist = length * length;
+		double D = startX*endY - endX*startY;
 		
-		//the determinant
-		double determinant = B * B - 4 * A * C;
-		if (determinant > 0 )
-			isIn = inFront((angle * RADTODEG), startX, startY, circleX, circleY);
+		double det = radius * radius * dist - D * D;
+		if (det > 0)
+		{
+			int x_p = (int)((D * dY + sign(dY) * dX * Math.sqrt(det))/dist);
+			int y_p = (int)((-D * dX + Math.abs(dY) * Math.sqrt(det))/dist);
+			isIn = (inFront(startX, startY, endX, endY, angle, x_p, y_p));
+		}
 		return isIn;
 	}
 	
-	private boolean inAngle( Agent a, double circleX, double circleY, double radius)
+	private boolean inAngle(Agent a, double circleX, double circleY, double radius)
 	{
 		boolean isIn = false;
-		double diameterMinusOne = 2.0 * radius - 1.0;
 		double startX = a.getLocation().getX();
 		double startY = a.getLocation().getY();
 		double heading = a.getLocation().getTheta();
+		double diameterMinusOne = 2*radius-1;
+		//System.out.println("In : sX : " + (int)startX + " sY : " + (int)startY + " A : " + (int)heading + " cX : " + (int)circleX + " cY : " + (int)circleY + " r : " + (int)radius );
 		
+		//transformation to a normal coordinate system
+
+		if(heading >= 0 && heading < 90)
+			heading = 360 - heading;
+		else if (heading >= 90 && heading < 180)
+			heading = 180 + (180 - heading);
+		else if (heading >= 180 && heading < 270)
+			heading = 180 - (heading - 180);
+		else
+			heading = 360 - heading;
 		
 		double startArc = heading - halfAngle;
-		while (startArc < 360)
+		while(startArc < 360)
 			startArc += 360;
-		while (startArc > 360)
-			startArc -= 360;
-		
-		//angle increment is the arcsin of diamterMinusOne/length
 		double incrementAngle = Math.asin(diameterMinusOne/length);
 		incrementAngle *= RADTODEG;
-		
-		//iterations are the number of steps to take within the sight cone + 1 for the initial edge case
 		int iterations = (int)(topLength/diameterMinusOne);
-		//steps is the number iterations we have done so far
 		int steps = 0;
 		
-		while (!isIn && steps <= iterations)
+		while(!isIn && steps <= iterations)
 		{
 			double newAngle = startArc + steps * incrementAngle;
-			newAngle *= DEGTORAD; 
-			
+			newAngle *= DEGTORAD;
 			isIn = lineCircle(startX,startY,newAngle,circleX,circleY,radius);
 			steps++;
 		}
-		
-		//if we still haven't hit, we need to check the far angle of the of the sight cone
-		if (!isIn)
+		if(!isIn)
 		{
 			double newAngle = startArc + arcAngle;
 			newAngle *= DEGTORAD;
-			
-			isIn = lineCircle(startX, startY, newAngle, circleX, circleY, radius);
+			isIn = lineCircle(startX,startY,newAngle,circleX,circleY,radius);
 		}
-		
 		return isIn;		
 	}
 	
@@ -149,7 +172,7 @@ public class Cone extends SensorModule{
     				if (length + b.getBoundingRadius() >= dist &&
     						a.getObjectID() != b.getObjectID() )
     				{
-    				
+    			//	System.out.println("bound : " + (length + b.getBoundingRadius()) + " dist " + dist);
     					//b is within the length of my viewing cone, now is it within
     					//my viewing arc?
     					if(inAngle(a,bX,bY,bR)) 

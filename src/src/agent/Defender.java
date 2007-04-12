@@ -14,7 +14,7 @@ public class Defender extends Agent
 	{
 		if (f.getOwned() == false)
 		{
-			f.setOwner(-1);
+			f.setOwner(0);
 			f.reset();
 		}
 	}

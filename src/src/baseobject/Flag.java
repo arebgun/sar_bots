@@ -56,6 +56,8 @@ public class Flag extends Bobject{
 	public void reset()
 	{
 		location = initialLocation;
+		isOwned = false;
+		owner = 0;
 	}
 	
 	public void setLocation()

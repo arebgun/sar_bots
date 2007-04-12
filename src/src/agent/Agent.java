@@ -219,7 +219,9 @@ public abstract class Agent extends Bobject implements Runnable
 	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
 	    	//drop the flag if your dead
 	    	if (health <= 0 && hasFlag)
+	    	{
 	    		hasFlag = false;
+	    	}
     	}
     }
     
@@ -265,6 +267,9 @@ public abstract class Agent extends Bobject implements Runnable
     {
         location = initialLocation;
         health = config.getHealth();
+        color = config.getObjectColor();
+        hearColor = config.getSoundColor();
+        sightColor = config.getSightColor();
     }
 
     /**
