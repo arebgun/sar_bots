@@ -46,4 +46,15 @@ public abstract class PlanModule
      */
     
     public abstract AgentLocation getGoalLocation(Agent a );
+    
+    public abstract void Dead(Agent a);
+    public abstract void FlagCarrier(Agent a);
+    public abstract void Guard(Agent a);
+    public abstract void Attacking(Agent a);
+    public abstract void Flee(Agent a);
+    public abstract void Hide(Agent a);
+    public abstract void Search(Agent a);
+    public abstract void RecoverFlag(Agent a);
+    
+    
 }

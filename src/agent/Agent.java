@@ -36,7 +36,31 @@ public abstract class Agent extends Bobject implements Runnable
 	protected ArrayList<Agent> agentsHeard = null;
 	protected ArrayList<Obstacle> obstaclesSeen = null;
 	protected ArrayList<Flag> flagsSeen = null;
+	protected int msgID;
 	int teamID;
+	
+	///AGENT STATES//////////////////
+	protected enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, RECOVER_FLAG};
+	state agent_state;
+	//call planner
+	protected void update()
+	{
+		if (agent_state == agent_state.DEAD)
+			plan.Dead(this);
+		if (agent_state == agent_state.FLAG_CARRIER)
+			plan.FlagCarrier(this);
+		if (agent_state == agent_state.ATTACKING)
+			plan.Attacking(this);
+		if (agent_state == agent_state.FLEE)
+			plan.Flee(this);
+		if (agent_state == agent_state.HIDE)
+			plan.Hide(this);
+		if (agent_state == agent_state.SEARCH)
+			plan.Search(this);
+		if (agent_state == agent_state.RECOVER_FLAG)
+			plan.RecoverFlag(this);
+	}
+	
     /**
      * Used to identify an agent thread. This becomes thread name.
      */

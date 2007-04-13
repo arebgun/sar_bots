@@ -42,4 +42,36 @@ public class APPlanner extends PlanModule
 		
 		return new AgentLocation( newX, newY, newTheta );
     }
+	public void Dead(Agent a)
+	{
+		
+	}
+    public void FlagCarrier(Agent a)
+    {
+    	
+    }
+    public void Guard(Agent a)
+    {
+    	
+    }
+    public void Attacking(Agent a)
+    {
+    	
+    }
+    public void Flee(Agent a)
+    {
+    	
+    }
+    public void Hide(Agent a)
+    {
+    	
+    }
+    public void Search(Agent a)
+    {
+    	
+    }
+    public void RecoverFlag(Agent a)
+    {
+    	
+    }
 }
