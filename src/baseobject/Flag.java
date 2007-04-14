@@ -1,6 +1,6 @@
 package baseobject;
 import sim.Simulator;
-
+import messageBoard.MessageBoard;
 import config.ConfigBobject;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -13,7 +13,9 @@ public class Flag extends Bobject implements Runnable{
     private Thread flagThread;
     private int sleepTime;
     private boolean oneStep;
-	//Consturctors for Flag
+    //private MessageBoard board;
+    
+	//Consturctors for Flag    
 	public Flag(ConfigBobject conf)
 	{
 		idString = "Agent unit id = " + objectID;
@@ -27,11 +29,26 @@ public class Flag extends Bobject implements Runnable{
 		owner = 0;
 		isOwned = false;
 		type = types.FLAG;
+		updateBoard(Simulator.teamBoards.get(teamID));
 	}
+	
+	private void updateBoard(MessageBoard board)
+	{
+		if(location == initialLocation) 
+		{
+			board.setFlagAtHome(true);
+		}
+		else
+		{
+			board.setFlagAtHome(false);
+		}
+	}
+	
 	public boolean getOwned()
 	{
 		return isOwned;
 	}
+	
 	public void setOwned(boolean newOwned)
 	{
 		isOwned = newOwned;
@@ -96,47 +113,47 @@ public class Flag extends Bobject implements Runnable{
 					
 	}
 	
-	  public void start( boolean oneStep )
-	    {
-	        if ( flagThread == null ) { flagThread = new Thread( this, idString ); }
-	        this.oneStep = oneStep;
-	        flagThread.start();
-	    }
+  public void start( boolean oneStep )
+    {
+        if ( flagThread == null ) { flagThread = new Thread( this, idString ); }
+        this.oneStep = oneStep;
+        flagThread.start();
+    }
 
-	    /**
-	     * Stops current agent.
-	     */
-	    public void stop()
-	    {
-	        flagThread = null;
-	    }
+    /**
+     * Stops current agent.
+     */
+    public void stop()
+    {
+        flagThread = null;
+    }
 
-	    /**
-	     * Moves the current agent. If oneStep is true moves only one step,
-	     * otherwise agent moves until Stop button is pressed.
-	     */
-	    public void run()
-	    {
-	        if( oneStep && flagThread != null )
-	        {
-	            update();
-	        	stop();
-	        }
-	        else
-	        {
-	            while( flagThread != null )
-	            {
-	            	update();
+    /**
+     * Moves the current agent. If oneStep is true moves only one step,
+     * otherwise agent moves until Stop button is pressed.
+     */
+    public void run()
+    {
+        if( oneStep && flagThread != null )
+        {
+            update();
+        	stop();
+        }
+        else
+        {
+            while( flagThread != null )
+            {
+            	update();
 
-	                try
-	                {
-	                    Thread.sleep( sleepTime );
-	                }
-	                catch ( InterruptedException e )
-	                {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
-	    }
+                try
+                {
+                    Thread.sleep( sleepTime );
+                }
+                catch ( InterruptedException e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

@@ -4,6 +4,7 @@ import agent.AgentLocation;
 import agent.Agent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import sim.Simulator;
 
 public class MessageBoard {
 	/* private members*/
@@ -22,11 +23,45 @@ public class MessageBoard {
 	private static ArrayList<Boolean> needHelp;
 	private static ArrayList<Boolean> isAlive;
 	private static ArrayList<Integer> currentHitPoints;
-	//private static ArrayList<blank> currentState; 
+	private static ArrayList<Agent.state> currentState;
+	private static ArrayList< ArrayList<Agent> > agentsSeen;
+	private static ArrayList< ArrayList<Agent> > agentsHeard;
 	
 	public MessageBoard()
 	{
+		/*Single Variables*/
+		opponentFlagLocation = null;
+		opponentFlagSeen = false;
+		whoOwnsFlag = -1;
+		flagAtHome = false;
+		ourFlagLocation = null;
+		ourFlagSeen = false;
 		
+		/*Multi-Variable*/
+		myId = null;
+		myLocation = null;
+		needHelp = null;
+		isAlive = null;
+		currentHitPoints = null;
+		currentState = null;
+		agentsSeen = null;
+		agentsHeard = null;
+	}
+	
+	/*Initialization Function*/
+	public void initialize(int teamID)
+	{
+		for(int i = 0; i < Simulator.numberOnTeam.get(teamID); i++)
+		{
+			myId.add(i, -1);
+			myLocation.add(i, null);
+			needHelp.add(i, false);
+			isAlive.add(i, false);
+			currentHitPoints.add(i, 0);
+			currentState.add(i, null);
+			agentsSeen.add(i, null);
+			agentsHeard.add(i, null);
+		}
 	}
 	
 	/*Accessors*/
@@ -85,6 +120,21 @@ public class MessageBoard {
 		return currentHitPoints.iterator();
 	}
 	
+	public Iterator<Agent.state> getCurrentState()
+	{
+		return currentState.iterator();
+	}
+	
+	public Iterator<ArrayList<Agent>> getAgentsSeen()
+	{
+		return agentsSeen.iterator();
+	}
+
+	public Iterator<ArrayList<Agent>> getAgentsHeard()
+	{
+		return agentsHeard.iterator();
+	}
+	
 	/*Mutators*/
 	public void setOpponentFlagLocation(AgentLocation temp)
 	{
@@ -139,6 +189,20 @@ public class MessageBoard {
 	public void setCurrentHitPoints(int index, int temp)
 	{
 		currentHitPoints.set(index, temp);
+	}	
+	
+	public void setCurrentState(int index, Agent.state temp)
+	{
+		currentState.set(index, temp);
 	}
 	
+	public void setAgentsSeen(int index, ArrayList<Agent> temp)
+	{
+		agentsSeen.set(index, temp);
+	}
+	
+	public void setAgentsHeard(int index, ArrayList<Agent> temp)
+	{
+		agentsHeard.set(index, temp);
+	}
 }

@@ -23,6 +23,7 @@ import agent.*;
 
 
 import java.util.ArrayList;
+import messageBoard.MessageBoard;
 import java.util.Iterator;
 import java.util.logging.*;
 
@@ -41,6 +42,9 @@ public class Simulator
     //the index value and object id)
     private static int numberWorldObjects = 0;
     public static ArrayList<Bobject> worldObjects;
+    public static ArrayList<MessageBoard> teamBoards;
+    private static int numberOfTeams;
+    public static ArrayList<Integer> numberOnTeam;
     
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce
@@ -74,6 +78,21 @@ public class Simulator
 
         logger.info( "loading ENVIRONMENT data ..." );
         Environment.load( config.getEnvConfigFileName() );
+        
+        /*Adding the messageBoards for each team*/
+        numberOfTeams = config.getNumberOfTeams();
+        teamBoards = new ArrayList<MessageBoard>(); 
+        for(int i = 0; i <= numberOfTeams; i++)
+        {
+        	if(i == 0)
+        	{
+        		teamBoards.add(null);
+        	} 
+        	else
+        	{
+        		teamBoards.add(new MessageBoard());
+        	}
+        }
 
         logger.info( "loading AGENT data ..." );
         worldObjects = new ArrayList<Bobject>();
@@ -89,7 +108,13 @@ public class Simulator
         	{
         		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
         		worldObjects.get(o).setObjectID(o);
-        		//numberWorldObjects++;
+        		if(worldObjects.get(o).isAgent())
+        		{
+        			Agent a = (Agent)worldObjects.get(o);
+        			int temp = numberOnTeam.get(a.getTeamID());
+        			temp++;
+        			numberOnTeam.set(a.getTeamID(), temp);
+        		}
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
         }

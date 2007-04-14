@@ -39,5 +39,10 @@ public class ConfigSim extends Config
     {
     	return pTable.get( "objectConfigFileNames").split( "\\,");
     }
+    
+    public int getNumberOfTeams()
+    {
+    	return Integer.parseInt(pTable.get( "numberOfTeams" ));
+    }
 
 }

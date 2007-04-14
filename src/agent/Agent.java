@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import obstacle.Obstacle;
 import sim.Simulator;
+import messageBoard.MessageBoard;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -506,14 +507,33 @@ public abstract class Agent extends Bobject implements Runnable
     	return location.getTheta();
     }
     
-    protected void sendMessage()
+    protected void sendMessage(boolean needHelp, boolean opponentFlagSeen, 
+    		AgentLocation opponentFlagLocation, boolean ourFlagSeen, 
+    		AgentLocation ourFlagLocation)
     {
-    	
-    }
-    
-    protected void recieveMessage()
-    {
-    	
+    	MessageBoard board = Simulator.teamBoards.get(teamID);
+    	board.setCurrentHitPoints(msgID, health);
+    	board.setCurrentState(msgID, agent_state);
+    	board.setIsAlive(msgID, isAlive);
+    	board.setMyId(msgID, objectID);
+    	board.setMyLocation(msgID, location);
+    	board.setNeedHelp(msgID, needHelp);
+    	if(opponentFlagSeen)
+    	{
+    		board.setOpponentFlagLocation(opponentFlagLocation);
+    	}
+		board.setOpponentFlagSeen(opponentFlagSeen);
+		if(ourFlagSeen)
+		{
+			board.setOurFlagLocation(location);
+		}
+		board.setOurFlagSeen(ourFlagSeen);
+		if(hasFlag)
+		{
+			board.setWhoOwnsFlag(objectID);
+		}
+		board.setAgentsSeen(msgID, agentsSeen);
+		board.setAgentsHeard(msgID, agentsHeard);
     }
     
     protected double aimID(int ID)
