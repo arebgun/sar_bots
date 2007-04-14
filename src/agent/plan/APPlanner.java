@@ -10,13 +10,17 @@ import config.ConfigBobject;
 public class APPlanner extends PlanModule
 {
 
-	 
+	private agent.Agent.state agentState = agent.Agent.state.SEARCH;
+	
 	
 	public APPlanner( ConfigBobject config )
     {
         super( config );
     }
-	
+	public agent.Agent.state getAgentState()
+	{
+		return agentState;
+	}
 	public AgentLocation getGoalLocation( Agent a )
     {
 		

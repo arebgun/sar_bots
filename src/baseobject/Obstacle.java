@@ -60,4 +60,9 @@ public class Obstacle extends Bobject{
 				(float)boundingRadius));
 
 	}
+	
+	public void update()
+	{
+		
+	}
 }

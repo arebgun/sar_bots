@@ -28,4 +28,9 @@ public class RoundObstacle extends Obstacle
 				2f * (float)boundingRadius,
 				2f * (float)boundingRadius));
 	}
+	
+	public void update()
+	{
+		
+	}
 }

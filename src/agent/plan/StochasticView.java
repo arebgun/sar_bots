@@ -14,7 +14,8 @@ import obstacle.Obstacle;
 public class StochasticView extends PlanModule
 {
     private static Random rand = null;
-
+    private agent.Agent.state agentState = agent.Agent.state.SEARCH;
+    
     public StochasticView( ConfigBobject config )
     {
         super( config );
@@ -23,7 +24,11 @@ public class StochasticView extends PlanModule
             rand = new Random( objectConfig.getPlanSeed() );
         }
     }
- 
+    
+    public agent.Agent.state getAgentState()
+	{
+		return agentState;
+	}
     // takes an angle and a heading, returns a random new heading
     // that is between (theta - arc/2 and theta + arc/2)
     // the angle returned is in radians.
@@ -65,7 +70,7 @@ public class StochasticView extends PlanModule
         double dist = 0;
         double bound = 0;
 
-        int range = a.getSoundRadius();
+        int range = (int)a.getMoveRadius();
         
         int limit      = 1000;
         boolean found = false;
@@ -102,7 +107,7 @@ public class StochasticView extends PlanModule
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
-        		if (a.getObjectID() != b.getObjectID())
+        		if (b.getIsAlive() && a.getObjectID() != b.getObjectID())
         		{
         			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
         			bound = a.getBoundingRadius() + b.getBoundingRadius();
@@ -129,7 +134,7 @@ public class StochasticView extends PlanModule
         	while ( heard.hasNext() && good)
         	{
         		Agent b = heard.next();
-        		if (a.getObjectID() != b.getObjectID())
+        		if (b.getIsAlive() && a.getObjectID() != b.getObjectID())
         		{
         			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
         			bound = a.getBoundingRadius() + b.getBoundingRadius();

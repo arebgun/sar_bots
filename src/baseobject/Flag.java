@@ -5,14 +5,18 @@ import config.ConfigBobject;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
-public class Flag extends Bobject{
+public class Flag extends Bobject implements Runnable{
+	protected String idString;
 	protected int owner;
 	protected boolean isOwned;
 	protected int teamID; //used to associate the flag with a specific team
-	
+    private Thread flagThread;
+    private int sleepTime;
+    private boolean oneStep;
 	//Consturctors for Flag
 	public Flag(ConfigBobject conf)
 	{
+		idString = "Agent unit id = " + objectID;
 		this.config = conf;
 		initialLocation = config.objectLocation();
 		location = config.objectLocation();
@@ -48,6 +52,11 @@ public class Flag extends Bobject{
 		owner = newOwner;
 	}
 	
+	public int getTeamID()
+	{
+		return teamID;
+	}
+	
 	public int getSoundRadius()
 	{
 		return soundRadius;
@@ -66,6 +75,13 @@ public class Flag extends Bobject{
 			this.location = Simulator.getObjectByID(this.getOwner()).location;
 	}
 	
+	public void flagDropped()
+	{
+		owner = -1;
+		isOwned = false;
+		System.out.println("Dropped the Flag <Flag> " + objectID);
+	}
+	
 	public void draw(Graphics2D g2)
 	{
 		g2.setColor(color);
@@ -74,4 +90,53 @@ public class Flag extends Bobject{
 				2f * (float)boundingRadius,
 				2f * (float)boundingRadius));
 	}
+	
+	public void update()
+	{
+					
+	}
+	
+	  public void start( boolean oneStep )
+	    {
+	        if ( flagThread == null ) { flagThread = new Thread( this, idString ); }
+	        this.oneStep = oneStep;
+	        flagThread.start();
+	    }
+
+	    /**
+	     * Stops current agent.
+	     */
+	    public void stop()
+	    {
+	        flagThread = null;
+	    }
+
+	    /**
+	     * Moves the current agent. If oneStep is true moves only one step,
+	     * otherwise agent moves until Stop button is pressed.
+	     */
+	    public void run()
+	    {
+	        if( oneStep && flagThread != null )
+	        {
+	            update();
+	        	stop();
+	        }
+	        else
+	        {
+	            while( flagThread != null )
+	            {
+	            	update();
+
+	                try
+	                {
+	                    Thread.sleep( sleepTime );
+	                }
+	                catch ( InterruptedException e )
+	                {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	    }
 }

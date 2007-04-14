@@ -56,5 +56,5 @@ public abstract class PlanModule
     public abstract void Search(Agent a);
     public abstract void RecoverFlag(Agent a);
     
-    
+    public abstract agent.Agent.state getAgentState();
 }

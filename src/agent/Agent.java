@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator; 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-
 import obstacle.Obstacle;
+import sim.Simulator;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -37,29 +37,17 @@ public abstract class Agent extends Bobject implements Runnable
 	protected ArrayList<Obstacle> obstaclesSeen = null;
 	protected ArrayList<Flag> flagsSeen = null;
 	protected int msgID;
-	int teamID;
-	
+	protected int teamID;
+	protected boolean isAlive = false;
+	protected int damage = 1;
+	protected int shotCounter = 0;
+	protected int initialSoundRadius;
+	protected double moveRadius;
 	///AGENT STATES//////////////////
-	protected enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, RECOVER_FLAG};
-	state agent_state;
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, RECOVER_FLAG};
+	protected state agent_state;
 	//call planner
-	protected void update()
-	{
-		if (agent_state == agent_state.DEAD)
-			plan.Dead(this);
-		if (agent_state == agent_state.FLAG_CARRIER)
-			plan.FlagCarrier(this);
-		if (agent_state == agent_state.ATTACKING)
-			plan.Attacking(this);
-		if (agent_state == agent_state.FLEE)
-			plan.Flee(this);
-		if (agent_state == agent_state.HIDE)
-			plan.Hide(this);
-		if (agent_state == agent_state.SEARCH)
-			plan.Search(this);
-		if (agent_state == agent_state.RECOVER_FLAG)
-			plan.RecoverFlag(this);
-	}
+	public abstract void update();
 	
     /**
      * Used to identify an agent thread. This becomes thread name.
@@ -136,6 +124,7 @@ public abstract class Agent extends Bobject implements Runnable
     	obstaclesSeen = new ArrayList<Obstacle>();
     	flagsSeen = new ArrayList<Flag>();
     	soundRadius = (int)config.getSoundRadius();
+    	initialSoundRadius = soundRadius;
     	boundingRadius = config.getBoundingRadius();
     	color = config.getObjectColor();
     	teamID = config.getTeamID();
@@ -143,6 +132,7 @@ public abstract class Agent extends Bobject implements Runnable
     	hearColor = config.getSoundColor();
     	health = config.getHealth();
     	type = types.AGENT;
+    	moveRadius = config.getSoundRadius();
     	
     }
 
@@ -161,6 +151,10 @@ public abstract class Agent extends Bobject implements Runnable
     public int getTeamID()
     {
     	return teamID;
+    }
+    public double getMoveRadius()
+    {
+    	return moveRadius;
     }
     /**
      * Gets the velocity of the agent.
@@ -192,6 +186,10 @@ public abstract class Agent extends Bobject implements Runnable
     	return hearColor;
     }
     
+    public boolean getHasFlag()
+    {
+    	return hasFlag;
+    }
      /**
      * Updates agent's location. Possible next location is selected according to
      * result returned from the planning module. Next location is within sensor
@@ -199,7 +197,7 @@ public abstract class Agent extends Bobject implements Runnable
      */
     public void move()
     {
-    	if (health > 0)
+    	if (isAlive)
     	{
     	checkSensors();
         AgentLocation goal = plan.getGoalLocation( this );
@@ -207,11 +205,20 @@ public abstract class Agent extends Bobject implements Runnable
     	}
     }
 
-    abstract public void pickUpFlag(Flag f);
+    public abstract void pickUpFlag(Flag f);
+    public abstract void dropFlag();
+    public void setAgentState(Agent.state newState)
+    {
+    	agent_state = newState; 
+    }
     
     public int getHealth()
     {
     	return health;
+    }
+    public boolean getIsAlive()
+    {
+    	return isAlive;
     }
     
     public void decrementHealth(int d)
@@ -223,9 +230,11 @@ public abstract class Agent extends Bobject implements Runnable
     	int hearGreen = hearColor.getGreen();
     	int hearBlue = hearColor.getBlue();
     	
-    	if(health > 0)
+    	if(isAlive)
     	{
 	    	health = health - d;
+	    	if (health <= 0)
+	    		isAlive = false;
 	    	if(sightColor.getRed()+d <= 255)
 	    		sightRed = sightColor.getRed() + d;
 	    	if(sightColor.getGreen()-d >= 0)
@@ -241,12 +250,10 @@ public abstract class Agent extends Bobject implements Runnable
 	    	
 	    	sightColor = new Color(sightRed,sightGreen,sightBlue,sightColor.getAlpha());
 	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
-	    	//drop the flag if your dead
-	    	if (health <= 0 && hasFlag)
-	    	{
-	    		hasFlag = false;
-	    	}
+	    	
     	}
+    	else
+    		agent_state = state.DEAD;
     }
     
     public void checkSensors()
@@ -294,6 +301,7 @@ public abstract class Agent extends Bobject implements Runnable
         color = config.getObjectColor();
         hearColor = config.getSoundColor();
         sightColor = config.getSightColor();
+        isAlive = true;
     }
 
     /**
@@ -322,6 +330,7 @@ public abstract class Agent extends Bobject implements Runnable
 
         loader = Class.forName( planClass, true, this.getClass().getClassLoader() );
         plan   = (PlanModule) loader.getConstructor( aC ).newInstance( config );
+        agent_state = plan.getAgentState();
 
         loader = Class.forName( commClass, true, this.getClass().getClassLoader() );
         comm   = (CommModule) loader.getConstructor( aC ).newInstance( config );
@@ -332,7 +341,187 @@ public abstract class Agent extends Bobject implements Runnable
       //  location    = deployStrategy.getNextLocation( this );
         //config.getSensorColor() is called for both atm, this needs to be changed
     }
+    
+    protected boolean avoidObstacle(AgentLocation newLoc)
+    {
+    	boolean good = true;
+    	double newX = newLoc.getX();
+    	double newY = newLoc.getY();
+    	Iterator<Obstacle> obs = this.getObstaclesSeen();
+    	while ( obs.hasNext() && good)
+    	{
+    		Obstacle o = obs.next();
+    		double dist = Math.hypot((newX - o.getLocation().getX()),(newY - o.getLocation().getY()));
+    		double bound = this.getBoundingRadius() + o.getBoundingRadius();
+    		if (bound >= dist)
+    			good = false;
+    	}
+    	return good;
+    }
+    
+    protected boolean avoidAgent(AgentLocation newLoc)
+    {
+    	boolean good = true;
+    	double newX = newLoc.getX();
+    	double newY = newLoc.getY();
+    	Iterator<Agent> ag = this.getAgentsSeen();
+    	while ( ag.hasNext())
+    	{
+    		Agent a = ag.next();
+    		if (a.getIsAlive())
+    		{
+    			double dist  = Math.hypot((newX - a.getLocation().getX()), (newY - a.getLocation().getY()));
+    			double bound = this.getBoundingRadius() + a.getBoundingRadius();
+    			if (bound >= dist)
+    				good = false;
+    		}
+    	}
+    	return good;
+    }
+    
+    protected void shootAll()
+    {
+    	Iterator<Agent> ag = this.getAgentsSeen();
+    	while (ag.hasNext())
+    	{
+    		Agent a = ag.next();
+    		if (a.getIsAlive())
+    			a.decrementHealth(damage);
+    	}
+    	shotCounter = 5;
+    }
 
+    protected void shootID(int ID)
+    {
+    	Iterator<Agent> ag = this.getAgentsSeen();
+    	while (ag.hasNext())
+    	{
+    		Agent a = ag.next();
+    		if (a.getObjectID() == ID && a.getIsAlive())
+    			a.decrementHealth(damage);
+    	}
+    	shotCounter = 5;
+    }
+    
+    private double headingToCartesian(double head)
+    {
+    	double newHead = 0;
+    	if(head >= 0 && head < 90)
+    		newHead = 360 - head;
+		else if (head >= 90 && head < 180)
+			newHead = 180 + (180 - head);
+		else if (head >= 180 && head < 270)
+			newHead = 180 - (head - 180);
+		else
+			newHead = 360 - head;
+    	return newHead;
+    }
+    private double cartesianToHeading(double cart)
+    {
+    	double head = 0;
+    	if (cart >= 0 && cart < 90)
+    		head = 360 - cart;
+    	else if (head >= 90 && head < 180)
+    		head = 180 + (180 - cart);
+    	else if (head >= 180 && head < 270)
+    		head = 180 - (cart - 180);
+    	else
+    		head = 360 - cart;
+    	return head;
+    }
+    
+    private double arctangentToGoal(AgentLocation goal)
+    {
+    	double x = location.getX();
+    	double y = location.getY();
+    	double x1 = goal.getX();
+    	double y1 = goal.getY();
+    	
+    	double temp = Math.atan((x-x1)/(y-y1)) * 57.29577951;
+    	temp = Math.abs(temp);
+    	
+    	if (x <= x1)
+    	{
+    		if (y <= y1)
+    			temp = 90 - temp;
+    		else
+    			temp = 270 + temp;
+    	}
+    	else
+    	{
+    		if (y <= y1)
+    			temp = 90 + temp;
+    		else
+    			temp = 270 - temp;
+    	}
+    	
+    	return temp;
+    }
+    
+    protected double moveToLocation( AgentLocation goal)
+    {
+    	double temp = headingToCartesian(location.getTheta());
+    	double arc = arctangentToGoal(goal);
+    	if (Math.abs(temp-arc) <= sensorSight.getHalfAngle() ||
+    			Math.abs(temp - (arc + 360)) <= sensorSight.getHalfAngle() ||
+    			Math.abs((temp + 360) - arc) <= sensorSight.getHalfAngle())
+    		temp = arc;
+    	else
+    	{
+    		//heading is in quad 2 or 3
+    		if (location.getX() > goal.getX())
+    		{
+    			if (temp > arc)
+    				temp = temp - sensorSight.getHalfAngle();
+    			else
+    				temp = temp + sensorSight.getHalfAngle();
+    		}
+    		//heading is in quad 1 or 4
+    		else
+    		{
+    			if (location.getY() <= goal.getY())
+    			{
+    				if (temp > arc || (temp + 360) > arc)
+    					temp = temp - sensorSight.getHalfAngle();
+    				else
+    					temp = temp + sensorSight.getHalfAngle();
+    			}
+    			else
+    			{
+    				if (temp > arc || temp > (arc + 360))
+    					temp = temp - sensorSight.getHalfAngle();
+    				else
+    					temp = temp + sensorSight.getHalfAngle();
+    			}
+    		}
+    	}
+    	
+    	temp = cartesianToHeading(temp);
+    	return temp;
+    	
+    }
+    //TODO finish flee
+    protected double flee()
+    {
+    	return location.getTheta();
+    }
+    
+    protected void sendMessage()
+    {
+    	
+    }
+    
+    protected void recieveMessage()
+    {
+    	
+    }
+    
+    protected double aimID(int ID)
+    {
+    	AgentLocation badGuy = Simulator.worldObjects.get(ID).getLocation();
+    	return moveToLocation(badGuy);
+    	
+    }
     /**
      * Starts the simulation (creates a separate thread for current agent and executes
      * the code in run() method).
@@ -343,7 +532,7 @@ public abstract class Agent extends Bobject implements Runnable
     
     public void draw (Graphics2D g2, boolean sight, boolean hearing)
     {
-    	if (health > 0)
+    	if (isAlive)
     	{
     	g2.setColor(this.color);
 		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
@@ -393,14 +582,14 @@ public abstract class Agent extends Bobject implements Runnable
     {
         if( oneStep && agentThread != null )
         {
-            move();
+            update();
         	stop();
         }
         else
         {
             while( agentThread != null )
             {
-            	move();
+            	update();
 
                 try
                 {

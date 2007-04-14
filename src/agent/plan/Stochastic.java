@@ -14,7 +14,8 @@ import obstacle.Obstacle;
 public class Stochastic extends PlanModule
 {
     private static Random rand = null;
-
+    private agent.Agent.state agentState = agent.Agent.state.SEARCH;
+	
     public Stochastic( ConfigBobject config )
     {
         super( config );
@@ -23,7 +24,10 @@ public class Stochastic extends PlanModule
             rand = new Random( objectConfig.getPlanSeed() );
         }
     }
-    
+    public agent.Agent.state getAgentState()
+	{
+		return agentState;
+	}
     
     public AgentLocation getGoalLocation( Agent a )
     {

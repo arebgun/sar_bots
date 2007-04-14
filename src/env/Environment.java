@@ -175,6 +175,8 @@ public class Environment
      */
     public static Rectangle2D getTextureAnchor( double divisor )
     {
+    	if (divisor == 10)
+    		return new Rectangle2D.Double(0,0,10,10);
         return new Rectangle2D.Double( 0, 0, worldWidth / divisor, worldHeight / divisor );
     }
 

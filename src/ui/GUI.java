@@ -282,7 +282,7 @@ abstract class SimDrawPanel extends JPanel
 class RescueArea extends SimDrawPanel
 {
     private final String soilTextureFilename = "images/textures/grass.jpg";
-    private final String roofTextureFilename = "images/textures/rocks.jpg";
+    private final String roofTextureFilename = "images/textures/bot_16.jpg";
     private TexturePaint soilTexture;
     private TexturePaint roofTexture;
    
@@ -339,6 +339,7 @@ class RescueArea extends SimDrawPanel
     		}
     		if (b.isFlag())
     		{
+    			g2.setPaint(roofTexture);
     			Flag f = (Flag)b;
     			f.setLocation();
     			f.draw(g2);
@@ -478,7 +479,12 @@ class BottomPanel extends JPanel
                     	{
                     		Agent a = (Agent)b;
                     		a.stop();
-                    	}                    
+                    	}       
+                    	if (b.isFlag())
+                    	{
+                    		Flag f = (Flag)b;
+                    		f.stop();
+                    	}
                     }
 
                     btnStartStop.setText( "Start" );
@@ -496,6 +502,11 @@ class BottomPanel extends JPanel
                     	{
                     		Agent a = (Agent)b;
                     		a.start(false);
+                    	}
+                    	if (b.isFlag())
+                    	{
+                    		Flag f = (Flag)b;
+                    		f.start(false);
                     	}
                     }
                 }

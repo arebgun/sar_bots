@@ -40,7 +40,7 @@ public class Simulator
    //our world objects and the number of them (numberWorldObjects is used as
     //the index value and object id)
     private static int numberWorldObjects = 0;
-    private static ArrayList<Bobject> worldObjects;
+    public static ArrayList<Bobject> worldObjects;
     
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce

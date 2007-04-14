@@ -113,4 +113,6 @@ public abstract class Bobject {
 	{
 		placed = tog;
 	}
+	
+	public abstract void update();
 }
