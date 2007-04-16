@@ -55,8 +55,7 @@ public class Simulator
      * @throws Exception
      */
     public static void run( String configFilePath, String uiType ) throws Exception
-    {
-       
+    {       
         startUp(configFilePath);
         mainSim(uiType);
         cleanUp();
@@ -82,8 +81,10 @@ public class Simulator
         /*Adding the messageBoards for each team*/
         numberOfTeams = config.getNumberOfTeams();
         teamBoards = new ArrayList<MessageBoard>(); 
+        numberOnTeam = new ArrayList<Integer>();
         for(int i = 0; i <= numberOfTeams; i++)
         {
+        	numberOnTeam.add(0);
         	if(i == 0)
         	{
         		teamBoards.add(null);
@@ -93,6 +94,7 @@ public class Simulator
         		teamBoards.add(new MessageBoard());
         	}
         }
+		//numberOnTeam.ensureCapacity(numberOfTeams);
 
         logger.info( "loading AGENT data ..." );
         worldObjects = new ArrayList<Bobject>();
@@ -103,7 +105,7 @@ public class Simulator
         {
         	ConfigBobject objConfig = new ConfigBobject( objFile );
         	Class loader = Class.forName(objConfig.getClassName(), true, objConfig.getClass().getClassLoader() );
-        	
+
         	for ( int o = numberWorldObjects; o < objConfig.getSwarmSize() + numberWorldObjects; o++)
         	{
         		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
@@ -112,11 +114,17 @@ public class Simulator
         		{
         			Agent a = (Agent)worldObjects.get(o);
         			int temp = numberOnTeam.get(a.getTeamID());
+        			a.setMsgID(temp);
         			temp++;
         			numberOnTeam.set(a.getTeamID(), temp);
         		}
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
+        }
+        /*Initialize the message boards*/
+        for(int i = 1; i <= numberOfTeams; i++)
+        {
+        	teamBoards.get(i).initialize(numberOnTeam.get(i));
         }
     }
     
