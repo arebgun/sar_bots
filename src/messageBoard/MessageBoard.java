@@ -4,7 +4,6 @@ import agent.AgentLocation;
 import agent.Agent;
 import java.util.ArrayList;
 import java.util.Iterator;
-import sim.Simulator;
 
 public class MessageBoard {
 	/* private members*/
@@ -49,18 +48,18 @@ public class MessageBoard {
 	}
 	
 	/*Initialization Function*/
-	public void initialize(int teamID)
+	public void initialize(int numOnTeam)
 	{
-		for(int i = 0; i < Simulator.numberOnTeam.get(teamID); i++)
+		for(int i = 0; i < numOnTeam; i++)
 		{
-			myId.add(i, -1);
-			myLocation.add(i, null);
-			needHelp.add(i, false);
-			isAlive.add(i, false);
-			currentHitPoints.add(i, 0);
-			currentState.add(i, null);
-			agentsSeen.add(i, null);
-			agentsHeard.add(i, null);
+			myId.add(-1);
+			myLocation.add(null);
+			needHelp.add(false);
+			isAlive.add(false);
+			currentHitPoints.add(0);
+			currentState.add(null);
+			agentsSeen.add(null);
+			agentsHeard.add(null);
 		}
 	}
 	
