@@ -8,6 +8,7 @@ public class Defender extends Agent
 	public Defender(ConfigBobject config) throws Exception
 	{
 		super (config);
+		isAlive = true;
 	}
 
 	public void pickUpFlag(Flag f)
