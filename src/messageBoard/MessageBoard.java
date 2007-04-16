@@ -15,6 +15,8 @@ public class MessageBoard {
 	private static boolean flagAtHome;
 	private static AgentLocation ourFlagLocation;
 	private static boolean ourFlagSeen;
+	private static ArrayList<Agent> agentsSeen;
+	private static ArrayList<Agent> agentsHeard;
 	
 	/*Multi-Variable*/
 	private static ArrayList<Integer> myId;
@@ -23,8 +25,6 @@ public class MessageBoard {
 	private static ArrayList<Boolean> isAlive;
 	private static ArrayList<Integer> currentHitPoints;
 	private static ArrayList<Agent.state> currentState;
-	private static ArrayList< ArrayList<Agent> > agentsSeen;
-	private static ArrayList< ArrayList<Agent> > agentsHeard;
 	
 	public MessageBoard()
 	{
@@ -35,6 +35,8 @@ public class MessageBoard {
 		flagAtHome = false;
 		ourFlagLocation = null;
 		ourFlagSeen = false;
+		agentsSeen = new ArrayList<Agent>();
+		agentsHeard = new ArrayList<Agent>();
 		
 		/*Multi-Variable*/
 		myId = new ArrayList<Integer>();
@@ -43,8 +45,6 @@ public class MessageBoard {
 		isAlive = new ArrayList<Boolean>();
 		currentHitPoints = new ArrayList<Integer>();
 		currentState = new ArrayList<Agent.state>();
-		agentsSeen = new ArrayList<ArrayList<Agent>>();
-		agentsHeard = new ArrayList<ArrayList<Agent>>();
 	}
 	
 	/*Initialization Function*/
@@ -124,12 +124,12 @@ public class MessageBoard {
 		return currentState.iterator();
 	}
 	
-	public Iterator<ArrayList<Agent>> getAgentsSeen()
+	public Iterator<Agent> getAgentsSeen()
 	{
 		return agentsSeen.iterator();
 	}
 
-	public Iterator<ArrayList<Agent>> getAgentsHeard()
+	public Iterator<Agent> getAgentsHeard()
 	{
 		return agentsHeard.iterator();
 	}
@@ -195,13 +195,41 @@ public class MessageBoard {
 		currentState.set(index, temp);
 	}
 	
-	public void setAgentsSeen(int index, ArrayList<Agent> temp)
+	public void setAgentsSeen(ArrayList<Agent> temp)
 	{
-		agentsSeen.set(index, temp);
+		for(int i = 0; i < temp.size(); i++)
+		{
+			boolean found = false;
+			for(int j = 0; j < agentsSeen.size() && !found; j++)
+			{
+				if(agentsSeen.get(i) == temp.get(i)) 
+				{
+					found = true;
+				}
+			}
+			if(!found) 
+			{
+				agentsSeen.add(temp.get(i));
+			}
+		}
 	}
 	
-	public void setAgentsHeard(int index, ArrayList<Agent> temp)
-	{
-		agentsHeard.set(index, temp);
+	public void setAgentsHeard(ArrayList<Agent> temp)
+	{		
+		for(int i = 0; i < temp.size(); i++)
+		{
+			boolean found = false;
+			for(int j = 0; j < agentsHeard.size() && !found; j++)
+			{
+				if(agentsHeard.get(i) == temp.get(i)) 
+				{
+					found = true;
+				}
+			}
+			if(!found) 
+			{
+				agentsHeard.add(temp.get(i));
+			}
+		}
 	}
 }
