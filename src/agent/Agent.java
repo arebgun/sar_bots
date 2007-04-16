@@ -37,7 +37,7 @@ public abstract class Agent extends Bobject implements Runnable
 	protected ArrayList<Agent> agentsHeard = null;
 	protected ArrayList<Obstacle> obstaclesSeen = null;
 	protected ArrayList<Flag> flagsSeen = null;
-	protected int msgID;
+	protected int msgID; //0 based
 	protected int teamID;
 	protected boolean isAlive = false;
 	protected int damage = 1;
@@ -274,22 +274,32 @@ public abstract class Agent extends Bobject implements Runnable
     	obstaclesSeen.addAll(sensorSight.getSightObstacles(this));
     	flagsSeen.addAll(sensorSight.getSightFlags(this));
     }
+    
+    public void setMsgID(int newID)
+    {
+    	msgID = newID;
+    }
+    
     public Iterator<Agent> getAgentsSeen()
     {
     	return agentsSeen.iterator();
     }
+    
     public Iterator<Agent> getAgentsHeard()
     {
     	return agentsHeard.iterator();
     }
+    
     public Iterator<Obstacle> getObstaclesSeen()
     {
     	return obstaclesSeen.iterator();
     }
+    
     public Iterator<Flag> getFlagsSeen()
     {
     	return flagsSeen.iterator();
     }
+    
     /**
      * Resents agent properties. This is used to restart the simulation. Currently
      * only resets agent location, but all subsystem modules could be reset here,
