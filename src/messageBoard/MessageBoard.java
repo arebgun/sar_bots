@@ -37,14 +37,14 @@ public class MessageBoard {
 		ourFlagSeen = false;
 		
 		/*Multi-Variable*/
-		myId = null;
-		myLocation = null;
-		needHelp = null;
-		isAlive = null;
-		currentHitPoints = null;
-		currentState = null;
-		agentsSeen = null;
-		agentsHeard = null;
+		myId = new ArrayList<Integer>();
+		myLocation = new ArrayList<AgentLocation>();
+		needHelp = new ArrayList<Boolean>();
+		isAlive = new ArrayList<Boolean>();
+		currentHitPoints = new ArrayList<Integer>();
+		currentState = new ArrayList<Agent.state>();
+		agentsSeen = new ArrayList<ArrayList<Agent>>();
+		agentsHeard = new ArrayList<ArrayList<Agent>>();
 	}
 	
 	/*Initialization Function*/
