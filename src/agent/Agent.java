@@ -542,8 +542,8 @@ public abstract class Agent extends Bobject implements Runnable
 		{
 			board.setWhoOwnsFlag(objectID);
 		}
-		board.setAgentsSeen(msgID, agentsSeen);
-		board.setAgentsHeard(msgID, agentsHeard);
+		board.setAgentsSeen(agentsSeen);
+		board.setAgentsHeard(agentsHeard);
     }
     
     protected double aimID(int ID)
