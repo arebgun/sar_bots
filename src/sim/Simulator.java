@@ -20,14 +20,16 @@ import ui.GUI;
 import ui.CLI;
 import baseobject.*;
 import agent.*;
-
-
+import obstacle.PolygonObstacle;
 import java.util.ArrayList;
 import messageBoard.MessageBoard;
 import java.util.Iterator;
 import java.util.logging.*;
-
 import obstacle.Obstacle;
+import java.awt.*;
+import java.io.*;
+import java.text.ParseException;
+
 /**
  * The main entrypoint for the Capture the Flag Bot Simulator.  This object keeps track of the main components,
  * such as the agents, the enviroment, and configuration.
@@ -95,7 +97,15 @@ public class Simulator
         	}
         }
 		//numberOnTeam.ensureCapacity(numberOfTeams);
-
+        
+        // load the buildings, if we have any
+        // load the buildings first so they have the first positions 
+        // in the worldObjects array. this way they get place where they are
+        // supposed to be.
+        String buildings = config.getBuildingsFileName();
+        if (buildings != null)
+        	loadBuildings(buildings);
+        
         logger.info( "loading AGENT data ..." );
         worldObjects = new ArrayList<Bobject>();
 
@@ -121,10 +131,43 @@ public class Simulator
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
         }
+        
         /*Initialize the message boards*/
         for(int i = 1; i <= numberOfTeams; i++)
         {
         	teamBoards.get(i).initialize(numberOnTeam.get(i));
+        }
+    }
+    private static void loadBuildings( String buildingsFileName ) throws Exception
+    {
+        
+        StreamTokenizer st = new StreamTokenizer( new BufferedReader( new FileReader( buildingsFileName ) ) );
+        st.ordinaryChars( '+', '9' );
+        st.wordChars( ' ', '~' );
+        st.commentChar( '#' );
+
+        while ( st.nextToken() != StreamTokenizer.TT_EOF )
+        {
+            String xPoints[] = st.sval.split( "\\," );
+            st.nextToken();
+            String yPoints[] = st.sval.split( "\\," );
+
+            int n = xPoints.length;
+            if ( n != yPoints.length ){ throw new ParseException( "building vertex X/Y list length mismatch", n ); }
+
+            int x[] = new int[n];
+            int y[] = new int[n];
+
+            for ( int i = 0; i < n; i++ )
+            {
+                x[i] = Integer.parseInt( xPoints[i] );
+                y[i] = Integer.parseInt( yPoints[i] );
+            }
+
+            Polygon building = new Polygon( x, y, n );
+            Color newColor = new Color(0,0,0,0);
+            numberWorldObjects++;
+            worldObjects.add(new PolygonObstacle(building,newColor,numberWorldObjects));
         }
     }
     

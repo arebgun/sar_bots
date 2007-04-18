@@ -23,6 +23,10 @@ public abstract class Obstacle extends Bobject
 		type = types.OBSTACLE;
 	}
 	
+	public Obstacle()
+	{
+		type = types.OBSTACLE;
+	}
 	//abstracted method getSoundRadius
 	public int getSoundRadius()
 	{
@@ -33,6 +37,7 @@ public abstract class Obstacle extends Bobject
 	{
 		
 	}
+	
 	public obstacleTypes getObstacleType()
 	{
 		return obstacleType;

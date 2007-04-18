@@ -44,5 +44,7 @@ public class Defender extends Agent
 		if (agent_state == agent_state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
 			*/
+		
+		beingShot = false;
 	}
 }

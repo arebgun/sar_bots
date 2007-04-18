@@ -29,6 +29,7 @@ public class Flag extends Bobject implements Runnable{
 		owner = 0;
 		isOwned = false;
 		type = types.FLAG;
+		boundingShape = Bobject.shapes.CIRCLE;
 		updateBoard(Simulator.teamBoards.get(teamID));
 	}
 	

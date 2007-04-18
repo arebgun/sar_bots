@@ -62,6 +62,16 @@ public abstract class Bobject {
 		return (types.OBSTACLE == type);
 	}
 	
+	public boolean isCircle()
+	{
+		return (shapes.CIRCLE == boundingShape);
+	}
+	
+	public boolean isPolygon()
+	{
+		return (shapes.POLYGON == boundingShape);
+	}
+	
 	public void setObjectID(int newID)
 	{
 		if (newID >= 0)

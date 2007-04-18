@@ -44,5 +44,9 @@ public class ConfigSim extends Config
     {
     	return Integer.parseInt(pTable.get( "numberOfTeams" ));
     }
-
+    
+    public String getBuildingsFileName()
+    {
+        return pTable.get( "buildingsFileName" );
+    }
 }

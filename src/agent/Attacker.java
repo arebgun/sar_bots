@@ -67,5 +67,8 @@ public class Attacker extends Agent
 		if (agent_state == agent_state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
 			*/
+		
+		//new turn starts from this point on, so reset beingShot to false
+		beingShot = false;
 	}
 }

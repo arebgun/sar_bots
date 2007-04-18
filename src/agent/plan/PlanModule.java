@@ -13,6 +13,8 @@ package agent.plan;
  * Copyright (c) 2006, University of Wyoming. All Rights Reserved.
  */
 
+import java.util.Iterator;
+import baseobject.Flag;
 import agent.*;
 import config.ConfigBobject;
 /**
@@ -57,4 +59,88 @@ public abstract class PlanModule
     public abstract void RecoverFlag(Agent a);
     
     public abstract agent.Agent.state getAgentState();
+    
+//  recieves an agent, returns true if the agent sees an opponent, false otherwise
+    protected boolean seeOpponent(Agent a)
+    {
+    	boolean temp = false;
+    	Iterator seen = a.getAgentsSeen();
+    	while (seen.hasNext() && !temp)
+    	{
+    		Agent b = (Agent)seen.next();
+    		if (b.getTeamID() != a.getTeamID())
+    			temp = true;
+    	}
+    	return temp;
+    }
+    
+    //recieves an agent, returns the number of opposing agents seen
+    protected int opponentsSeen(Agent a)
+    {
+    	int temp = 0;
+    	Iterator seen = a.getAgentsSeen();
+    	while (seen.hasNext())
+    	{
+    		Agent b = (Agent)seen.next();
+    		if (b.getTeamID() != a.getTeamID())
+    			temp++;
+    	}
+    	return temp;
+    }
+    
+    //recieves an agent, returns true if the agents seens an opponents flag, false otherwise
+    protected boolean opponentsFlagSeen(Agent a)
+    {
+    	boolean temp = false;
+    	Iterator seen = a.getFlagsSeen();
+    	while (seen.hasNext() && !temp)
+    	{
+    		Flag f = (Flag)seen.next();
+    		if (f.getTeamID() != a.getTeamID())
+    			temp = true;
+    	}
+    	return true;
+    }
+    
+    //recieves an agent, returns the location of the seen flag
+    protected AgentLocation opponentsFlagLocation(Agent a)
+    {
+    	AgentLocation temp = new AgentLocation(-1,-1,-1);
+    	Iterator seen = a.getFlagsSeen();
+    	while (seen.hasNext())
+    	{
+    		Flag f = (Flag)seen.next();
+    		if (f.getTeamID() != a.getTeamID())
+    			temp = f.getLocation();
+    	}
+    	return temp;
+    }
+    
+    //recieves an agent, returns true if the agent sees its flag
+    protected boolean ourFlagSeen(Agent a)
+    {
+    	boolean temp = false;
+    	Iterator seen = a.getFlagsSeen();
+    	while (seen.hasNext() && !temp)
+    	{
+    		Flag f = (Flag)seen.next();
+    		if (f.getTeamID() == a.getTeamID())
+    			temp = true;
+    	}
+    	return temp;
+    }
+    
+    //recieves an agent, returns the location of the agent's team's flag
+    protected AgentLocation ourFlagLoc(Agent a)
+    {
+    	AgentLocation temp = new AgentLocation(-1,-1,-1);
+    	Iterator seen = a.getFlagsSeen();
+    	while (seen.hasNext())
+    	{
+    		Flag f = (Flag)seen.next();
+    		if (f.getTeamID() == a.getTeamID())
+    			temp = f.getLocation();
+    	}
+    	return temp;
+    }
 }

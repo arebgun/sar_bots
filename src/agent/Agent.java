@@ -44,8 +44,9 @@ public abstract class Agent extends Bobject implements Runnable
 	protected int shotCounter = 0;
 	protected int initialSoundRadius;
 	protected double moveRadius;
+	protected boolean beingShot = false;
 	///AGENT STATES//////////////////
-	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, RECOVER_FLAG};
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, GUARD, RECOVER_FLAG};
 	protected state agent_state;
 	//call planner
 	public abstract void update();
@@ -134,6 +135,7 @@ public abstract class Agent extends Bobject implements Runnable
     	health = config.getHealth();
     	type = types.AGENT;
     	moveRadius = config.getSoundRadius();
+    	boundingShape = Bobject.shapes.CIRCLE;
     	
     }
 
@@ -191,6 +193,11 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	return hasFlag;
     }
+    
+    public boolean getIsBeingShot()
+    {
+    	return beingShot;
+    }
      /**
      * Updates agent's location. Possible next location is selected according to
      * result returned from the planning module. Next location is within sensor
@@ -233,7 +240,9 @@ public abstract class Agent extends Bobject implements Runnable
     	
     	if(isAlive)
     	{
-	    	health = health - d;
+    		beingShot = true;
+        	
+    		health = health - d;
 	    	if (health <= 0)
 	    		isAlive = false;
 	    	if(sightColor.getRed()+d <= 255)
@@ -390,7 +399,7 @@ public abstract class Agent extends Bobject implements Runnable
     	return good;
     }
     
-    protected void shootAll()
+    public void shootAll()
     {
     	Iterator<Agent> ag = this.getAgentsSeen();
     	while (ag.hasNext())
@@ -402,7 +411,7 @@ public abstract class Agent extends Bobject implements Runnable
     	shotCounter = 5;
     }
 
-    protected void shootID(int ID)
+    public void shootID(int ID)
     {
     	Iterator<Agent> ag = this.getAgentsSeen();
     	while (ag.hasNext())
@@ -469,7 +478,7 @@ public abstract class Agent extends Bobject implements Runnable
     	return temp;
     }
     
-    protected double moveToLocation( AgentLocation goal)
+    public double moveToLocation( AgentLocation goal)
     {
     	double temp = headingToCartesian(location.getTheta());
     	double arc = arctangentToGoal(goal);
@@ -512,12 +521,12 @@ public abstract class Agent extends Bobject implements Runnable
     	
     }
     //TODO finish flee
-    protected double flee()
+    public double flee()
     {
     	return location.getTheta();
     }
     
-    protected void sendMessage(boolean needHelp, boolean opponentFlagSeen, 
+    public void sendMessage(boolean needHelp, boolean opponentFlagSeen, 
     		AgentLocation opponentFlagLocation, boolean ourFlagSeen, 
     		AgentLocation ourFlagLocation)
     {
@@ -546,7 +555,7 @@ public abstract class Agent extends Bobject implements Runnable
 		board.setAgentsHeard(agentsHeard);
     }
     
-    protected double aimID(int ID)
+    public double aimID(int ID)
     {
     	AgentLocation badGuy = Simulator.worldObjects.get(ID).getLocation();
     	return moveToLocation(badGuy);

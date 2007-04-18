@@ -3,6 +3,7 @@ package obstacle;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.util.Random;
+import baseobject.Bobject;
 
 import config.ConfigBobject;
 
@@ -18,6 +19,7 @@ public class RoundObstacle extends Obstacle
 		boundingRadius = config.getBoundingRadius();
 		if (boundingRadius <= 0)
 			boundingRadius = (int)(rand.nextDouble() * 25.0);
+		boundingShape = Bobject.shapes.CIRCLE;
 	}
 	
 	public void draw(Graphics2D g2)
