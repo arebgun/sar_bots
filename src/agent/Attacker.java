@@ -50,7 +50,7 @@ public class Attacker extends Agent
     	else
     		soundRadius = initialSoundRadius;
     	
-		move();
+		//move();
 		/*
 		if (agent_state == agent_state.DEAD)
 			plan.Dead(this);

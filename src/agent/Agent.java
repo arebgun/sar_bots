@@ -203,14 +203,47 @@ public abstract class Agent extends Bobject implements Runnable
      * result returned from the planning module. Next location is within sensor
      * range of the agent.
      */
-    public void move()
+    public boolean move(double heading)
     {
-    	if (isAlive)
+    	double radHeading = Math.toRadians(heading);
+    	int tempRadius = (int)moveRadius;
+    	boolean found = false;
+    	AgentLocation newLoc = location;
+    	while(!found && tempRadius > 0)
     	{
-    	checkSensors();
-        AgentLocation goal = plan.getGoalLocation( this );
-        location           =  goal;//propulsion.move( location, goal ); //
+    		double newx = location.getX() + moveRadius * Math.cos(radHeading);
+        	double newy = location.getY() - moveRadius * Math.sin(radHeading);
+        	newLoc = new AgentLocation(newx, newy, heading);
+        	found = avoidObstacle(newLoc);
+        	if(found)
+        	{
+        		found = avoidAgent(newLoc);
+        	}        	
+        	tempRadius--;        	
+    	}    	
+    	if(found) {
+    		location = newLoc;
     	}
+    	return found;
+    }
+    
+    public boolean maxMove(double heading)
+    {
+    	double radHeading = Math.toRadians(heading);
+    	boolean found = false;
+    	AgentLocation newLoc = location;
+		double newx = location.getX() + moveRadius * Math.cos(radHeading);
+    	double newy = location.getY() - moveRadius * Math.sin(radHeading);
+    	newLoc = new AgentLocation(newx, newy, heading);
+    	found = avoidObstacle(newLoc);
+    	if(found)
+    	{
+    		found = avoidAgent(newLoc);
+    	}    
+    	if(found) {
+    		location = newLoc;
+    	}    	    	
+    	return found;
     }
 
     public abstract void pickUpFlag(Flag f);

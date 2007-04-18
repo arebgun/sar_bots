@@ -27,7 +27,7 @@ public class Defender extends Agent
 	
 	public void update()
 	{
-		move();
+		//move();
 		/*
 		if (agent_state == agent_state.DEAD)
 			plan.Dead(this);
