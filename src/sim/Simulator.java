@@ -42,10 +42,10 @@ public class Simulator
     private static int time;
    //our world objects and the number of them (numberWorldObjects is used as
     //the index value and object id)
-    private static int numberWorldObjects = 0;
+    public static int numberWorldObjects = 0;
     public static ArrayList<Bobject> worldObjects;
     public static ArrayList<MessageBoard> teamBoards;
-    private static int numberOfTeams;
+    public static int numberOfTeams;
     public static ArrayList<Integer> numberOnTeam;
     
     /**
@@ -108,7 +108,7 @@ public class Simulator
         
         logger.info( "loading AGENT data ..." );
         worldObjects = new ArrayList<Bobject>();
-
+        
         String objectConfigFiles[] = config.getObjectConfigFileNames();
         
         for ( String objFile : objectConfigFiles )
@@ -122,11 +122,13 @@ public class Simulator
         		worldObjects.get(o).setObjectID(o);
         		if(worldObjects.get(o).isAgent())
         		{
+
         			Agent a = (Agent)worldObjects.get(o);
         			int temp = numberOnTeam.get(a.getTeamID());
         			a.setMsgID(temp);
         			temp++;
         			numberOnTeam.set(a.getTeamID(), temp);
+
         		}
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
@@ -228,6 +230,11 @@ public class Simulator
     public static void reset()
     {
         time = 0;
+        /*reset the message boards*/
+        for(int i = 1; i <= numberOfTeams; i++)
+        {
+        	teamBoards.get(i).reset();
+        }
 
         for(Bobject obj : worldObjects)
         {

@@ -27,6 +27,7 @@ import java.awt.geom.Ellipse2D;
 import obstacle.Obstacle;
 import sim.Simulator;
 import messageBoard.MessageBoard;
+import env.Environment;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -45,6 +46,9 @@ public abstract class Agent extends Bobject implements Runnable
 	protected int initialSoundRadius;
 	protected double moveRadius;
 	protected boolean beingShot = false;
+	protected int threshold = 50;
+	public enum agentType {BASE, AGENT};
+	protected agentType myType;
 	///AGENT STATES//////////////////
 	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, GUARD, RECOVER_FLAG};
 	protected state agent_state;
@@ -136,6 +140,7 @@ public abstract class Agent extends Bobject implements Runnable
     	type = types.AGENT;
     	moveRadius = config.getSoundRadius();
     	boundingShape = Bobject.shapes.CIRCLE;
+    	isAlive = true;
     	
     }
 
@@ -146,6 +151,13 @@ public abstract class Agent extends Bobject implements Runnable
      *
      * @param sleepTime thread sleep time in milliseconds
      */
+    public void setObjectID(int newID)
+	{
+		if (newID >= 0)
+			objectID = newID;
+		idString = "Agent unit id = " + objectID;
+        
+	}
     public void setSleepTime( int sleepTime )
     {
         this.sleepTime = sleepTime;
@@ -155,18 +167,28 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	return teamID;
     }
+    public int getThreshold()
+    {
+    	return threshold;
+    }
     public double getMoveRadius()
     {
     	return moveRadius;
     }
-    /**
-     * Gets the velocity of the agent.
-     * @author jeff
-     * @return agent velocity
-     */
+    
     public double getVelocity()
     {
         return velocity;
+    }
+    
+    public void setIsAlive(boolean alive)
+    {
+    	isAlive = alive;
+    }
+    
+    public void setTheta(double newT)
+    {
+    	location.setTheta(newT);
     }
     
     public int getSoundRadius()
@@ -198,11 +220,26 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	return beingShot;
     }
+    
+    public boolean isMobile()
+    {
+    	return (myType == agentType.AGENT);
+    }
+    
+    public boolean isBase()
+    {
+    	return (myType == agentType.BASE);
+    }
      /**
      * Updates agent's location. Possible next location is selected according to
      * result returned from the planning module. Next location is within sensor
      * range of the agent.
      */
+    public void move()
+    {
+    	checkSensors();
+    	location = plan.getGoalLocation(this);
+    }
     public boolean move(double heading)
     {
     	double radHeading = Math.toRadians(heading);
@@ -211,20 +248,27 @@ public abstract class Agent extends Bobject implements Runnable
     	AgentLocation newLoc = location;
     	while(!found && tempRadius > 0)
     	{
-    		double newx = location.getX() + moveRadius * Math.cos(radHeading);
-        	double newy = location.getY() - moveRadius * Math.sin(radHeading);
-        	newLoc = new AgentLocation(newx, newy, heading);
-        	found = avoidObstacle(newLoc);
-        	if(found)
+    		double newx = location.getX() + tempRadius * Math.cos(radHeading);
+        	double newy = location.getY() - tempRadius * Math.sin(radHeading);
+        	found = inWorld(newx, newy);
+        	if (found)
         	{
-        		found = avoidAgent(newLoc);
-        	}        	
+	        	newLoc = new AgentLocation(newx, newy, heading);
+	        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
+        	}
         	tempRadius--;        	
     	}    	
     	if(found) {
     		location = newLoc;
     	}
+    	//if(!found)
+    //		System.out.println("move had "+getNumAgentsSeen()+" agents in the way and " + getNumObstaclesSeen() + " obstacles in the way");
     	return found;
+    }
+    
+    public void turnMove(double heading)
+    {
+    	location.setTheta(heading);
     }
     
     public boolean maxMove(double heading)
@@ -234,15 +278,14 @@ public abstract class Agent extends Bobject implements Runnable
     	AgentLocation newLoc = location;
 		double newx = location.getX() + moveRadius * Math.cos(radHeading);
     	double newy = location.getY() - moveRadius * Math.sin(radHeading);
-    	newLoc = new AgentLocation(newx, newy, heading);
-    	found = avoidObstacle(newLoc);
-    	if(found)
+    	found = inWorld(newx, newy);
+    	if (found)
     	{
-    		found = avoidAgent(newLoc);
-    	}    
-    	if(found) {
+        	newLoc = new AgentLocation(newx, newy, heading);
+        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
+    	}
+    	if(found)
     		location = newLoc;
-    	}    	    	
     	return found;
     }
 
@@ -261,7 +304,14 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	return isAlive;
     }
-    
+    public int getNumAgentsSeen()
+    {
+    	return agentsSeen.size();
+    }
+    public int getNumObstaclesSeen()
+    {
+    	return obstaclesSeen.size();
+    }
     public void decrementHealth(int d)
     {
     	int sightRed = sightColor.getRed();
@@ -295,8 +345,12 @@ public abstract class Agent extends Bobject implements Runnable
 	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
 	    	
     	}
-    	else
+    	
+    	if (!isAlive)
+    	{
     		agent_state = state.DEAD;
+    		System.out.println("Agent is Dead");
+    	}
     }
     
     public void checkSensors()
@@ -355,6 +409,14 @@ public abstract class Agent extends Bobject implements Runnable
         hearColor = config.getSoundColor();
         sightColor = config.getSightColor();
         isAlive = true;
+        agentsSeen.clear();
+        agentsHeard.clear();
+        obstaclesSeen.clear();
+        flagsSeen.clear();
+        hasFlag = false;
+        shotCounter = 0;
+        agent_state = plan.getInitialState();
+        moveRadius = initialSoundRadius;
     }
 
     /**
@@ -421,7 +483,7 @@ public abstract class Agent extends Bobject implements Runnable
     	while ( ag.hasNext())
     	{
     		Agent a = ag.next();
-    		if (a.getIsAlive())
+    		if (a.getIsAlive() && a.isMobile())
     		{
     			double dist  = Math.hypot((newX - a.getLocation().getX()), (newY - a.getLocation().getY()));
     			double bound = this.getBoundingRadius() + a.getBoundingRadius();
@@ -430,6 +492,13 @@ public abstract class Agent extends Bobject implements Runnable
     		}
     	}
     	return good;
+    }
+    
+    protected boolean inWorld(double x, double y)
+    {
+    	double MaxX = Environment.groundShape().getMaxX();
+    	double MaxY = Environment.groundShape().getMaxY();
+    	return ((0 <= x) && (x < MaxX)) && ((0 <= y) && (y < MaxY)); 
     }
     
     public void shootAll()
@@ -483,7 +552,7 @@ public abstract class Agent extends Bobject implements Runnable
     	return head;
     }
     
-    private double arctangentToGoal(AgentLocation goal)
+    public double arctangentToGoal(AgentLocation goal)
     {
     	double x = location.getX();
     	double y = location.getY();
@@ -508,7 +577,7 @@ public abstract class Agent extends Bobject implements Runnable
     			temp = 270 - temp;
     	}
     	
-    	return temp;
+    	return cartesianToHeading(temp);
     }
     
     public double moveToLocation( AgentLocation goal)
@@ -583,6 +652,7 @@ public abstract class Agent extends Bobject implements Runnable
 		if(hasFlag)
 		{
 			board.setWhoOwnsFlag(objectID);
+			board.setOpponentFlagLocation(location);
 		}
 		board.setAgentsSeen(agentsSeen);
 		board.setAgentsHeard(agentsHeard);

@@ -81,7 +81,7 @@ public class StochasticView extends PlanModule
     	while ( it.hasNext())
     	{
     		Agent b = it.next();
-    		if (a.getTeamID() != b.getTeamID())
+    		if (a.getTeamID() != b.getTeamID() && b.isMobile())
     		{
     			shoot = true;
     			b.decrementHealth(1);
@@ -107,7 +107,7 @@ public class StochasticView extends PlanModule
         	while ( iter.hasNext() && good)
         	{
         		Agent b = iter.next();
-        		if (b.getIsAlive() && a.getObjectID() != b.getObjectID())
+        		if (b.getIsAlive() && b.isMobile() && a.getObjectID() != b.getObjectID())
         		{
         			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
         			bound = a.getBoundingRadius() + b.getBoundingRadius();
@@ -134,7 +134,7 @@ public class StochasticView extends PlanModule
         	while ( heard.hasNext() && good)
         	{
         		Agent b = heard.next();
-        		if (b.getIsAlive() && a.getObjectID() != b.getObjectID())
+        		if (b.getIsAlive() && b.isMobile() && a.getObjectID() != b.getObjectID())
         		{
         			dist = Math.hypot((newX - b.getLocation().getX()), (newY - b.getLocation().getY()));
         			bound = a.getBoundingRadius() + b.getBoundingRadius();

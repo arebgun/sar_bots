@@ -28,6 +28,8 @@ public abstract class PlanModule
      * Configuration class that specifies all agent properties.
      */
     protected ConfigBobject objectConfig;
+    protected double guardDistance = 50.0;
+    protected Agent.state initialState;
 
     /**
      * Default constructor.
@@ -37,7 +39,7 @@ public abstract class PlanModule
     protected PlanModule( ConfigBobject config )
     {
         objectConfig = config;
-    }
+         }
 
     /**
      * Calculates next location that the agent will move to.
@@ -47,6 +49,10 @@ public abstract class PlanModule
      * @return next location that the agent will move to
      */
     
+    public Agent.state getInitialState()
+    {
+    	return initialState;
+    }
     public abstract AgentLocation getGoalLocation(Agent a );
     
     public abstract void Dead(Agent a);
@@ -99,13 +105,13 @@ public abstract class PlanModule
     		if (f.getTeamID() != a.getTeamID())
     			temp = true;
     	}
-    	return true;
+    	return temp;
     }
     
     //recieves an agent, returns the location of the seen flag
     protected AgentLocation opponentsFlagLocation(Agent a)
     {
-    	AgentLocation temp = new AgentLocation(-1,-1,-1);
+    	AgentLocation temp = null;
     	Iterator seen = a.getFlagsSeen();
     	while (seen.hasNext())
     	{
@@ -133,7 +139,7 @@ public abstract class PlanModule
     //recieves an agent, returns the location of the agent's team's flag
     protected AgentLocation ourFlagLoc(Agent a)
     {
-    	AgentLocation temp = new AgentLocation(-1,-1,-1);
+    	AgentLocation temp = null;
     	Iterator seen = a.getFlagsSeen();
     	while (seen.hasNext())
     	{
@@ -142,5 +148,166 @@ public abstract class PlanModule
     			temp = f.getLocation();
     	}
     	return temp;
+    }
+    protected boolean move(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+		boolean found = a.move(heading);
+		if (!found)
+		{
+			for(int i = 1; i <= count && !found; i++)
+			{
+				found = a.move(heading + count);
+				if (!found)
+					found = a.move(heading - count);
+			}
+		}
+		return found;
+    }
+    
+    protected boolean moveRight(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+    	boolean found = a.move(heading);
+    	if (!found)
+    	{
+    		for (int i = 1; i <= count && !found; i++)
+    			found = a.move(heading + count);
+    	}
+    	return found;
+    }
+    
+    protected boolean moveLeft(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+    	boolean found = a.move(heading);
+    	if (!found)
+    	{
+    		for (int i = 1; i <= count && !found; i++)
+    			found = a.move(heading - count);
+    	}
+    	return found;
+    }
+    protected boolean maxMove(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+		boolean found = a.maxMove(heading);
+		if (!found)
+		{
+			for(int i = 1; i <= count && !found; i++)
+			{
+				found = a.maxMove(heading + count);
+				if (!found)
+					found = a.maxMove(heading - count);
+			}
+		}
+		return found;
+    }
+    
+    protected boolean maxMoveLeft(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+    	boolean found = a.maxMove(heading);
+    	if (!found)
+    	{
+    		for (int i = 1; i <= count && !found; i++)
+    			found = a.maxMove(heading - count);
+    	}
+    	return found;
+    }
+    
+    protected boolean maxMoveRight(Agent a, double heading)
+    {
+    	int count = (int)a.sensorSight.getHalfAngle();
+    	boolean found = a.maxMove(heading);
+    	if (!found)
+    	{
+    		for (int i = 1; i <= count && !found; i++)
+    			found = a.maxMove(heading + count);
+    	}
+    	return found;
+    }
+    //returns the first flag seen, if no flags are seen returns null
+    protected Flag getFlagSeen(Agent a)
+    {
+    	Iterator<Flag> flag = a.getFlagsSeen();
+    	while (flag.hasNext())
+    	{
+    		Flag f = (Flag)flag.next();
+    		return f;
+    	}
+    	return null;
+    }
+    //returns -x degrees if myHeading > newHeading (turn right)
+    //returns x degrees if newHeading > myHeading (turn left)
+    //and 0 if the headings are the same.
+    protected int turnDir(Agent a, double newHeading)
+    {
+    	int dir = 0;
+    	double myHeading = a.getLocation().getTheta();
+    	if (Math.abs(newHeading - myHeading) <= 180)
+    		dir = (int)(newHeading - myHeading);
+    	//myheading is in quad 4 and newHeading is in quad 1, turn left
+    	else if (myHeading > newHeading)
+    		dir = (int)((360 + newHeading) - myHeading);
+    	//otherwise, newHeading is in 4 and myHeading is in 1, turn right
+    	else
+    		dir = (int)(newHeading - (myHeading + 360));
+    	
+    	return dir;
+    }
+    
+    protected void moveAgent(Agent a, double heading, double newHeading)
+    {
+    	boolean found = false;
+    	int turn = turnDir(a,newHeading);
+    	if (turn > 0)
+    	{
+    		if (turn > a.sensorSight.getHalfAngle());
+    			turn = (int)a.sensorSight.getHalfAngle();
+    		found = maxMoveLeft(a,(heading+turn));
+    		if (!found)
+    			found = moveLeft(a,(heading+turn));
+    	}
+    	else if (turn < 0)
+    	{
+    		turn = Math.abs(turn);
+    		if (turn > a.sensorSight.getHalfAngle())
+    			turn = (int)a.sensorSight.getHalfAngle();
+    		turn *= -1;
+    		found = maxMoveRight(a,(heading+turn));
+    		if (!found)
+    			found = moveRight(a,(heading+turn));
+    	}
+    	else
+    	{
+    		found = maxMove(a,heading);
+    		if (!found)
+    			found = move(a,heading);
+    	}
+		if (!found)
+		{
+			double newTurn = heading + a.sensorSight.getHalfAngle();//rand.nextDouble()*a.sensorSight.getArcAngle() + (heading - a.sensorSight.getHalfAngle());
+			a.turnMove(newTurn);
+		}	
+    }
+    
+    protected boolean atBase(Agent a)
+    {
+    	boolean inBase = false;
+    	Iterator<Agent> ag = a.getAgentsHeard();
+    	while (ag.hasNext() && !inBase)
+    	{
+    		Agent b = (Agent)ag.next();
+    		if (b.isBase())
+    		{
+    			double dist = Math.hypot((a.getLocation().getX() - b.getLocation().getX()),
+    									 (a.getLocation().getY() - b.getLocation().getY()));
+    			double bound = a.getBoundingRadius();
+    			if (bound >= dist)
+    				inBase = true;
+    		}
+    	}
+    	return inBase;
     }
 }

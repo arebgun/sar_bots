@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Attacker
-swarmSize=15
+swarmSize=5
 teamID=2
 
 #communications
@@ -17,8 +17,9 @@ yCircle=200
 circleRadius=90
 
 #planning
-planName=agent.plan.StochasticView
+planName=agent.plan.Aggressive
 planSeed=0
+guardDistance=75
 
 #propulsion
 propulsionName=agent.propulsion.Thruster
@@ -30,7 +31,8 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=300
+health=100
+threshold=30
 boundingRadius=5
 objectColor=0,0,255,255
 

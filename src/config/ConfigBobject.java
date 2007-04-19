@@ -101,7 +101,10 @@ public class ConfigBobject extends Config
     {
     	return Integer.parseInt( pTable.get( "health" ) );
     }
-    
+    public int getThreshold()
+    {
+    	return Integer.parseInt( pTable.get( "threshold") );
+    }
     public int getBoundingRadius()
     {
     	return Integer.parseInt( pTable.get( "boundingRadius" ) );
@@ -194,7 +197,12 @@ public class ConfigBobject extends Config
 	{
 		return Double.parseDouble( pTable.get( "initialHeading"));
 	}
-	
+//===================================================================
+	//plan config stuffs
+	public double getGuardDistance()
+	{
+		return Double.parseDouble( pTable.get("guardDistance"));
+	}
 //===================================================================
 //CONFIG FOR OBSTACLES
 //===================================================================

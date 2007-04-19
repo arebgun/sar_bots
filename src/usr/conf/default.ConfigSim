@@ -4,7 +4,7 @@
 envConfigFileName=usr/conf/default.ConfigEnv
 
 # comma-separated list of agent configuration files (path relative to top package directory)
-objectConfigFileNames=usr/conf/line.Defender,usr/conf/default.Attacker,usr/conf/default.Flag1,usr/conf/default.Obstacle
+objectConfigFileNames=usr/conf/default.Obstacle,usr/conf/line.Defender,usr/conf/default.Attacker,usr/conf/default.Flag1,usr/conf/default.Base2
 
 # Number of teams
 numberOfTeams=2

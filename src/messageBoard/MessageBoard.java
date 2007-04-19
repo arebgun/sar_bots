@@ -15,8 +15,8 @@ public class MessageBoard {
 	private static boolean flagAtHome;
 	private static AgentLocation ourFlagLocation;
 	private static boolean ourFlagSeen;
-	private static ArrayList<Agent> agentsSeen;
-	private static ArrayList<Agent> agentsHeard;
+	private static AgentLocation ourBaseLocation;
+	private static int teamSize;
 	
 	/*Multi-Variable*/
 	private static ArrayList<Integer> myId;
@@ -25,6 +25,10 @@ public class MessageBoard {
 	private static ArrayList<Boolean> isAlive;
 	private static ArrayList<Integer> currentHitPoints;
 	private static ArrayList<Agent.state> currentState;
+	private static ArrayList<Agent> agentsSeen;
+	private static int seenCounters[];
+	private static ArrayList<Agent> agentsHeard;
+	private static int heardCounters[];
 	
 	public MessageBoard()
 	{
@@ -35,8 +39,7 @@ public class MessageBoard {
 		flagAtHome = false;
 		ourFlagLocation = null;
 		ourFlagSeen = false;
-		agentsSeen = new ArrayList<Agent>();
-		agentsHeard = new ArrayList<Agent>();
+		ourBaseLocation = null;
 		
 		/*Multi-Variable*/
 		myId = new ArrayList<Integer>();
@@ -45,11 +48,16 @@ public class MessageBoard {
 		isAlive = new ArrayList<Boolean>();
 		currentHitPoints = new ArrayList<Integer>();
 		currentState = new ArrayList<Agent.state>();
+		agentsSeen = new ArrayList<Agent>();
+		agentsHeard = new ArrayList<Agent>();
+		seenCounters = new int[100];
+		heardCounters = new int[100];
 	}
 	
 	/*Initialization Function*/
 	public void initialize(int numOnTeam)
 	{
+		teamSize = numOnTeam;
 		for(int i = 0; i < numOnTeam; i++)
 		{
 			myId.add(-1);
@@ -61,6 +69,26 @@ public class MessageBoard {
 			agentsSeen.add(null);
 			agentsHeard.add(null);
 		}
+		for(int i = 0; i < 100; i++)
+		{
+			seenCounters[i] = 0;
+			heardCounters[i] = 0;
+		}
+	}
+	
+	public void reset()
+	{
+		
+		/*Single Variables*/
+		opponentFlagLocation = null;
+		opponentFlagSeen = false;
+		whoOwnsFlag = 0;
+		flagAtHome = false;
+		ourFlagLocation = null;
+		ourFlagSeen = false;;
+		
+		/*Multi-Variable*/
+		initialize(teamSize);
 	}
 	
 	/*Accessors*/
@@ -134,6 +162,11 @@ public class MessageBoard {
 		return agentsHeard.iterator();
 	}
 	
+	public AgentLocation getBaseLocation()
+	{
+		return ourBaseLocation;
+	}
+	
 	/*Mutators*/
 	public void setOpponentFlagLocation(AgentLocation temp)
 	{
@@ -195,6 +228,11 @@ public class MessageBoard {
 		currentState.set(index, temp);
 	}
 	
+	public void setBaseLocation(AgentLocation bl)
+	{
+		ourBaseLocation = bl;
+	}
+	
 	public void setAgentsSeen(ArrayList<Agent> temp)
 	{
 		for(int i = 0; i < temp.size(); i++)
@@ -202,7 +240,7 @@ public class MessageBoard {
 			boolean found = false;
 			for(int j = 0; j < agentsSeen.size() && !found; j++)
 			{
-				if(agentsSeen.get(i) == temp.get(i)) 
+				if(agentsSeen.get(j) == temp.get(i)) 
 				{
 					found = true;
 				}
@@ -215,20 +253,42 @@ public class MessageBoard {
 	}
 	
 	public void setAgentsHeard(ArrayList<Agent> temp)
-	{		
+	{	
 		for(int i = 0; i < temp.size(); i++)
 		{
 			boolean found = false;
 			for(int j = 0; j < agentsHeard.size() && !found; j++)
 			{
-				if(agentsHeard.get(i) == temp.get(i)) 
+				if(agentsHeard.get(j) == temp.get(i)) 
 				{
 					found = true;
+					heardCounters[temp.get(i).getObjectID()] += 1;
 				}
 			}
 			if(!found) 
 			{
 				agentsHeard.add(temp.get(i));
+				heardCounters[temp.get(i).getObjectID()] = 15;
+			}
+		}
+//		first decrement all counters for heard agents
+		for(int d = 0; d < 100; d++)
+		{
+			if (heardCounters[d] > 0)
+			{
+				heardCounters[d]--;
+				if (heardCounters[d] == 0)
+				{
+					boolean found = false;
+					for(int i = 0; i < agentsHeard.size() && !found;i++)
+					{
+						if (agentsHeard.get(i) != null && agentsHeard.get(i).getObjectID() == d)
+						{
+							agentsHeard.remove(i);
+							found = true;
+						}
+					}
+				}
 			}
 		}
 	}

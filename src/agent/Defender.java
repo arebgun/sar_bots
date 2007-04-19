@@ -1,4 +1,5 @@
 package agent;
+import agent.Agent.agentType;
 import baseobject.*;
 
 import config.ConfigBobject;
@@ -9,6 +10,8 @@ public class Defender extends Agent
 	{
 		super (config);
 		isAlive = true;
+		threshold = config.getThreshold();
+    	myType = agentType.AGENT;
 	}
 
 	public void pickUpFlag(Flag f)
@@ -27,7 +30,7 @@ public class Defender extends Agent
 	
 	public void update()
 	{
-		//move();
+		move();
 		/*
 		if (agent_state == agent_state.DEAD)
 			plan.Dead(this);

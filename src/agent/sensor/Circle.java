@@ -47,10 +47,8 @@ public class Circle extends SensorModule
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
-    				(double)b.getLocation().getX()+
-    				(double)a.getLocation().getY() * 
-    				(double)b.getLocation().getY());
+    			int dist = (int)Math.hypot(a.getLocation().getX() - b.getLocation().getX(),
+    					a.getLocation().getY() - b.getLocation().getY());
     			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
     				a.getObjectID() != b.getObjectID())
     			temp.add((Agent)b);
@@ -69,11 +67,9 @@ public class Circle extends SensorModule
     		Bobject b = iter.next();
     		if (b.isAgent())
     		{
-    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
-    				(double)b.getLocation().getX()+
-    				(double)a.getLocation().getY() * 
-    				(double)b.getLocation().getY());
-    			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
+    			int dist = (int)Math.hypot(a.getLocation().getX() - b.getLocation().getX(),
+    					a.getLocation().getY() - b.getLocation().getY());
+    			if (radius + b.getSoundRadius() >= dist &&
     				a.getObjectID() != b.getObjectID())
     			temp.add((Agent)b);
     		}
@@ -91,10 +87,8 @@ public class Circle extends SensorModule
     		Bobject b = iter.next();
     		if (b.isObstacle())
     		{
-    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
-    				(double)b.getLocation().getX()+
-    				(double)a.getLocation().getY() * 
-    				(double)b.getLocation().getY());
+    			int dist = (int)Math.hypot(a.getLocation().getX() - b.getLocation().getX(),
+    					a.getLocation().getY() - b.getLocation().getY());
     			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
     				a.getObjectID() != b.getObjectID())
     			temp.add((Obstacle)b);
@@ -113,10 +107,8 @@ public class Circle extends SensorModule
     		Bobject b = iter.next();
     		if (b.isFlag())
     		{
-    			int dist = (int)Math.sqrt((double)a.getLocation().getX() * 
-    				(double)b.getLocation().getX()+
-    				(double)a.getLocation().getY() * 
-    				(double)b.getLocation().getY());
+    			int dist = (int)Math.hypot(a.getLocation().getX() - b.getLocation().getX(),
+    					a.getLocation().getY() - b.getLocation().getY());
     			if (a.getBoundingRadius() + b.getBoundingRadius() <= dist &&
     				a.getObjectID() != b.getObjectID())
     			temp.add((Flag)b);

@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Defender
-swarmSize=15
+swarmSize=5
 teamID=1
 
 #communications
@@ -32,8 +32,9 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=300
+health=100
 boundingRadius=5
+threshold=20
 objectColor=255,255,0,255
 
 #sound attributes
