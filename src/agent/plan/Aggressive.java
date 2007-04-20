@@ -7,12 +7,12 @@ import config.ConfigBobject;
 import messageBoard.MessageBoard;
 import sim.Simulator;
 import java.util.Iterator;
+import statistics.Statistics;
 
 public class Aggressive extends PlanModule
 {
 	private static Random rand = null;
     private agent.Agent.state agentState = agent.Agent.state.SEARCH;
-	
 	public Aggressive(ConfigBobject config)
 	{
 		super(config);
@@ -44,6 +44,9 @@ public class Aggressive extends PlanModule
     		a.dropFlag();
     	a.setIsAlive(false);
     	
+    	Statistics.incStateDead(a.getObjectID());
+    	int blah = Statistics.getDamageDone(a.getObjectID());
+    	System.out.println("Agent : " + a.getObjectID() + " did : " + blah + " damage before he died");
     	a.sendMessage(false, false, holder, false, holder);
     	a.stop();
     	   		
@@ -61,11 +64,16 @@ public class Aggressive extends PlanModule
     	AgentLocation base = mb.getBaseLocation();
     	double newHeading = a.arctangentToGoal(base);
     	if (atBase(a))
+    	{
     		Simulator.whoCapturedFlag = "FLAG CAPTURED";
+    		Statistics.incFlagsCaptured(a.getTeamID());
+    		Statistics.incFlagsScored(a.getObjectID());
+    	}
     	else
     		moveAgent(a,heading,newHeading);
     	
 		a.checkSensors();
+		Statistics.incStateFlagCarrier(a.getObjectID());
 		a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     	
     }
@@ -109,6 +117,7 @@ public class Aggressive extends PlanModule
     	}
     	
     	a.checkSensors();
+    	Statistics.incStateGuard(a.getObjectID());
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     	
     }
@@ -160,6 +169,13 @@ public class Aggressive extends PlanModule
     	moveAgent(a,heading,newHeading);
     	
 		a.checkSensors();
+    	oppFlagSeen = opponentsFlagSeen(a);
+    	if (oppFlagSeen)
+    		oppFlagLoc = opponentsFlagLocation(a);
+    	ourFlagSeen = ourFlagSeen(a);
+    	if (ourFlagSeen)
+    		ourFlagLoc = ourFlagLoc(a);
+    	Statistics.incStateFlee(a.getObjectID());
 		a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
    }
     
@@ -265,6 +281,7 @@ public class Aggressive extends PlanModule
     	if (ourFlagSeen)
     		ourFlagLoc = ourFlagLoc(a);
     	
+    	Statistics.incStateSearch(a.getObjectID());
     	//now send all your info to the messageboard
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     }
@@ -353,6 +370,7 @@ public class Aggressive extends PlanModule
     	if (ourFlagSeen)
     		ourFlagLoc = ourFlagLoc(a);
     	
+    	Statistics.incStateRecoverFlag(a.getObjectID());
     	//now send all your info to the messageboard
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     		

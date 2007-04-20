@@ -1,8 +1,8 @@
 package agent;
-import agent.Agent.agentType;
-import baseobject.*;
 
+import baseobject.*;
 import config.ConfigBobject;
+import statistics.Statistics;
 
 public class Defender extends Agent
 {
@@ -20,6 +20,7 @@ public class Defender extends Agent
 		{
 			f.setOwner(0);
 			f.reset();
+			Statistics.incFlagsRecovered(objectID);
 		}
 	}
 	public void dropFlag()
@@ -30,7 +31,8 @@ public class Defender extends Agent
 	
 	public void update()
 	{
-		move();
+		if (isAlive)
+			move();
 		/*
 		if (agent_state == agent_state.DEAD)
 			plan.Dead(this);

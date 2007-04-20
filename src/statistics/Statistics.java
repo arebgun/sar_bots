@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Statistics 
 {
+	private static Statistics statisticsInstance = null;
 	private static int numberOfTeams = 0;
 	private static int totalWorldObjects = 0;
 	
@@ -12,6 +13,7 @@ public class Statistics
 	private static ArrayList<Integer> shotsTaken = null;
 	private static ArrayList<Integer> enemiesHit = null;
 	private static ArrayList<Integer> damageDone = null;
+	private static ArrayList<Integer> flagsPickedUp = null;
 	private static ArrayList<Integer> flagsRecovered = null;
 	private static ArrayList<Integer> flagsScored = null;
 	private static ArrayList<Integer> stateSearch = null;
@@ -27,7 +29,7 @@ public class Statistics
 	
 	
 	
-	public Statistics()
+	private Statistics()
 	{
 		numberOfTeams = Simulator.numberOfTeams;
 		totalWorldObjects = Simulator.numberWorldObjects;
@@ -35,14 +37,39 @@ public class Statistics
 		initialize();
 	}
 	
+	public static Statistics getStatisticsInstance()
+	{
+		if (statisticsInstance == null)
+		{
+			statisticsInstance = new Statistics();
+		}
+		return statisticsInstance;
+		
+	}
 	private void initialize()
 	{
+		shotsTaken = new ArrayList<Integer>();
+		enemiesHit = new ArrayList<Integer>();
+		damageDone = new ArrayList<Integer>();
+		flagsPickedUp = new ArrayList<Integer>();
+		flagsRecovered = new ArrayList<Integer>();
+		flagsScored = new ArrayList<Integer>();
+		stateSearch = new ArrayList<Integer>();
+		stateDead = new ArrayList<Integer>();
+		stateFlagCarrier = new ArrayList<Integer>();
+		stateGuard = new ArrayList<Integer>();
+		stateFlee = new ArrayList<Integer>();
+		stateRecoverFlag = new ArrayList<Integer>();
+		stateHide = new ArrayList<Integer>();
+		flagsCaptured = new ArrayList<Integer>();
+		
 		//individual statistics
 		for(int i = 0; i < totalWorldObjects; i++)
 		{
 			shotsTaken.add(0);
 			enemiesHit.add(0);
 			damageDone.add(0);
+			flagsPickedUp.add(0);
 			flagsRecovered.add(0);
 			flagsScored.add(0);
 			stateSearch.add(0);
@@ -62,109 +89,117 @@ public class Statistics
 	}
 	
 	//set functions
-	public void incShotsTaken(int id)
+	public static void incShotsTaken(int id)
 	{
 		shotsTaken.set(id, (shotsTaken.get(id) + 1));
 	}
-	public void incEnemiesHit(int id)
+	public static void incEnemiesHit(int id)
 	{
 		enemiesHit.set(id, (enemiesHit.get(id) + 1));
 	}
-	public void incDamageDone(int id, int d)
+	public static void incDamageDone(int id, int d)
 	{
 		damageDone.set(id, (damageDone.get(id)+d));
 	}
-	public void incFlagsRecovered(int id)
+	public static void incFlagsPickedUp(int id)
+	{
+		flagsPickedUp.set(id, (flagsPickedUp.get(id)+1));
+	}
+	public static void incFlagsRecovered(int id)
 	{
 		flagsRecovered.set(id, (flagsRecovered.get(id)+1));
 	}
-	public void incFlagsScored(int id)
+	public static void incFlagsScored(int id)
 	{
 		flagsScored.set(id, (flagsScored.get(id)+1));
 	}
-	public void incStateSearch(int id)
+	public static void incStateSearch(int id)
 	{
 		stateSearch.set(id, stateSearch.get(id)+1);
 	}
-	public void incStateGuard(int id)
+	public static void incStateGuard(int id)
 	{
 		stateGuard.set(id, (stateGuard.get(id) + 1));
 	}
-	public void incStateFlee(int id)
+	public static void incStateFlee(int id)
 	{
 		stateFlee.set(id, (stateFlee.get(id)+1));
 	}
-	public void incStateFlagCarrier(int id)
+	public static void incStateFlagCarrier(int id)
 	{
 		stateFlagCarrier.set(id, (stateFlagCarrier.get(id)+1));
 	}
-	public void incStateDead(int id)
+	public static void incStateDead(int id)
 	{
 		stateDead.set(id, (stateDead.get(id)+1));
 	}
-	public void incStateHide(int id)
+	public static void incStateHide(int id)
 	{
 		stateHide.set(id, (stateHide.get(id)+1));
 	}
-	public void incStateRecoverFlag(int id)
+	public static void incStateRecoverFlag(int id)
 	{
 		stateRecoverFlag.set(id, (stateRecoverFlag.get(id)+1));
 	}
-	public void incFlagsCaptured(int teamID)
+	public static void incFlagsCaptured(int teamID)
 	{
 		flagsCaptured.set(teamID, (flagsCaptured.get(teamID)+1));
 	}
 	
 	//gets
-	public int getShotsTaken(int id)
+	public static int getShotsTaken(int id)
 	{
 		return shotsTaken.get(id);
 	}
-	public int getEnemiesHit(int id)
+	public static int getEnemiesHit(int id)
 	{
 		return enemiesHit.get(id);
 	}
-	public int getDamageDone(int id)
+	public static int getDamageDone(int id)
 	{
 		return damageDone.get(id);
 	}
-	public int getFlagsRecovered(int id)
+	public static int getFlagsPickedUp(int id)
+	{
+		return flagsPickedUp.get(id);
+	}
+	public static int getFlagsRecovered(int id)
 	{
 		return flagsRecovered.get(id);
 	}
-	public int getFlagsScored(int id)
+	public static int getFlagsScored(int id)
 	{
 		return flagsScored.get(id);
 	}
-	public int getStateSearch(int id)
+	public static int getStateSearch(int id)
 	{
 		return stateSearch.get(id);
 	}
-	public int getStateDead(int id)
+	public static int getStateDead(int id)
 	{
 		return stateDead.get(id);
 	}
-	public int getStateFlagCarrier(int id)
+	public static int getStateFlagCarrier(int id)
 	{
 		return stateFlagCarrier.get(id);
 	}
-	public int getStateGuard(int id)
+	public static int getStateGuard(int id)
 	{
 		return stateGuard.get(id);
 	}
-	public int getFlee(int id)
+	public static int getFlee(int id)
 	{
 		return stateFlee.get(id);
 	}
-	public int getRecoverFlag(int id)
+	public static int getRecoverFlag(int id)
 	{
 		return stateRecoverFlag.get(id);
 	}
-	public int getStateHide(int id)
+	public static int getStateHide(int id)
 	{
 		return stateHide.get(id);
 	}
-	public int getFlagsCaptured(int id)
+	public static int getFlagsCaptured(int id)
 	{
 		return flagsCaptured.get(id);
 	}

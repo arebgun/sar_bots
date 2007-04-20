@@ -2,6 +2,7 @@ package agent;
 import baseobject.*;
 import config.ConfigBobject;
 import sim.Simulator;
+import statistics.Statistics;
 
 public class Attacker extends Agent
 {
@@ -25,6 +26,7 @@ public class Attacker extends Agent
 			System.out.println("Picked up the flag <Agent> " + objectID);
 			hasFlag = true;
 			moveRadius = moveRadius / 2;
+			Statistics.incFlagsPickedUp(objectID);
 		}
 		else
 			System.out.println("Agent "+this.objectID+" is trying to pick up already owned flag!");

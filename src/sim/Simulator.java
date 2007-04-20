@@ -29,6 +29,7 @@ import obstacle.Obstacle;
 import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
+import statistics.Statistics;
 
 /**
  * The main entrypoint for the Capture the Flag Bot Simulator.  This object keeps track of the main components,
@@ -38,6 +39,7 @@ public class Simulator
 {
     public static Logger logger;
 
+    public static Statistics stats = null;
     private static ConfigSim config;
     private static int time;
    //our world objects and the number of them (numberWorldObjects is used as
@@ -140,6 +142,8 @@ public class Simulator
         {
         	teamBoards.get(i).initialize(numberOnTeam.get(i));
         }
+        
+        stats = Statistics.getStatisticsInstance();
     }
     private static void loadBuildings( String buildingsFileName ) throws Exception
     {

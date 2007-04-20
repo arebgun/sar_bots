@@ -28,6 +28,7 @@ import obstacle.Obstacle;
 import sim.Simulator;
 import messageBoard.MessageBoard;
 import env.Environment;
+import statistics.Statistics;
 
 
 public abstract class Agent extends Bobject implements Runnable
@@ -509,11 +510,12 @@ public abstract class Agent extends Bobject implements Runnable
     		Agent a = ag.next();
     		if (a.getIsAlive() && a.getTeamID() != teamID)
     		{
-    			System.out.println(a.getTeamID() + "\t" + teamID);
     			a.decrementHealth(damage);
+    			Statistics.incDamageDone(objectID, damage);
+    			Statistics.incEnemiesHit(objectID);
+    	    	shotCounter = 5;
     		}
     	}
-    	shotCounter = 5;
     }
 
     public void shootID(int ID)
@@ -523,10 +525,14 @@ public abstract class Agent extends Bobject implements Runnable
     	{
     		Agent a = ag.next();
     		if (a.getObjectID() == ID && a.getIsAlive())
+    		{
     			a.decrementHealth(damage);
+    			Statistics.incDamageDone(objectID, damage);
+    			Statistics.incEnemiesHit(objectID);
+    			shotCounter = 5;
+    		}
     	}
-    	shotCounter = 5;
-    }
+     }
     
     private double headingToCartesian(double head)
     {
