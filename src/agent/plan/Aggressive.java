@@ -61,7 +61,7 @@ public class Aggressive extends PlanModule
     	AgentLocation base = mb.getBaseLocation();
     	double newHeading = a.arctangentToGoal(base);
     	if (atBase(a))
-    		System.out.println("we win, you losers");
+    		Simulator.whoCapturedFlag = "FLAG CAPTURED";
     	else
     		moveAgent(a,heading,newHeading);
     	

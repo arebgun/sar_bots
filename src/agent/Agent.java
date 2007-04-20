@@ -507,8 +507,11 @@ public abstract class Agent extends Bobject implements Runnable
     	while (ag.hasNext())
     	{
     		Agent a = ag.next();
-    		if (a.getIsAlive())
+    		if (a.getIsAlive() && a.getTeamID() != teamID)
+    		{
+    			System.out.println(a.getTeamID() + "\t" + teamID);
     			a.decrementHealth(damage);
+    		}
     	}
     	shotCounter = 5;
     }
