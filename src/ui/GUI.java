@@ -17,7 +17,7 @@ import agent.Agent;
 import env.Environment;
 import sim.Simulator;
 import baseobject.*;
-
+import java.awt.geom.Ellipse2D;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -365,11 +365,23 @@ class RescueArea extends SimDrawPanel
     }
 }
  
+class blah extends JComponent
+{
+	void paint(Graphics2D g2)
+	{
+		g2.setColor(Color.red);
+		g2.fill(new Ellipse2D.Float((float)100,
+				(float)100,
+				100,
+				100));
+	}
+}
 
 class SensCoverage extends SimDrawPanel
 {
     private final static int clrSize     = 1023;
     private final static Color[]clrTable = new Color[clrSize + 1];
+    private final static blah something = new blah();
 
     public SensCoverage()
     {
@@ -379,13 +391,15 @@ class SensCoverage extends SimDrawPanel
         {
             clrTable[clrSize - i] = new Color( i / (float) clrSize, 1f, i / (float) clrSize );
         }
+        add(something);
     }
-
+    
     public void simPaint( Graphics2D g2 )
     {
-        if ( GUI.getShowGrid() ) { paintGrid( g2 ); }
+        something.paint(g2);
     }
 }
+
 
 /*
  * Class Name:    BottomPanel
