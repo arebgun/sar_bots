@@ -320,6 +320,17 @@ class RescueArea extends SimDrawPanel
     	
     	paintObjects(g2);
     }
+    
+    private void paintWinner( Graphics2D g2 , String text)
+    {    	
+    	if(text != null)
+    	{
+    		Font font = new Font("SansSerif", Font.BOLD, 85);
+    		g2.setFont(font);
+    		g2.setColor(Color.RED);
+    		g2.drawString(text, 100, 300);
+    	}
+    }
    
     private void paintObjects( Graphics2D g2)
     {
@@ -350,6 +361,7 @@ class RescueArea extends SimDrawPanel
     			o.draw(g2);
     		}    	
     	}
+    	paintWinner(g2, Simulator.whoCapturedFlag);
     }
 }
  

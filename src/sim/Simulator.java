@@ -47,6 +47,7 @@ public class Simulator
     public static ArrayList<MessageBoard> teamBoards;
     public static int numberOfTeams;
     public static ArrayList<Integer> numberOnTeam;
+    public static String whoCapturedFlag = null;
     
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce
@@ -242,6 +243,8 @@ public class Simulator
         }
 
         Environment.reset();
+        
+        whoCapturedFlag = null;
     }
 
     public static int getTime()
