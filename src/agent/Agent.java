@@ -79,6 +79,7 @@ public abstract class Agent extends Bobject implements Runnable
      * Currently not used.
      */
     protected int health;
+    protected int maxHealth;
 
     /**
      * Deployment strategy subsystem (detremines agent initial position).
@@ -137,7 +138,8 @@ public abstract class Agent extends Bobject implements Runnable
     	teamID = config.getTeamID();
     	sightColor = config.getSightColor();
     	hearColor = config.getSoundColor();
-    	health = config.getHealth();
+    	maxHealth = config.getHealth();
+    	health = maxHealth;
     	type = types.AGENT;
     	moveRadius = config.getSoundRadius();
     	boundingShape = Bobject.shapes.CIRCLE;
@@ -315,12 +317,14 @@ public abstract class Agent extends Bobject implements Runnable
     }
     public void decrementHealth(int d)
     {
+    	/*
     	int sightRed = sightColor.getRed();
     	int sightGreen = sightColor.getGreen();
     	int sightBlue = sightColor.getBlue();
     	int hearRed = hearColor.getRed();
     	int hearGreen = hearColor.getGreen();
     	int hearBlue = hearColor.getBlue();
+    	*/
     	
     	if(isAlive)
     	{
@@ -329,22 +333,23 @@ public abstract class Agent extends Bobject implements Runnable
     		health = health - d;
 	    	if (health <= 0)
 	    		isAlive = false;
-	    	if(sightColor.getRed()+d <= 255)
-	    		sightRed = sightColor.getRed() + d;
-	    	if(sightColor.getGreen()-d >= 0)
-	    		sightGreen = sightColor.getGreen() - d;
-	    	if(sightColor.getBlue()-d >= 0)
-	    		sightBlue = sightColor.getBlue() - d;
-	    	if(hearColor.getRed()+d <= 255)
+	    	/*
+	    	if(sightColor.getRed()+d <= 252)
+	    		sightRed = sightColor.getRed() + 3 * d;
+	    	if(sightColor.getGreen()-d >= 3)
+	    		sightGreen = sightColor.getGreen() - 3 * d;
+	    	if(sightColor.getBlue()-d >= 3)
+	    		sightBlue = sightColor.getBlue() - 3 * d;
+	    	if(hearColor.getRed()+d <= 252)
 	    		hearRed = hearColor.getRed() + d;
-	    	if(hearColor.getGreen()-d >= 0)
+	    	if(hearColor.getGreen()-d >= 3)
 	    		hearGreen = hearColor.getGreen() - d;
-	    	if(hearColor.getBlue()-d >= 0)
+	    	if(hearColor.getBlue()-d >= 3)
 	    		hearBlue = hearColor.getBlue() - d;
 	    	
 	    	sightColor = new Color(sightRed,sightGreen,sightBlue,sightColor.getAlpha());
 	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
-	    	
+	    	*/
     	}
     	
     	if (!isAlive)
@@ -692,6 +697,13 @@ public abstract class Agent extends Bobject implements Runnable
 				2f * (float)boundingRadius));
 		if (sight)
 		{
+			/*Check how much of each color should be drawn*/
+			int RED, GREEN, BLUE;
+			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
+			GREEN = (int)(255 * ((double)health / (double)maxHealth));
+			BLUE = (int)(255 * ((double)health / (double)maxHealth));
+			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
+			/*Now draw it*/
 			g2.setColor(this.sightColor);
 			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength()), 
 					(int)location.getY() - (int)(sensorSight.getlength()), 
@@ -702,6 +714,14 @@ public abstract class Agent extends Bobject implements Runnable
 		
 		if (hearing)
 		{
+			/*Check how much of each color should be drawn*/
+			int RED, GREEN, BLUE;
+			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
+			GREEN = (int)(255 * ((double)health / (double)maxHealth));
+			BLUE = (int)(255 * ((double)health / (double)maxHealth));
+			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
+			hearColor = new Color(RED,GREEN,BLUE, hearColor.getAlpha());
+			/*Now draw it*/
 			g2.setColor(this.hearColor);
 			g2.fill(new Ellipse2D.Float((float)location.getX() - (float)sensorHearing.getHearingRadius(),
     				(float)location.getY() - (float)sensorHearing.getHearingRadius(),
