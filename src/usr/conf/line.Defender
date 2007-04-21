@@ -37,6 +37,7 @@ health=50
 boundingRadius=5
 threshold=20
 objectColor=255,255,0,255
+fadeInRadius=30
 
 #sound attributes
 soundRadius=10
