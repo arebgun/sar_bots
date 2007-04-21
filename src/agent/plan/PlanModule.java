@@ -29,8 +29,7 @@ public abstract class PlanModule
      */
     protected ConfigBobject objectConfig;
     protected double guardDistance = 50.0;
-    protected AgentLocation patrolLocation = null;
-	protected Agent.state initialState;
+    protected Agent.state initialState;
 
     /**
      * Default constructor.
@@ -54,10 +53,6 @@ public abstract class PlanModule
     {
     	return initialState;
     }
-    public void setPatrolLocation(AgentLocation temp)
-    {
-    	patrolLocation = temp;
-    }
     public abstract AgentLocation getGoalLocation(Agent a );
     
     public abstract void Dead(Agent a);
@@ -68,6 +63,7 @@ public abstract class PlanModule
     public abstract void Hide(Agent a);
     public abstract void Search(Agent a);
     public abstract void RecoverFlag(Agent a);
+    public abstract void CleanUp(Agent a);
     public abstract void Patrol(Agent a);
     
     public abstract agent.Agent.state getAgentState();
@@ -94,7 +90,7 @@ public abstract class PlanModule
     	while (seen.hasNext())
     	{
     		Agent b = (Agent)seen.next();
-    		if (b.getTeamID() != a.getTeamID() && b.isMobile())
+    		if (b.getTeamID() != a.getTeamID())
     			temp++;
     	}
     	return temp;
@@ -259,7 +255,7 @@ public abstract class PlanModule
     	//otherwise, newHeading is in 4 and myHeading is in 1, turn right
     	else
     		dir = (int)(newHeading - (myHeading + 360));
-    	//System.out.println("my Heading : " + myHeading + " new Heading : " + newHeading + " direction : " + dir);
+    	
     	return dir;
     }
     
@@ -274,7 +270,6 @@ public abstract class PlanModule
     		found = maxMoveLeft(a,(heading+turn));
     		if (!found)
     			found = moveLeft(a,(heading+turn));
-    		//System.out.println("turned left");
     	}
     	else if (turn < 0)
     	{
@@ -285,14 +280,12 @@ public abstract class PlanModule
     		found = maxMoveRight(a,(heading+turn));
     		if (!found)
     			found = moveRight(a,(heading+turn));
-    		//System.out.println("turned right");
     	}
     	else
     	{
     		found = maxMove(a,heading);
     		if (!found)
     			found = move(a,heading);
-    		//System.out.println("went straight");
     	}
 		if (!found)
 		{
