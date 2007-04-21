@@ -2,8 +2,12 @@ package statistics;
 
 import java.awt.*;
 
+import ui.GUI;
+import javax.swing.*;
+
+
 //Class to hold a value for a slice
-public class PieChart {
+public class PieChart extends JComponent {
     double value;
     Color color;
 
@@ -41,4 +45,6 @@ public static void drawPie(Graphics2D g, Rectangle area, PieChart[] slices) {
         curValue += slices[i].value;
     }
 }
+
 }
+
