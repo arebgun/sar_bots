@@ -324,5 +324,10 @@ public class Defensive extends PlanModule
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, iSeeOurFlag, ourFlagLoc);
     	
 	}
+    
+    public void CleanUp()
+    {
+    	
+    }
 
 }
