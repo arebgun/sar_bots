@@ -10,6 +10,7 @@ public class Flag extends Bobject implements Runnable{
 	protected int owner;
 	protected boolean isOwned;
 	protected int teamID; //used to associate the flag with a specific team
+	protected boolean atHome;
     private Thread flagThread;
     private int sleepTime;
     private boolean oneStep;
@@ -35,16 +36,14 @@ public class Flag extends Bobject implements Runnable{
 	
 	private void updateBoard(MessageBoard board)
 	{
-		if(location == initialLocation) 
-		{
-			board.setFlagAtHome(true);
-		}
-		else
-		{
-			board.setFlagAtHome(false);
-		}
+		board.setFlagAtHome(getAtHome());
+		board.setWhoOwnsFlag(owner);
+		board.setOurFlagOwned(isOwned);
 	}
-	
+	public boolean getAtHome()
+	{
+		return (location == initialLocation);
+	}
 	public boolean getOwned()
 	{
 		return isOwned;
@@ -85,6 +84,7 @@ public class Flag extends Bobject implements Runnable{
 		location = initialLocation;
 		isOwned = false;
 		owner = 0;
+		updateBoard(Simulator.teamBoards.get(teamID));	
 	}
 	
 	public void setLocation()
@@ -111,7 +111,7 @@ public class Flag extends Bobject implements Runnable{
 	
 	public void update()
 	{
-					
+		updateBoard(Simulator.teamBoards.get(teamID));	
 	}
 	
   public void start( boolean oneStep )

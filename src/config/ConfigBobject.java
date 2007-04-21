@@ -203,6 +203,10 @@ public class ConfigBobject extends Config
 	{
 		return Double.parseDouble( pTable.get("guardDistance"));
 	}
+	public double getPatrolDistance()
+	{
+		return Double.parseDouble( pTable.get("patrolDistance"));
+	}
 //===================================================================
 //CONFIG FOR OBSTACLES
 //===================================================================

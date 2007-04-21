@@ -14,9 +14,9 @@ public class MessageBoard {
 	private static int whoOwnsFlag;
 	private static boolean flagAtHome;
 	private static AgentLocation ourFlagLocation;
-	private static boolean ourFlagSeen;
 	private static AgentLocation ourBaseLocation;
 	private static int teamSize;
+	private static boolean ourFlagOwned;
 	
 	/*Multi-Variable*/
 	private static ArrayList<Integer> myId;
@@ -29,6 +29,7 @@ public class MessageBoard {
 	private static int seenCounters[];
 	private static ArrayList<Agent> agentsHeard;
 	private static int heardCounters[];
+	private static ArrayList<Boolean> ourTeamFlagSeen;
 	
 	public MessageBoard()
 	{
@@ -38,8 +39,8 @@ public class MessageBoard {
 		whoOwnsFlag = -1;
 		flagAtHome = false;
 		ourFlagLocation = null;
-		ourFlagSeen = false;
 		ourBaseLocation = null;
+		ourFlagOwned = false;
 		
 		/*Multi-Variable*/
 		myId = new ArrayList<Integer>();
@@ -52,6 +53,7 @@ public class MessageBoard {
 		agentsHeard = new ArrayList<Agent>();
 		seenCounters = new int[100];
 		heardCounters = new int[100];
+		ourTeamFlagSeen = new ArrayList<Boolean>();
 	}
 	
 	/*Initialization Function*/
@@ -68,6 +70,7 @@ public class MessageBoard {
 			currentState.add(null);
 			agentsSeen.add(null);
 			agentsHeard.add(null);
+			ourTeamFlagSeen.add(false);
 		}
 		for(int i = 0; i < 100; i++)
 		{
@@ -85,7 +88,6 @@ public class MessageBoard {
 		whoOwnsFlag = 0;
 		flagAtHome = false;
 		ourFlagLocation = null;
-		ourFlagSeen = false;;
 		
 		/*Multi-Variable*/
 		initialize(teamSize);
@@ -119,7 +121,19 @@ public class MessageBoard {
 	
 	public boolean getOurFlagSeen()
 	{
-		return ourFlagSeen;
+		Iterator<Boolean> b = ourTeamFlagSeen.iterator();
+		while(b.hasNext())
+		{
+			boolean flagSeen = (boolean)b.next();
+			if (flagSeen)
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean getOurFlagOwned()
+	{
+		return ourFlagOwned;
 	}
 	
 	public Iterator<Integer> getMyId()
@@ -193,9 +207,14 @@ public class MessageBoard {
 		ourFlagLocation = temp;
 	}
 	
-	public void setOurFlagSeen(boolean temp)
+	public void setOurFlagSeen(int id, boolean temp)
 	{
-		ourFlagSeen = temp;
+		ourTeamFlagSeen.set(id, temp);
+	}
+	
+	public void setOurFlagOwned(boolean temp)
+	{
+		ourFlagOwned = temp;
 	}
 	
 	public void setMyId(int index, int temp)
@@ -241,14 +260,10 @@ public class MessageBoard {
 			for(int j = 0; j < agentsSeen.size() && !found; j++)
 			{
 				if(agentsSeen.get(j) == temp.get(i)) 
-				{
 					found = true;
-				}
 			}
 			if(!found) 
-			{
 				agentsSeen.add(temp.get(i));
-			}
 		}
 	}
 	

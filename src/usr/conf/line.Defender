@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Defender
-swarmSize=10
+swarmSize=5
 teamID=1
 
 #communications
@@ -19,8 +19,9 @@ endY=500
 initialHeading=0
 
 #planning
-planName=agent.plan.StochasticView
+planName=agent.plan.Defensive
 planSeed=0
+patrolDistance=100
 
 #propulsion
 propulsionName=agent.propulsion.Thruster
@@ -32,7 +33,7 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=100
+health=50
 boundingRadius=5
 threshold=20
 objectColor=255,255,0,255
