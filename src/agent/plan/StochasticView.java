@@ -154,7 +154,7 @@ public class StochasticView extends PlanModule
         		if (bound >= dist && (f.getOwner() != a.getObjectID()))
         		{
         			good = false;
-        			if (!f.getOwned())
+        			if (!f.getOwned() && !f.hasBeenCaptured())
         			{
         				a.pickUpFlag(f);
         			}
@@ -212,6 +212,12 @@ public class StochasticView extends PlanModule
     {
     	
     }
+    public void CleanUp(Agent a)
+    {
+    	
+    }
+    
+ 
     public void Patrol(Agent a)
     {
     	

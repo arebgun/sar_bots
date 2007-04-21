@@ -1,6 +1,7 @@
 package agent.plan;
 
 import agent.*;
+import baseobject.*;
 import config.ConfigBobject;
 import env.Environment;
 import java.awt.geom.Rectangle2D;
@@ -171,6 +172,11 @@ public class Stochastic extends PlanModule
     {
     	
     }
+    public void CleanUp(Agent a)
+    {
+    	
+    }
+ 
     public void Patrol(Agent a)
     {
     	
