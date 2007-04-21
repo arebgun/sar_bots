@@ -105,4 +105,9 @@ public class ConfigAgent extends Config
                           Integer.parseInt( clrValues[2] ),
                           Integer.parseInt( clrValues[3] ) );
     }
+    
+    public int getFadeInRadius()
+    {
+    	return Integer.parseInt( pTable.get("sensorColor"));
+    }
 }

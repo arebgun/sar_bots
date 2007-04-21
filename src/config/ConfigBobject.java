@@ -153,6 +153,11 @@ public class ConfigBobject extends Config
 	{
 		return Integer.parseInt( pTable.get("teamID"));
 	}
+	
+	public int getFadeInRadius()
+	{
+		return Integer.parseInt( pTable.get("fadeInRadius"));
+	}
 //DeploymentStrategy variables
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	
@@ -230,4 +235,5 @@ public class ConfigBobject extends Config
 	{
 		return Integer.parseInt( pTable.get( "obsMaxY"));
 	}
+
 }
