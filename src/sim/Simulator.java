@@ -49,7 +49,9 @@ public class Simulator
     public static ArrayList<MessageBoard> teamBoards;
     public static int numberOfTeams;
     public static ArrayList<Integer> numberOnTeam;
-    public static String whoCapturedFlag = null;
+    public static ArrayList<Integer> currentNumberOnTeam;
+    public static String winText = null;
+    public static Color winColor;
     
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce
@@ -62,9 +64,7 @@ public class Simulator
     public static void run( String configFilePath, String uiType ) throws Exception
     {       
         startUp(configFilePath);
-        mainSim(uiType);
-        cleanUp();
-       
+        mainSim(uiType);       
     }
 /*========================================================================
  * Start Up functions for the simulation
@@ -87,9 +87,11 @@ public class Simulator
         numberOfTeams = config.getNumberOfTeams();
         teamBoards = new ArrayList<MessageBoard>(); 
         numberOnTeam = new ArrayList<Integer>();
+        currentNumberOnTeam = new ArrayList<Integer>();
         for(int i = 0; i <= numberOfTeams; i++)
         {
         	numberOnTeam.add(0);
+        	currentNumberOnTeam.add(0);
         	if(i == 0)
         	{
         		teamBoards.add(null);
@@ -123,15 +125,15 @@ public class Simulator
         	{
         		worldObjects.add( (Bobject) loader.getConstructor(ConfigBobject.class).newInstance(objConfig));
         		worldObjects.get(o).setObjectID(o);
-        		if(worldObjects.get(o).isAgent())
+        		if(worldObjects.get(o).isAgent() )
         		{
-
         			Agent a = (Agent)worldObjects.get(o);
-        			int temp = numberOnTeam.get(a.getTeamID());
-        			a.setMsgID(temp);
-        			temp++;
-        			numberOnTeam.set(a.getTeamID(), temp);
-
+        			if(a.isMobile()) {
+        				int temp = numberOnTeam.get(a.getTeamID());
+        				a.setMsgID(temp);
+        				temp++;
+        				numberOnTeam.set(a.getTeamID(), temp);
+        			}
         		}
         	}
         	numberWorldObjects += objConfig.getSwarmSize();
@@ -142,6 +144,8 @@ public class Simulator
         {
         	teamBoards.get(i).initialize(numberOnTeam.get(i));
         }
+        /*Set the decrementing current numbers*/
+        currentNumberOnTeam = numberOnTeam;
         
         stats = Statistics.getStatisticsInstance();
     }
@@ -226,7 +230,20 @@ public class Simulator
  *===================================================================================*/
     private static void cleanUp()
     {
-    	//i'm sure somehting will go here
+    	/*So we need to make the bots go back to their original locations*/
+    	Iterator<Bobject> iter = worldObjects.iterator();
+    	while(iter.hasNext())
+    	{
+    		Bobject o = iter.next();
+    		o.cleanup();
+    	}
+    }
+    
+    public static void weWon(Color teamColor, String tempText)
+    {
+    	winText = tempText;
+    	winColor = teamColor;
+    	cleanUp();
     }
    
     /**
@@ -235,6 +252,10 @@ public class Simulator
     public static void reset()
     {
         time = 0;
+        
+        /* reset the current number on teams*/
+        currentNumberOnTeam = numberOnTeam;
+        
         /*reset the message boards*/
         for(int i = 1; i <= numberOfTeams; i++)
         {
@@ -248,7 +269,21 @@ public class Simulator
 
         Environment.reset();
         
-        whoCapturedFlag = null;
+        winText = null;
+    }
+    
+    public static void oneDied(int teamID)
+    {
+    	int temp = currentNumberOnTeam.get(teamID);
+    	System.out.println("used to have " + temp);
+    	temp--;
+    	currentNumberOnTeam.set(teamID, temp);
+    	System.out.println("Team " + teamID + " lost a bot, they have " + currentNumberOnTeam.get(teamID) + " bots.");
+    }
+    
+    public static boolean areTheyDeadYet(int teamID)
+    {
+    	return currentNumberOnTeam.get(teamID) == 0 ? true : false;
     }
 
     public static int getTime()
