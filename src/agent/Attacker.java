@@ -25,6 +25,7 @@ public class Attacker extends Agent
 			flagID = f.getObjectID();
 			System.out.println("Picked up the flag <Agent> " + objectID);
 			hasFlag = true;
+			myFlag = f;
 			moveRadius = moveRadius / 2;
 			Statistics.incFlagsPickedUp(objectID);
 		}
@@ -34,10 +35,10 @@ public class Attacker extends Agent
 
 	public void dropFlag()
 	{
-		hasFlag = false;
-		Flag f = (Flag)Simulator.worldObjects.get(flagID);
-		f.flagDropped();
+		myFlag.flagDropped();
+		myFlag = null;
 		flagID = -1;
+		hasFlag = false;
 		moveRadius = initialSoundRadius;
 	}
 	public void update()
@@ -66,9 +67,16 @@ public class Attacker extends Agent
 			plan.Search(this);
 		if (agent_state == state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
+		if(agent_state == state.CLEANUP)
+			plan.CleanUp(this);
 
 		
 		//new turn starts from this point on, so reset beingShot to false
 		beingShot = false;
+	}
+		
+	public void cleanup()
+	{
+		agent_state = Agent.state.CLEANUP;
 	}
 }
