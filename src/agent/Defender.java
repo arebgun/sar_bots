@@ -51,4 +51,9 @@ public class Defender extends Agent
 		
 		beingShot = false;
 	}
+	
+	public void cleanup()
+	{
+		agent_state = Agent.state.CLEANUP;		
+	}
 }
