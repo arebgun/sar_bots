@@ -325,7 +325,7 @@ public class Defensive extends PlanModule
     	
 	}
     
-    public void CleanUp()
+    public void CleanUp(Agent a)
     {
     	
     }
