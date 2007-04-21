@@ -19,6 +19,7 @@ import sim.Simulator;
 import baseobject.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.*;
+import java.awt.Graphics;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -34,6 +35,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import obstacle.Obstacle;
+import statistics.*;
+import javax.swing.border.*;
 
 public class GUI
 {
@@ -211,12 +214,12 @@ public class GUI
     {
         // Main simulator window scroll pane and rescue area
         area     = new SimScrollPane( new JPanel(), new RescueArea() );
-        coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
-
+        StatPanel viewStats = new StatPanel();
+  
         // Create tabs and add simulator views
         jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
         jtViewSwitcher.addTab( "Environment", area );
-        jtViewSwitcher.addTab( "Sensor Coverage", coverage );
+        jtViewSwitcher.addTab( "Sensor Coverage", viewStats );
         main.add( jtViewSwitcher, BorderLayout.CENTER );
 
         // Create and add bottom panel
@@ -229,6 +232,123 @@ public class GUI
     {
         throw new CloneNotSupportedException();
     }
+}
+
+class GraphicsComponent extends JComponent
+{
+	void paint(Graphics2D g2)
+	{
+	}
+}
+
+class StatPanel extends JPanel
+{
+		private final static GraphicsComponent stat1Display = new GraphicsComponent();
+		private final static GraphicsComponent stat2Display = new GraphicsComponent();
+	 	private static String[] drop1Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+	    private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+
+	    private static JPanel dropDownP1 = new JPanel();
+	    private static JPanel dropDownP2 = new JPanel();
+
+	    
+	    private static JComboBox dropDown1 = new JComboBox(drop1Strings);
+	    private static JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    
+	    private PieChart[] slices1 = new PieChart[4];
+	    private PieChart[] slices2 = new PieChart[4];
+	    
+	
+	    StatPanel()
+		{
+	    	slices1[0] = new PieChart(25, Color.red);
+	        slices1[1] = new PieChart(35, Color.green);
+	        slices1[2] = new PieChart(25, Color.pink);
+	        slices1[3] = new PieChart(15, Color.blue);
+	        
+	        slices2[0] = new PieChart(25, Color.red);
+	        slices2[1] = new PieChart(35, Color.green);
+	        slices2[2] = new PieChart(25, Color.pink);
+	        slices2[3] = new PieChart(15, Color.blue);
+			
+	    	JPanel dropDownPanel = new JPanel();
+	    	dropDownPanel.setLayout(new GridLayout(1,2,2,2));
+	    	JComboBox dropDown1 = new JComboBox(drop1Strings);
+	    	JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    	dropDownPanel.add(dropDown1);
+	    	dropDownPanel.add(dropDown2);
+	    	add(dropDownPanel, BorderLayout.NORTH);
+	    	add(stat1Display, BorderLayout.WEST);
+	    	add(stat2Display, BorderLayout.EAST);
+	    	
+	    	
+	    	dropDown1.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+				System.out.println(StatPanel.dropDown1.getSelectedItem());
+					if(StatPanel.dropDown1.getSelectedIndex() == 0);
+				{
+					slices1[0] = new PieChart(40, Color.red);
+			        slices1[1] = new PieChart(20, Color.green);
+			        slices1[2] = new PieChart(25, Color.yellow);
+			        slices1[3] = new PieChart(15, Color.black);
+			        //System.out.println("Team1");
+			        repaint();
+				}
+				if(StatPanel.dropDown1.getSelectedItem().toString().equals("Team2"))
+				{
+				slices1[0] = new PieChart(40, Color.red);
+		        slices1[1] = new PieChart(20, Color.black);
+		        slices1[2] = new PieChart(25, Color.yellow);
+		        slices1[3] = new PieChart(15, Color.black);
+		        //System.out.println("Team2");
+		        repaint();
+				}
+				if(StatPanel.dropDown1.getSelectedItem().toString().equals("Seeker1"))
+				{
+				slices1[0] = new PieChart(40, Color.green);
+		        slices1[1] = new PieChart(20, Color.green);
+		        slices1[2] = new PieChart(25, Color.black);
+		        slices1[3] = new PieChart(15, Color.black);
+		        repaint();
+				}
+				}
+			});
+	    	
+	    	dropDown2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					slices2[0] = new PieChart(40, Color.blue);
+			        slices2[1] = new PieChart(20, Color.green);
+			        slices2[2] = new PieChart(25, Color.orange);
+			        slices2[3] = new PieChart(15, Color.red);
+			        repaint();
+				}
+			});
+
+		}
+	    
+	    public void paintComponent( Graphics g )
+	    {
+	        Graphics2D g2 = (Graphics2D) g;
+	        Environment.scaleGraphics( g2, getSize() );
+	        paintStat1( g2 );
+	        paintStat2( g2 );
+	    }
+	    
+	    public void paintStat1( Graphics2D g2 )
+	    {   
+	        Rectangle r = new Rectangle();
+	        r.setBounds(100, 150, 400, 400);
+	        PieChart.drawPie((Graphics2D)g2, r.getBounds(), slices1);
+	    }
+	
+	    public void paintStat2( Graphics2D g2 )
+	    {
+	      
+	        Rectangle r = new Rectangle();
+	        r.setBounds(700, 150, 400, 400);
+	        PieChart.drawPie((Graphics2D)g2, r.getBounds(), slices2);
+
+	    }
 }
 
 class SimScrollPane extends JScrollPane
@@ -263,6 +383,7 @@ abstract class SimDrawPanel extends JPanel
         Environment.scaleGraphics( g2, getSize() );
         simPaint( g2 );
     }
+    
 
     protected void paintGrid( Graphics2D g2 )
     {
@@ -321,6 +442,7 @@ class RescueArea extends SimDrawPanel
     	paintObjects(g2);
     }
     
+    
     private void paintWinner( Graphics2D g2 , String text)
     {    	
     	if(text != null)
@@ -362,41 +484,6 @@ class RescueArea extends SimDrawPanel
     		}    	
     	}
     	paintWinner(g2, Simulator.whoCapturedFlag);
-    }
-}
- 
-class blah extends JComponent
-{
-	void paint(Graphics2D g2)
-	{
-		g2.setColor(Color.red);
-		g2.fill(new Ellipse2D.Float((float)100,
-				(float)100,
-				100,
-				100));
-	}
-}
-
-class SensCoverage extends SimDrawPanel
-{
-    private final static int clrSize     = 1023;
-    private final static Color[]clrTable = new Color[clrSize + 1];
-    private final static blah something = new blah();
-
-    public SensCoverage()
-    {
-        setBackground( Color.WHITE );
-
-        for ( int i = 0; i < clrTable.length; i++ )
-        {
-            clrTable[clrSize - i] = new Color( i / (float) clrSize, 1f, i / (float) clrSize );
-        }
-        add(something);
-    }
-    
-    public void simPaint( Graphics2D g2 )
-    {
-        something.paint(g2);
     }
 }
 
