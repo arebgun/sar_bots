@@ -30,6 +30,7 @@ sensorHearingName=agent.sensor.Circle
 health=300
 boundingRadius=15
 objectColor=0,0,255,100
+fadeInRadius=30
 
 #sound attributes
 soundRadius=10
