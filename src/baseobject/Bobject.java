@@ -125,4 +125,5 @@ public abstract class Bobject {
 	}
 	
 	public abstract void update();
+	public abstract void cleanup();
 }

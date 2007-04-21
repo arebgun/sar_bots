@@ -9,6 +9,7 @@ public class Flag extends Bobject implements Runnable{
 	protected String idString;
 	protected int owner;
 	protected boolean isOwned;
+	protected boolean captured;
 	protected int teamID; //used to associate the flag with a specific team
 	protected boolean atHome;
     private Thread flagThread;
@@ -16,7 +17,7 @@ public class Flag extends Bobject implements Runnable{
     private boolean oneStep;
     //private MessageBoard board;
     
-	//Consturctors for Flag    
+	//Constructors for Flag    
 	public Flag(ConfigBobject conf)
 	{
 		idString = "Agent unit id = " + objectID;
@@ -43,10 +44,21 @@ public class Flag extends Bobject implements Runnable{
 	public boolean getAtHome()
 	{
 		return (location == initialLocation);
+		//board.setWhoOwnsFlag(msgID, owner);
 	}
 	public boolean getOwned()
 	{
 		return isOwned;
+	}
+	
+	public boolean hasBeenCaptured()
+	{
+		return captured;
+	}
+	
+	public void setCaptured(boolean temp)
+	{
+		captured = temp;
 	}
 	
 	public void setOwned(boolean newOwned)
@@ -95,8 +107,9 @@ public class Flag extends Bobject implements Runnable{
 	
 	public void flagDropped()
 	{
-		owner = -1;
+		owner = 0;
 		isOwned = false;
+		updateBoard(Simulator.teamBoards.get(teamID));
 		System.out.println("Dropped the Flag <Flag> " + objectID);
 	}
 	
@@ -156,5 +169,10 @@ public class Flag extends Bobject implements Runnable{
                 }
             }
         }
+    }
+    
+    public void cleanup()
+    {
+    	reset();
     }
 }
