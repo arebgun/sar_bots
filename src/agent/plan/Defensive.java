@@ -136,7 +136,6 @@ public class Defensive extends PlanModule
     	double heading = a.getLocation().getTheta();
     	double newHeading = heading;
     	int moveChance = 100;
-    	int shootChance = 0;
     	boolean oppFlagSeen = opponentsFlagSeen(a);
     	AgentLocation oppFlagLoc = null;
     	boolean iSeeOurFlag = ourFlagSeen(a);
@@ -271,11 +270,8 @@ public class Defensive extends PlanModule
     {
     	MessageBoard mb = Simulator.teamBoards.get(a.getTeamID());
     	double heading = a.getLocation().getTheta();
-    	int moveChance = 100;
-    	int shootChance = 0;
     	double newHeading = heading;
     	boolean oppFlagSeen = opponentsFlagSeen(a);
-    	int numOpponentsSeen = opponentsSeen(a);
     	AgentLocation oppFlagLoc = null;
     	boolean iSeeOurFlag = ourFlagSeen(a);
     	AgentLocation ourFlagLoc = null;

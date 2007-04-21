@@ -2,7 +2,7 @@
 
 #classname
 className=agent.Attacker
-swarmSize=2
+swarmSize=5
 teamID=2
 
 #communications
@@ -31,7 +31,7 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=150
+health=50
 threshold=30
 boundingRadius=5
 objectColor=0,0,255,255
