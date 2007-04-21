@@ -51,10 +51,14 @@ public abstract class Agent extends Bobject implements Runnable
 	public enum agentType {BASE, AGENT};
 	protected agentType myType;
 	///AGENT STATES//////////////////
-	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, GUARD, RECOVER_FLAG, PATROL};
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, CLEANUP, SEARCH, GUARD, RECOVER_FLAG};
 	protected state agent_state;
 	//call planner
 	public abstract void update();
+	protected int fadeInRadius;
+	protected int fadeInTransparency;
+	protected boolean fadeIn;
+	protected int currentFadeInRadius;
 	
     /**
      * Used to identify an agent thread. This becomes thread name.
@@ -71,7 +75,7 @@ public abstract class Agent extends Bobject implements Runnable
      * Agent's current speed. Currently not used.
      */
     protected double velocity = 0;
-    
+    protected Flag myFlag;
     protected boolean hasFlag = false;
     
     /**
@@ -95,7 +99,7 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Planning subsystem (AI algorithm goes here)
      */
-    public PlanModule plan;
+    protected PlanModule plan;
 
     /**
      * Communication subsystem (inter-agent communication).
@@ -142,9 +146,12 @@ public abstract class Agent extends Bobject implements Runnable
     	health = maxHealth;
     	type = types.AGENT;
     	moveRadius = config.getSoundRadius();
+    	fadeInRadius = config.getFadeInRadius();
+    	fadeInTransparency = 0;
+    	currentFadeInRadius = 0;
     	boundingShape = Bobject.shapes.CIRCLE;
     	isAlive = true;
-    	
+    	myFlag = null;
     }
 
    
@@ -224,6 +231,11 @@ public abstract class Agent extends Bobject implements Runnable
     	return beingShot;
     }
     
+    public Flag getMyFlag()
+    {
+    	return myFlag;
+    }
+    
     public boolean isMobile()
     {
     	return (myType == agentType.AGENT);
@@ -257,7 +269,7 @@ public abstract class Agent extends Bobject implements Runnable
         	if (found)
         	{
 	        	newLoc = new AgentLocation(newx, newy, heading);
-	        	found = avoidObstacle(newLoc) && avoidAgent(newLoc) && avoidFlag(newLoc);
+	        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
         	}
         	tempRadius--;        	
     	}    	
@@ -285,7 +297,7 @@ public abstract class Agent extends Bobject implements Runnable
     	if (found)
     	{
         	newLoc = new AgentLocation(newx, newy, heading);
-        	found = avoidObstacle(newLoc) && avoidAgent(newLoc) && avoidFlag(newLoc);
+        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
     	}
     	if(found)
     		location = newLoc;
@@ -317,6 +329,15 @@ public abstract class Agent extends Bobject implements Runnable
     }
     public void decrementHealth(int d)
     {
+    	/*
+    	int sightRed = sightColor.getRed();
+    	int sightGreen = sightColor.getGreen();
+    	int sightBlue = sightColor.getBlue();
+    	int hearRed = hearColor.getRed();
+    	int hearGreen = hearColor.getGreen();
+    	int hearBlue = hearColor.getBlue();
+    	*/
+    	
     	if(isAlive)
     	{
     		beingShot = true;
@@ -324,6 +345,23 @@ public abstract class Agent extends Bobject implements Runnable
     		health = health - d;
 	    	if (health <= 0)
 	    		isAlive = false;
+	    	/*
+	    	if(sightColor.getRed()+d <= 252)
+	    		sightRed = sightColor.getRed() + 3 * d;
+	    	if(sightColor.getGreen()-d >= 3)
+	    		sightGreen = sightColor.getGreen() - 3 * d;
+	    	if(sightColor.getBlue()-d >= 3)
+	    		sightBlue = sightColor.getBlue() - 3 * d;
+	    	if(hearColor.getRed()+d <= 252)
+	    		hearRed = hearColor.getRed() + d;
+	    	if(hearColor.getGreen()-d >= 3)
+	    		hearGreen = hearColor.getGreen() - d;
+	    	if(hearColor.getBlue()-d >= 3)
+	    		hearBlue = hearColor.getBlue() - d;
+	    	
+	    	sightColor = new Color(sightRed,sightGreen,sightBlue,sightColor.getAlpha());
+	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
+	    	*/
     	}
     	
     	if (!isAlive)
@@ -397,6 +435,8 @@ public abstract class Agent extends Bobject implements Runnable
         shotCounter = 0;
         agent_state = plan.getInitialState();
         moveRadius = initialSoundRadius;
+        fadeInRadius = config.getFadeInRadius();
+        stop();
     }
 
     /**
@@ -474,26 +514,6 @@ public abstract class Agent extends Bobject implements Runnable
     	return good;
     }
     
-    protected boolean avoidFlag(AgentLocation newLoc)
-    {
-    	boolean good = true;
-    	double newX = newLoc.getX();
-    	double newY = newLoc.getY();
-    	Iterator<Flag> flag = this.getFlagsSeen();
-    	while (flag.hasNext())
-    	{
-    		Flag f = flag.next();
-    		if (f.getTeamID() == teamID && f.getAtHome())
-    		{
-    			double dist = Math.hypot(newX - f.getLocation().getX(), newY - f.getLocation().getY());
-	    		double bound = boundingRadius + f.getBoundingRadius();
-	    		if (bound >= dist)
-	    			good = false;
-    		}
-    	}
-    	return good;
-    }
-    
     protected boolean inWorld(double x, double y)
     {
     	double MaxX = Environment.groundShape().getMaxX();
@@ -533,8 +553,33 @@ public abstract class Agent extends Bobject implements Runnable
     	}
      }
     
-    //gets the arctangent between this agent and the goal
-    //in screen space
+    private double headingToCartesian(double head)
+    {
+    	double newHead = 0;
+    	if(head >= 0 && head < 90)
+    		newHead = 360 - head;
+		else if (head >= 90 && head < 180)
+			newHead = 180 + (180 - head);
+		else if (head >= 180 && head < 270)
+			newHead = 180 - (head - 180);
+		else
+			newHead = 360 - head;
+    	return newHead;
+    }
+    private double cartesianToHeading(double cart)
+    {
+    	double head = 0;
+    	if (cart >= 0 && cart < 90)
+    		head = 360 - cart;
+    	else if (head >= 90 && head < 180)
+    		head = 180 + (180 - cart);
+    	else if (head >= 180 && head < 270)
+    		head = 180 - (cart - 180);
+    	else
+    		head = 360 - cart;
+    	return head;
+    }
+    
     public double arctangentToGoal(AgentLocation goal)
     {
     	double x = location.getX();
@@ -542,47 +587,76 @@ public abstract class Agent extends Bobject implements Runnable
     	double x1 = goal.getX();
     	double y1 = goal.getY();
     	
-    	double temp = Math.atan((y-y1)/(x-x1)) * 57.29577951;
+    	double temp = Math.atan((x-x1)/(y-y1)) * 57.29577951;
+    	temp = Math.abs(temp);
     	
     	if (x <= x1)
     	{
     		if (y <= y1)
-    			temp = 360 - temp;
+    			temp = 90 - temp;
     		else
-    			temp = Math.abs(temp);
-       	}
+    			temp = 270 + temp;
+    	}
     	else
-    		temp = 180 - temp;
-    	return temp;
+    	{
+    		if (y <= y1)
+    			temp = 90 + temp;
+    		else
+    			temp = 270 - temp;
+    	}
+    	
+    	return cartesianToHeading(temp);
     }
     
     public double moveToLocation( AgentLocation goal)
     {
-    	double temp = location.getTheta();
+    	double temp = headingToCartesian(location.getTheta());
     	double arc = arctangentToGoal(goal);
-    	double maxAngle = sensorSight.getHalfAngle();
-    	if (Math.abs(temp-arc) <= maxAngle ||
-    			Math.abs(temp - (arc + 360)) <= maxAngle ||
-    			Math.abs((temp + 360) - arc) <= maxAngle)
+    	if (Math.abs(temp-arc) <= sensorSight.getHalfAngle() ||
+    			Math.abs(temp - (arc + 360)) <= sensorSight.getHalfAngle() ||
+    			Math.abs((temp + 360) - arc) <= sensorSight.getHalfAngle())
     		temp = arc;
     	else
     	{
-    		if (Math.abs(arc - temp) <= 180)
+    		//heading is in quad 2 or 3
+    		if (location.getX() > goal.getX())
     		{
-    			if (arc > temp)
-    				temp = temp + maxAngle;
+    			if (temp > arc)
+    				temp = temp - sensorSight.getHalfAngle();
     			else
-    				temp = temp - maxAngle;
+    				temp = temp + sensorSight.getHalfAngle();
     		}
-    		else if ((arc + 360 - temp) <= 180)
-    			temp = temp + maxAngle;
+    		//heading is in quad 1 or 4
     		else
-    			temp = temp - maxAngle;
+    		{
+    			if (location.getY() <= goal.getY())
+    			{
+    				if (temp > arc || (temp + 360) > arc)
+    					temp = temp - sensorSight.getHalfAngle();
+    				else
+    					temp = temp + sensorSight.getHalfAngle();
+    			}
+    			else
+    			{
+    				if (temp > arc || temp > (arc + 360))
+    					temp = temp - sensorSight.getHalfAngle();
+    				else
+    					temp = temp + sensorSight.getHalfAngle();
+    			}
+    		}
     	}
     	
+    	temp = cartesianToHeading(temp);
     	return temp;
     	
     }
+    
+    public boolean closeToGoal(double threshold, AgentLocation goalLocation)
+    {
+    	double dist = Math.hypot(location.getX() - goalLocation.getX(), location.getY() - goalLocation.getY());
+    	return dist <= threshold;
+    }
+    
     //TODO finish flee
     public double flee()
     {
@@ -609,7 +683,7 @@ public abstract class Agent extends Bobject implements Runnable
 		{
 			board.setOurFlagLocation(location);
 		}
-		board.setOurFlagSeen(msgID,ourFlagSeen);
+		board.setOurFlagSeen(msgID, ourFlagSeen);
 		if(hasFlag)
 		{
 			board.setWhoOwnsFlag(objectID);
@@ -637,44 +711,60 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	if (isAlive)
     	{
-    	g2.setColor(this.color);
-		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
+    		g2.setColor(this.color);
+    		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
 				(float)location.getY() - (float)boundingRadius,
 				2f * (float)boundingRadius,
 				2f * (float)boundingRadius));
-		if (sight)
-		{
-			/*Check how much of each color should be drawn*/
-			int RED, GREEN, BLUE;
-			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
-			GREEN = (int)(255 * ((double)health / (double)maxHealth));
-			BLUE = (int)(255 * ((double)health / (double)maxHealth));
-			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
-			/*Now draw it*/
-			g2.setColor(this.sightColor);
-			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength()), 
-					(int)location.getY() - (int)(sensorSight.getlength()), 
-					2 *(int)sensorSight.getlength(), 2* (int)sensorSight.getlength(),
-					(int)location.getTheta()- (int)(sensorSight.getArcAngle() / 2),
-					(int)sensorSight.getArcAngle());
-		}
+    		if (sight)
+    		{
+    			/*Check how much of each color should be drawn*/
+    			int RED, GREEN, BLUE;
+    			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
+    			GREEN = (int)(255 * ((double)health / (double)maxHealth));
+    			BLUE = (int)(255 * ((double)health / (double)maxHealth));
+    			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
+    			/*Now draw it*/
+    			g2.setColor(this.sightColor);
+    			g2.fillArc((int)location.getX() - (int)(sensorSight.getlength()), 
+    					(int)location.getY() - (int)(sensorSight.getlength()), 
+    					2 *(int)sensorSight.getlength(), 2* (int)sensorSight.getlength(),
+    					(int)location.getTheta()- (int)(sensorSight.getArcAngle() / 2),
+    					(int)sensorSight.getArcAngle());
+    		}
 		
-		if (hearing)
-		{
-			/*Check how much of each color should be drawn*/
-			int RED, GREEN, BLUE;
-			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
-			GREEN = (int)(255 * ((double)health / (double)maxHealth));
-			BLUE = (int)(255 * ((double)health / (double)maxHealth));
-			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
-			hearColor = new Color(RED,GREEN,BLUE, hearColor.getAlpha());
-			/*Now draw it*/
-			g2.setColor(this.hearColor);
-			g2.fill(new Ellipse2D.Float((float)location.getX() - (float)sensorHearing.getHearingRadius(),
-    				(float)location.getY() - (float)sensorHearing.getHearingRadius(),
-    				2f * (float)sensorHearing.getHearingRadius(),
-    				2f * (float)sensorHearing.getHearingRadius()));
-		}
+    		if (hearing)
+    		{
+    			/*Check how much of each color should be drawn*/
+    			int RED, GREEN, BLUE;
+    			RED = (int)(255-(255 * (double)((double)health / (double)maxHealth)));
+    			GREEN = (int)(255 * ((double)health / (double)maxHealth));
+    			BLUE = (int)(255 * ((double)health / (double)maxHealth));
+    			sightColor = new Color(RED,GREEN,BLUE, sightColor.getAlpha());
+    			hearColor = new Color(RED,GREEN,BLUE, hearColor.getAlpha());
+    			/*Now draw it*/
+    			g2.setColor(this.hearColor);
+    			g2.fill(new Ellipse2D.Float((float)location.getX() - (float)sensorHearing.getHearingRadius(),
+    					(float)location.getY() - (float)sensorHearing.getHearingRadius(),
+    					2f * (float)sensorHearing.getHearingRadius(),
+    					2f * (float)sensorHearing.getHearingRadius()));
+    		}
+    	}
+    	else
+    	{
+    		/*Our Agent is dead and we need to fade if cleanup is called*/
+    		if(fadeIn)
+    		{
+    			int step = 3;
+    			if(currentFadeInRadius + step <= fadeInRadius)
+    			{
+        			System.out.println("Fading In");
+    				int newTransparency = fadeInTransparency + 255/ (fadeInRadius / step);
+    				g2.setColor(new Color(255,255,255,newTransparency));
+    				g2.fill(new Ellipse2D.Float((float)initialLocation.getX(), (float)initialLocation.getY(), fadeInRadius, fadeInRadius));
+    				currentFadeInRadius += step;
+    			}
+    		}
     	}
     }
     public void start( boolean oneStep )
@@ -719,5 +809,10 @@ public abstract class Agent extends Bobject implements Runnable
                 }
             }
         }
+    }
+    
+    public void fadeIn()
+    {
+    	fadeIn = true;
     }
 }
