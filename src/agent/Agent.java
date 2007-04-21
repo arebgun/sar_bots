@@ -51,7 +51,7 @@ public abstract class Agent extends Bobject implements Runnable
 	public enum agentType {BASE, AGENT};
 	protected agentType myType;
 	///AGENT STATES//////////////////
-	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, CLEANUP, SEARCH, GUARD, RECOVER_FLAG};
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, CLEANUP, SEARCH, GUARD, RECOVER_FLAG, PATROL};
 	protected state agent_state;
 	//call planner
 	public abstract void update();
