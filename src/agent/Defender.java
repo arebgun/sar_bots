@@ -31,24 +31,23 @@ public class Defender extends Agent
 	
 	public void update()
 	{
-		if (isAlive)
-			move();
-		/*
-		if (agent_state == agent_state.DEAD)
+		if (agent_state == Agent.state.DEAD)
 			plan.Dead(this);
-		if (agent_state == agent_state.FLAG_CARRIER)
+		if (agent_state == Agent.state.FLAG_CARRIER)
 			plan.FlagCarrier(this);
-		if (agent_state == agent_state.ATTACKING)
+		if (agent_state == Agent.state.ATTACKING)
 			plan.Attacking(this);
-		if (agent_state == agent_state.FLEE)
+		if (agent_state == Agent.state.FLEE)
 			plan.Flee(this);
-		if (agent_state == agent_state.HIDE)
+		if (agent_state == Agent.state.HIDE)
 			plan.Hide(this);
-		if (agent_state == agent_state.SEARCH)
+		if (agent_state == Agent.state.SEARCH)
 			plan.Search(this);
-		if (agent_state == agent_state.RECOVER_FLAG)
+		if (agent_state == Agent.state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
-			*/
+		if (agent_state == Agent.state.PATROL)
+			plan.Patrol(this);
+			
 		
 		beingShot = false;
 	}

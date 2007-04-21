@@ -78,4 +78,8 @@ public class APPlanner extends PlanModule
     {
     	
     }
+    public void Patrol(Agent a)
+    {
+    	
+    } 
 }

@@ -82,7 +82,9 @@ public class Stochastic extends DeploymentStrategy
         }
 
         if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
-
-        return new AgentLocation( x, y, rand.nextDouble() * 360 );
+        a.setPlaced(true);
+        AgentLocation newLoc = new AgentLocation(x, y, rand.nextDouble() * 360 );
+        if (found) a.plan.setPatrolLocation(newLoc);
+        return newLoc; 
     }
 }

@@ -172,5 +172,8 @@ public class Stochastic extends PlanModule
     {
     	
     }
- 
+    public void Patrol(Agent a)
+    {
+    	
+    } 
 }

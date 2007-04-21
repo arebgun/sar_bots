@@ -51,7 +51,7 @@ public abstract class Agent extends Bobject implements Runnable
 	public enum agentType {BASE, AGENT};
 	protected agentType myType;
 	///AGENT STATES//////////////////
-	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, GUARD, RECOVER_FLAG};
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, SEARCH, GUARD, RECOVER_FLAG, PATROL};
 	protected state agent_state;
 	//call planner
 	public abstract void update();
@@ -95,7 +95,7 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Planning subsystem (AI algorithm goes here)
      */
-    protected PlanModule plan;
+    public PlanModule plan;
 
     /**
      * Communication subsystem (inter-agent communication).
@@ -257,7 +257,7 @@ public abstract class Agent extends Bobject implements Runnable
         	if (found)
         	{
 	        	newLoc = new AgentLocation(newx, newy, heading);
-	        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
+	        	found = avoidObstacle(newLoc) && avoidAgent(newLoc) && avoidFlag(newLoc);
         	}
         	tempRadius--;        	
     	}    	
@@ -285,7 +285,7 @@ public abstract class Agent extends Bobject implements Runnable
     	if (found)
     	{
         	newLoc = new AgentLocation(newx, newy, heading);
-        	found = avoidObstacle(newLoc) && avoidAgent(newLoc);
+        	found = avoidObstacle(newLoc) && avoidAgent(newLoc) && avoidFlag(newLoc);
     	}
     	if(found)
     		location = newLoc;
@@ -317,15 +317,6 @@ public abstract class Agent extends Bobject implements Runnable
     }
     public void decrementHealth(int d)
     {
-    	/*
-    	int sightRed = sightColor.getRed();
-    	int sightGreen = sightColor.getGreen();
-    	int sightBlue = sightColor.getBlue();
-    	int hearRed = hearColor.getRed();
-    	int hearGreen = hearColor.getGreen();
-    	int hearBlue = hearColor.getBlue();
-    	*/
-    	
     	if(isAlive)
     	{
     		beingShot = true;
@@ -333,23 +324,6 @@ public abstract class Agent extends Bobject implements Runnable
     		health = health - d;
 	    	if (health <= 0)
 	    		isAlive = false;
-	    	/*
-	    	if(sightColor.getRed()+d <= 252)
-	    		sightRed = sightColor.getRed() + 3 * d;
-	    	if(sightColor.getGreen()-d >= 3)
-	    		sightGreen = sightColor.getGreen() - 3 * d;
-	    	if(sightColor.getBlue()-d >= 3)
-	    		sightBlue = sightColor.getBlue() - 3 * d;
-	    	if(hearColor.getRed()+d <= 252)
-	    		hearRed = hearColor.getRed() + d;
-	    	if(hearColor.getGreen()-d >= 3)
-	    		hearGreen = hearColor.getGreen() - d;
-	    	if(hearColor.getBlue()-d >= 3)
-	    		hearBlue = hearColor.getBlue() - d;
-	    	
-	    	sightColor = new Color(sightRed,sightGreen,sightBlue,sightColor.getAlpha());
-	    	hearColor = new Color(hearRed,hearGreen,hearBlue,hearColor.getAlpha());
-	    	*/
     	}
     	
     	if (!isAlive)
@@ -500,6 +474,26 @@ public abstract class Agent extends Bobject implements Runnable
     	return good;
     }
     
+    protected boolean avoidFlag(AgentLocation newLoc)
+    {
+    	boolean good = true;
+    	double newX = newLoc.getX();
+    	double newY = newLoc.getY();
+    	Iterator<Flag> flag = this.getFlagsSeen();
+    	while (flag.hasNext())
+    	{
+    		Flag f = flag.next();
+    		if (f.getTeamID() == teamID && f.getAtHome())
+    		{
+    			double dist = Math.hypot(newX - f.getLocation().getX(), newY - f.getLocation().getY());
+	    		double bound = boundingRadius + f.getBoundingRadius();
+	    		if (bound >= dist)
+	    			good = false;
+    		}
+    	}
+    	return good;
+    }
+    
     protected boolean inWorld(double x, double y)
     {
     	double MaxX = Environment.groundShape().getMaxX();
@@ -539,33 +533,8 @@ public abstract class Agent extends Bobject implements Runnable
     	}
      }
     
-    private double headingToCartesian(double head)
-    {
-    	double newHead = 0;
-    	if(head >= 0 && head < 90)
-    		newHead = 360 - head;
-		else if (head >= 90 && head < 180)
-			newHead = 180 + (180 - head);
-		else if (head >= 180 && head < 270)
-			newHead = 180 - (head - 180);
-		else
-			newHead = 360 - head;
-    	return newHead;
-    }
-    private double cartesianToHeading(double cart)
-    {
-    	double head = 0;
-    	if (cart >= 0 && cart < 90)
-    		head = 360 - cart;
-    	else if (head >= 90 && head < 180)
-    		head = 180 + (180 - cart);
-    	else if (head >= 180 && head < 270)
-    		head = 180 - (cart - 180);
-    	else
-    		head = 360 - cart;
-    	return head;
-    }
-    
+    //gets the arctangent between this agent and the goal
+    //in screen space
     public double arctangentToGoal(AgentLocation goal)
     {
     	double x = location.getX();
@@ -573,66 +542,44 @@ public abstract class Agent extends Bobject implements Runnable
     	double x1 = goal.getX();
     	double y1 = goal.getY();
     	
-    	double temp = Math.atan((x-x1)/(y-y1)) * 57.29577951;
-    	temp = Math.abs(temp);
+    	double temp = Math.atan((y-y1)/(x-x1)) * 57.29577951;
     	
     	if (x <= x1)
     	{
     		if (y <= y1)
-    			temp = 90 - temp;
+    			temp = 360 - temp;
     		else
-    			temp = 270 + temp;
-    	}
+    			temp = Math.abs(temp);
+       	}
     	else
-    	{
-    		if (y <= y1)
-    			temp = 90 + temp;
-    		else
-    			temp = 270 - temp;
-    	}
-    	
-    	return cartesianToHeading(temp);
+    		temp = 180 - temp;
+    	return temp;
     }
     
     public double moveToLocation( AgentLocation goal)
     {
-    	double temp = headingToCartesian(location.getTheta());
+    	double temp = location.getTheta();
     	double arc = arctangentToGoal(goal);
-    	if (Math.abs(temp-arc) <= sensorSight.getHalfAngle() ||
-    			Math.abs(temp - (arc + 360)) <= sensorSight.getHalfAngle() ||
-    			Math.abs((temp + 360) - arc) <= sensorSight.getHalfAngle())
+    	double maxAngle = sensorSight.getHalfAngle();
+    	if (Math.abs(temp-arc) <= maxAngle ||
+    			Math.abs(temp - (arc + 360)) <= maxAngle ||
+    			Math.abs((temp + 360) - arc) <= maxAngle)
     		temp = arc;
     	else
     	{
-    		//heading is in quad 2 or 3
-    		if (location.getX() > goal.getX())
+    		if (Math.abs(arc - temp) <= 180)
     		{
-    			if (temp > arc)
-    				temp = temp - sensorSight.getHalfAngle();
+    			if (arc > temp)
+    				temp = temp + maxAngle;
     			else
-    				temp = temp + sensorSight.getHalfAngle();
+    				temp = temp - maxAngle;
     		}
-    		//heading is in quad 1 or 4
+    		else if ((arc + 360 - temp) <= 180)
+    			temp = temp + maxAngle;
     		else
-    		{
-    			if (location.getY() <= goal.getY())
-    			{
-    				if (temp > arc || (temp + 360) > arc)
-    					temp = temp - sensorSight.getHalfAngle();
-    				else
-    					temp = temp + sensorSight.getHalfAngle();
-    			}
-    			else
-    			{
-    				if (temp > arc || temp > (arc + 360))
-    					temp = temp - sensorSight.getHalfAngle();
-    				else
-    					temp = temp + sensorSight.getHalfAngle();
-    			}
-    		}
+    			temp = temp - maxAngle;
     	}
     	
-    	temp = cartesianToHeading(temp);
     	return temp;
     	
     }
@@ -662,7 +609,7 @@ public abstract class Agent extends Bobject implements Runnable
 		{
 			board.setOurFlagLocation(location);
 		}
-		board.setOurFlagSeen(ourFlagSeen);
+		board.setOurFlagSeen(msgID,ourFlagSeen);
 		if(hasFlag)
 		{
 			board.setWhoOwnsFlag(objectID);

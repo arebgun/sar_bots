@@ -62,7 +62,8 @@ public class LineDeploy extends DeploymentStrategy
 		}
 		if ( !found ) { throw new IllegalStateException( "unable to deploy agent #" + a.getObjectID() ); }
 		a.setPlaced(true); 
-		
-		return new AgentLocation(newX, newY, initialHeading);
+		AgentLocation newLoc = new AgentLocation(newX, newY, rand.nextDouble() * 360 );
+        if (found) a.plan.setPatrolLocation(newLoc);
+        return newLoc; 
 	}
 }

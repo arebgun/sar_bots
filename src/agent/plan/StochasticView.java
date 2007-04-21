@@ -212,6 +212,8 @@ public class StochasticView extends PlanModule
     {
     	
     }
-    
- 
+    public void Patrol(Agent a)
+    {
+    	
+    } 
 }

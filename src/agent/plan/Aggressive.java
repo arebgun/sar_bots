@@ -219,12 +219,15 @@ public class Aggressive extends PlanModule
      	//if we collide with the flag, pick it up and change state to Flag Carrier
     	if (oppFlagSeen)
     	{
-    		AgentLocation temp = opponentsFlagLocation(a);
     		Flag f = getFlagSeen(a);
+    		if (f == null)
+			{
+				System.out.println("Attacker : flag was moved before i could get it's location");
+				return;
+			}
     		double dist = Math.hypot((a.getLocation().getX() - f.getLocation().getX()), 
-    								 
     				(a.getLocation().getY() - f.getLocation().getY()));
-    		if ((a.getBoundingRadius() + f.getBoundingRadius()) <= dist)
+    		if ((a.getBoundingRadius() + f.getBoundingRadius()) >= dist)
     		{
     			a.pickUpFlag(f);
     			agentState = Agent.state.FLAG_CARRIER;
@@ -232,7 +235,7 @@ public class Aggressive extends PlanModule
     			a.update();
     			return;
     		}
-    		newHeading = a.moveToLocation(temp);
+    		newHeading = a.moveToLocation(f.getLocation());
     		moveChance = 100;
     	}
     	else if (a.getHealth() <= a.getThreshold() && a.getIsBeingShot())
@@ -375,8 +378,8 @@ public class Aggressive extends PlanModule
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     		
     }
-
-    
-    
-
+    public void Patrol(Agent a)
+    {
+    	
+    } 
 }
