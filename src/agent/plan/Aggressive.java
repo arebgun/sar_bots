@@ -44,8 +44,10 @@ public class Aggressive extends PlanModule
     		a.dropFlag();
     	a.setIsAlive(false);
     	
+    	Simulator.oneDied(a.getTeamID());
     	Statistics.incStateDead(a.getObjectID());
     	int blah = Statistics.getDamageDone(a.getObjectID());
+    	
     	System.out.println("Agent : " + a.getObjectID() + " did : " + blah + " damage before he died");
     	a.sendMessage(false, false, holder, false, holder);
     	a.stop();
@@ -65,7 +67,9 @@ public class Aggressive extends PlanModule
     	double newHeading = a.arctangentToGoal(base);
     	if (atBase(a))
     	{
-    		Simulator.whoCapturedFlag = "FLAG CAPTURED";
+    		Simulator.weWon(a.getColor(), "FLAG CAPTURED!!");
+    		Flag f = a.getMyFlag();
+    		f.setCaptured(true);
     		Statistics.incFlagsCaptured(a.getTeamID());
     		Statistics.incFlagsScored(a.getObjectID());
     	}
@@ -74,9 +78,9 @@ public class Aggressive extends PlanModule
     	
 		a.checkSensors();
 		Statistics.incStateFlagCarrier(a.getObjectID());
-		a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
-    	
+		a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);	
     }
+    
     public void Guard(Agent a)
     {
     	MessageBoard mb = Simulator.teamBoards.get(a.getTeamID());
@@ -377,6 +381,28 @@ public class Aggressive extends PlanModule
     	//now send all your info to the messageboard
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, ourFlagSeen, ourFlagLoc);
     		
+    }
+
+    public void CleanUp(Agent a)
+    {
+    	//System.out.println("CleanUP");
+		/*There are two conditions, if the agent is dead or alive*/
+		if(!a.getIsAlive())
+		{
+			a.fadeIn();
+		}
+		else
+		{
+			if(!a.closeToGoal(a.getMoveRadius(), a.getInitialLocation()))
+			{
+				double initHeading = a.arctangentToGoal(a.getInitialLocation());
+				moveAgent(a, a.getLocation().getTheta(), initHeading);
+			}
+			else
+			{
+				a.setLocation(a.getInitialLocation());
+			}
+		}
     }
     public void Patrol(Agent a)
     {
