@@ -52,6 +52,9 @@ public class Base extends Agent
 		g2.setColor(this.color);
 		g2.fill(new Ellipse2D.Double(x,y,(2*radius),(2*radius)));
 	}
-	 
-}
 
+	public void cleanup()
+	{
+		
+	}
+}
