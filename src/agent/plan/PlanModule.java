@@ -68,7 +68,10 @@ public abstract class PlanModule
     public abstract void Patrol(Agent a);
     
     public abstract agent.Agent.state getAgentState();
-    
+    public void setPatrolLocation(AgentLocation newLoc)
+    {
+    	patrolLocation = newLoc;
+    }
 //  recieves an agent, returns true if the agent sees an opponent, false otherwise
     protected boolean seeOpponent(Agent a)
     {
