@@ -35,4 +35,9 @@ public class RoundObstacle extends Obstacle
 	{
 		
 	}
+	
+	public void cleanup()
+	{
+		
+	}
 }

@@ -75,4 +75,9 @@ public class PolygonObstacle extends Obstacle
 		}
 		return dist;
 	}
+	
+	public void cleanup()
+	{
+		
+	}
 }
