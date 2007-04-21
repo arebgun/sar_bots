@@ -29,6 +29,7 @@ public abstract class PlanModule
      */
     protected ConfigBobject objectConfig;
     protected double guardDistance = 50.0;
+    protected AgentLocation patrolLocation = null;
     protected Agent.state initialState;
 
     /**
