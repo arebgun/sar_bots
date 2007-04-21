@@ -99,7 +99,7 @@ public abstract class Agent extends Bobject implements Runnable
     /**
      * Planning subsystem (AI algorithm goes here)
      */
-    protected PlanModule plan;
+    public PlanModule plan;
 
     /**
      * Communication subsystem (inter-agent communication).
