@@ -19,6 +19,7 @@ import sim.Simulator;
 import baseobject.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.*;
+import java.awt.Graphics;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -34,6 +35,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import obstacle.Obstacle;
+import statistics.*;
+import javax.swing.border.*;
 
 public class GUI
 {
@@ -211,12 +214,13 @@ public class GUI
     {
         // Main simulator window scroll pane and rescue area
         area     = new SimScrollPane( new JPanel(), new RescueArea() );
-        coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
-
+       // coverage = new SimScrollPane( new JPanel(), new SensCoverage() );
+        StatPanel viewStats = new StatPanel();
+  
         // Create tabs and add simulator views
         jtViewSwitcher = new JTabbedPane( JTabbedPane.BOTTOM );
         jtViewSwitcher.addTab( "Environment", area );
-        jtViewSwitcher.addTab( "Sensor Coverage", coverage );
+        jtViewSwitcher.addTab( "Game Stats", viewStats );
         main.add( jtViewSwitcher, BorderLayout.CENTER );
 
         // Create and add bottom panel
@@ -229,6 +233,95 @@ public class GUI
     {
         throw new CloneNotSupportedException();
     }
+}
+
+class GraphicsComponent extends JComponent
+{
+	void paint(Graphics2D g2)
+	{
+		paintComponent(g2);
+	}
+}
+
+class StatPanel extends JPanel
+{
+		private final static GraphicsComponent stat1Display = new GraphicsComponent();
+		//private final static GraphicsComponent stat2Display = new GraphicsComponent();
+	 	private static String[] drop1Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+	    private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+
+	    private static JPanel dropDownP1 = new JPanel();
+	    private static JPanel dropDownP2 = new JPanel();
+
+	    
+	    private static JComboBox dropDown1 = new JComboBox(drop1Strings);
+	    private static JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    
+	    private static PieChart[] slices1 = new PieChart[4];
+    	private static PieChart[] slices2 = new PieChart[4];
+	
+	    StatPanel()
+		{
+	    	slices1[0] = new PieChart(25, Color.blue);
+	        slices1[1] = new PieChart(35, Color.green);
+	        slices1[2] = new PieChart(25, Color.black);
+	        slices1[3] = new PieChart(15, Color.darkGray);
+	        
+	        slices2[0] = new PieChart(25, Color.black);
+	        slices2[1] = new PieChart(35, Color.yellow);
+	        slices2[2] = new PieChart(25, Color.orange);
+	        slices2[3] = new PieChart(15, Color.red);
+	        
+	    	JPanel dropDownPanel = new JPanel();
+	    	dropDownPanel.setLayout(new GridLayout(1,2,2,2));
+	    	JComboBox dropDown1 = new JComboBox(drop1Strings);
+	    	JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    	dropDownPanel.add(dropDown1);
+	    	dropDownPanel.add(dropDown2);
+	    	add(dropDownPanel, BorderLayout.NORTH);
+	    	add(stat1Display, BorderLayout.WEST);
+	    	//add(stat2Display, BorderLayout.EAST);
+	    	//this.paintStat1();
+	    	//setVisible(true);
+		}
+	    
+	    public void paintComponent( Graphics g2 )
+	    {
+	    	super.paintComponent(g2);
+	        paintStat1( g2 );
+	        paintStat2( g2 );
+	    }
+	    
+	    public void paintStat1( Graphics g2 )
+	    {
+	    	slices1[0] = new PieChart(25, Color.blue);
+	        slices1[1] = new PieChart(35, Color.green);
+	        slices1[2] = new PieChart(25, Color.black);
+	        slices1[3] = new PieChart(15, Color.darkGray);
+	        
+	        
+	        Rectangle r = new Rectangle();
+	        r.setBounds(100, 150, 400, 400);
+	        PieChart.drawPie(g2, r.getBounds(), slices1);
+
+	        //repaint();
+	        //setVisible(true);
+	        stat1Display.paint(g2);
+	    }
+	
+	    public void paintStat2( Graphics g2 )
+	    {
+	    	PieChart[] slices = new PieChart[4];
+	        slices2[0] = new PieChart(25, Color.red);
+	        slices2[1] = new PieChart(35, Color.green);
+	        slices2[2] = new PieChart(25, Color.pink);
+	        slices2[3] = new PieChart(15, Color.blue);
+	        Rectangle r = new Rectangle();
+	        r.setBounds(750, 150, 400, 400);
+	        PieChart.drawPie(g2, r.getBounds(), slices2);
+
+	        //stat2Display.paint(g2);
+	    }
 }
 
 class SimScrollPane extends JScrollPane
@@ -263,6 +356,11 @@ abstract class SimDrawPanel extends JPanel
         Environment.scaleGraphics( g2, getSize() );
         simPaint( g2 );
     }
+    
+    public void paintNoG()
+    {
+        simPaintNoG();
+    }
 
     protected void paintGrid( Graphics2D g2 )
     {
@@ -277,6 +375,7 @@ abstract class SimDrawPanel extends JPanel
     }
 
     protected abstract void simPaint( Graphics2D g2 );
+    protected abstract void simPaintNoG();
 }
 
 class RescueArea extends SimDrawPanel
@@ -321,13 +420,18 @@ class RescueArea extends SimDrawPanel
     	paintObjects(g2);
     }
     
-    private void paintWinner( Graphics2D g2 , String text, Color textColor)
+    public void simPaintNoG()
+    {
+    	
+    }
+    
+    private void paintWinner( Graphics2D g2 , String text)
     {    	
     	if(text != null)
     	{
     		Font font = new Font("SansSerif", Font.BOLD, 85);
     		g2.setFont(font);
-    		g2.setColor(textColor);
+    		g2.setColor(Color.RED);
     		g2.drawString(text, 100, 300);
     	}
     }
@@ -361,45 +465,76 @@ class RescueArea extends SimDrawPanel
     			o.draw(g2);
     		}    	
     	}
-    	paintWinner(g2, Simulator.winText, Simulator.winColor);
+    	paintWinner(g2, Simulator.whoCapturedFlag);
     }
 }
  
-class blah extends JComponent
-{
-	void paint(Graphics2D g2)
-	{
-		g2.setColor(Color.red);
-		g2.fill(new Ellipse2D.Float((float)100,
-				(float)100,
-				100,
-				100));
-	}
-}
 
+/*
 class SensCoverage extends SimDrawPanel
 {
     private final static int clrSize     = 1023;
     private final static Color[]clrTable = new Color[clrSize + 1];
-    private final static blah something = new blah();
+    //private final static GraphicsComponent gDisplay = new GraphicsComponent();
 
+    private static String[] drop1Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+    private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+
+    private static JPanel dropDownP1 = new JPanel();//(new FlowLayout(FlowLayout.CENTER, 2, 2));
+    private static JPanel dropDownP2 = new JPanel();//(new FlowLayout(FlowLayout.CENTER, 2, 2));
+
+    
+    private static JComboBox dropDown1 = new JComboBox(drop1Strings);
+    private static JComboBox dropDown2 = new JComboBox(drop2Strings);
+
+    //JButton testButton = new JButton("test");
+
+    
     public SensCoverage()
     {
-        setBackground( Color.WHITE );
-
-        for ( int i = 0; i < clrTable.length; i++ )
-        {
-            clrTable[clrSize - i] = new Color( i / (float) clrSize, 1f, i / (float) clrSize );
-        }
-        add(something);
+    	this.setBackground(Color.cyan);
+    	this.setForeground(Color.cyan);
+    	
+    	JPanel dropDownP1 = new JPanel();
+    	JPanel dropDownP2 = new JPanel();
+    	
+    	dropDownP1.setLayout(new FlowLayout());
+    	dropDownP2.setLayout(new FlowLayout());
+    	JComboBox dropDown1 = new JComboBox(drop1Strings);
+    	JComboBox dropDown2 = new JComboBox(drop2Strings);
+    	dropDownP1.add(dropDown1);
+    	dropDownP2.add(dropDown2);
+    	dropDownP1.setBorder(new TitledBorder("sdkjfhgdkjfh"));
+    	
+    	add(dropDownP1, BorderLayout.EAST);
+    	add(dropDownP2, BorderLayout.SOUTH);
+       // add(gDisplay);
+        //setVisible(true);
     }
     
     public void simPaint( Graphics2D g2 )
     {
-        something.paint(g2);
+    	
+    	PieChart[] slices = new PieChart[4];
+        slices[0] = new PieChart(25, Color.red);
+        slices[1] = new PieChart(35, Color.green);
+        slices[2] = new PieChart(25, Color.pink);
+        slices[3] = new PieChart(15, Color.blue);
+        Rectangle r = new Rectangle();
+        r.setBounds(30, 30, 50, 50);
+        //PieChart.drawPie((Graphics2D)g2, r.getBounds(), slices);
+
+        setVisible(true);
+    	//gDisplay.paint(g2);
+
+    }
+    
+    public void simPaintNoG()
+    {
+    	
     }
 }
-
+*/
 
 /*
  * Class Name:    BottomPanel
@@ -546,25 +681,6 @@ class BottomPanel extends JPanel
             public void actionPerformed( ActionEvent e )
             {
                 Simulator.reset();
-                GUI.getInstance().getTmrUpdate().stop();
-                tmrSim.stop();
-                Iterator<Bobject> it = Simulator.objectIterator();
-                while(it.hasNext())
-                {
-                	Bobject b = it.next();
-                	if (b.isAgent())
-                	{
-                		Agent a = (Agent)b;
-                		a.stop();
-                	}       
-                	if (b.isFlag())
-                	{
-                		Flag f = (Flag)b;
-                		f.stop();
-                	}
-                }
-
-                btnStartStop.setText( "Start" );
                 GUI.getInstance().update();
             }
         } );
