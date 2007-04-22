@@ -1,4 +1,5 @@
 package agent.plan;
+
 import java.util.Random;
 import agent.Agent;
 import baseobject.Flag;
@@ -221,7 +222,7 @@ public class Defensive extends PlanModule
     	}
     	if (iSeeOurFlag)
     	{
-    		if (mb.getOurFlagOwned())
+    		if (mb.getOurFlagSeen())
 	    		a.shootAll();
     		
 			Flag ourFlag = getFlagSeen(a);
@@ -279,7 +280,7 @@ public class Defensive extends PlanModule
     	
     	if (!mb.getFlagAtHome())
     	{
-    		if (!mb.getOurFlagOwned() && !iSeeOurFlag)
+    		if (!mb.getOurFlagSeen() && !iSeeOurFlag)
     		{
     			agentState = Agent.state.SEARCH;
     			a.setAgentState(agentState);
