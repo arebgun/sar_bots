@@ -249,18 +249,20 @@ class StatPanel extends JPanel
 {
 		//private final static GraphicsComponent stat1Display = new GraphicsComponent();
 		//private final static GraphicsComponent stat2Display = new GraphicsComponent();
-	 	private static String[] drop1Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
-	    private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
+	 	private static String[] drop1Strings = new String[60];
+	    //private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
 
 	   // private static JPanel dropDownP1 = new JPanel();
 	    //private static JPanel dropDownP2 = new JPanel();
 
 	    
-	    private final static JComboBox dropDown1 = new JComboBox(drop1Strings);
-	    private final static JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    private static JComboBox dropDown1 = new JComboBox();
+	    private static JComboBox dropDown2 = new JComboBox();
 	    
 	    private static PieChart[] slices1 = new PieChart[7];
     	private static PieChart[] slices2 = new PieChart[7];
+    	
+    	private static int[] IDarray = new int[60];
 	
     	private static int[] sliceSizes1 = new int[7];
     	private static int[] sliceSizes2 = new int[7];
@@ -293,6 +295,8 @@ class StatPanel extends JPanel
 	    	JPanel dropDownPanel = new JPanel();
 	    	dropDownPanel.setLayout(new GridLayout(1,2,2,2));
 	    	
+	    	setDropDown1();
+	    	
 	    	dropDownPanel.add(dropDown1);
 	    	dropDownPanel.add(dropDown2);
 	    	add(dropDownPanel, BorderLayout.NORTH);
@@ -314,9 +318,84 @@ class StatPanel extends JPanel
 	    	
 		}
 	    
+	    public void setDropDown1()
+	    {
+	    	Iterator<Bobject> wo = Simulator.objectIterator();
+	    	int numOnTeam = Simulator.numberOnTeam.get(1);
+	    	int count = 0;
+	    	while (wo.hasNext() && count < numOnTeam)
+	    	{
+	    		Bobject b = wo.next();
+	    		if(b.isAgent())
+	    		{
+	    			Agent a = (Agent)b;
+	    			if(a.getTeamID()==1)
+	    			{
+	    				String temp = ("Team 1 Agent " + count);
+	    				drop1Strings[count] = temp;
+	    				IDarray[count] = a.getObjectID();
+	    				System.out.println("ID:" + IDarray[count]);
+	    				count++;
+	    			}
+	    		}
+	    	}
+	    	
+	    	wo = Simulator.objectIterator();
+	    	numOnTeam = Simulator.numberOnTeam.get(2);
+	    	int agentNumber = 0;
+	    	int count2 = 0;
+	    	while (wo.hasNext() && count2 < numOnTeam)
+	    	{
+	    		Bobject b = wo.next();
+	    		if(b.isAgent())
+	    		{
+	    			Agent a = (Agent)b;
+	    			if(a.getTeamID()==2)
+	    			{
+	    				String temp = ("Team 2 Agent " + agentNumber);
+	    				drop1Strings[count] = temp;
+	    				IDarray[count] = a.getObjectID();
+	    				System.out.println("ID:" + IDarray[count]);
+	    				count++;
+	    				count2++;
+	    				agentNumber++;
+	    			}
+	    		}
+	    	}
+	    	
+	    	dropDown1 = new JComboBox(drop1Strings);
+	    	dropDown2 = new JComboBox(drop1Strings);
+	    }
+	    
 	    public void setGraph1(int index)
     	{
-    		if(index == 0)
+	    	int currentID = IDarray[index];
+	    	System.out.println("currentID: " + currentID);
+	    	System.out.println("search: " + Statistics.getStateSearch(currentID));
+	    	int flee = Statistics.getFlee(currentID);
+	    	int search = Statistics.getStateSearch(currentID);
+	    	int guard = Statistics.getStateGuard(currentID);
+	    	int dead = Statistics.getStateDead(currentID);
+	    	int hide = Statistics.getStateHide(currentID);
+	    	int recover = Statistics.getRecoverFlag(currentID);
+	    	int carrier = Statistics.getStateFlagCarrier(currentID);
+	    	//int patrol = Statistics.getS
+	    	
+	    	System.out.println(flee + " " + search + " " + guard + " " + dead + " " + hide + " " + recover + " " + carrier);
+	    	
+	    	int total = flee + search + guard + dead + hide + recover + carrier;
+	    	if (total == 0)
+	    		total = 100;
+	    	sliceSizes1[0] = (int)(100*((dead+hide)/total));
+	    	sliceSizes1[1] = (int)(100*(flee/total));
+	    	sliceSizes1[2] = (int)(100*(guard/total));
+	    	sliceSizes1[3] = (int)(100*(search/total));
+	    	sliceSizes1[4] = (int)(100*(recover/total));
+	    	sliceSizes1[5] = (int)(100*(carrier/total));
+	    	sliceSizes1[6] = 0;
+	    	
+	    	//sliceSizes1[0] = 
+    		/*if(index == 0)
     		{
     			for (int i = 0; i < 7; i++)
     				sliceSizes1[i] = test1[i];
@@ -335,7 +414,7 @@ class StatPanel extends JPanel
     		{
     			for (int i = 0; i < 7; i++)
     				sliceSizes1[i] = test4[i];
-    		}
+    		}*/
     	}
 	    
 	    public void setGraph2(int index)
