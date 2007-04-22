@@ -19,6 +19,7 @@ import sim.Simulator;
 import baseobject.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.Graphics;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -33,6 +34,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JPanel;
 
 import obstacle.Obstacle;
 import statistics.*;
@@ -96,7 +98,7 @@ public class GUI
             {
                 Dimension newSize = jtViewSwitcher.getSize();
                 Environment.scaleDrawing( area, newSize );
-                Environment.scaleDrawing( coverage, newSize );
+               // Environment.scaleDrawing( coverage, newSize );
             }
         } );
 
@@ -245,45 +247,120 @@ class GraphicsComponent extends JComponent
 
 class StatPanel extends JPanel
 {
-		private final static GraphicsComponent stat1Display = new GraphicsComponent();
+		//private final static GraphicsComponent stat1Display = new GraphicsComponent();
 		//private final static GraphicsComponent stat2Display = new GraphicsComponent();
 	 	private static String[] drop1Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
 	    private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
 
-	    private static JPanel dropDownP1 = new JPanel();
-	    private static JPanel dropDownP2 = new JPanel();
+	   // private static JPanel dropDownP1 = new JPanel();
+	    //private static JPanel dropDownP2 = new JPanel();
 
 	    
-	    private static JComboBox dropDown1 = new JComboBox(drop1Strings);
-	    private static JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    private final static JComboBox dropDown1 = new JComboBox(drop1Strings);
+	    private final static JComboBox dropDown2 = new JComboBox(drop2Strings);
 	    
-	    private static PieChart[] slices1 = new PieChart[4];
-    	private static PieChart[] slices2 = new PieChart[4];
+	    private static PieChart[] slices1 = new PieChart[7];
+    	private static PieChart[] slices2 = new PieChart[7];
 	
+    	private static int[] sliceSizes1 = new int[7];
+    	private static int[] sliceSizes2 = new int[7];
+    	private static int[] test1 = {10, 10, 10, 10, 10, 10, 40};
+    	private static int[] test2 = {10, 30, 5, 10, 10, 10, 15};
+    	private static int[] test3 = {5, 10, 10, 5, 10, 40, 20};
+    	private static int[] test4 = {5, 5, 20, 10, 10, 45, 5};
+    	
 	    StatPanel()
 		{
-	    	slices1[0] = new PieChart(25, Color.blue);
-	        slices1[1] = new PieChart(35, Color.green);
-	        slices1[2] = new PieChart(25, Color.black);
-	        slices1[3] = new PieChart(15, Color.darkGray);
+	    	
+	    	
+	    	slices1[0] = new PieChart(5, Color.blue);
+	        slices1[1] = new PieChart(10, Color.green);
+	        slices1[2] = new PieChart(15, Color.yellow);
+	        slices1[3] = new PieChart(20, Color.orange);
+	        slices1[4] = new PieChart(25, Color.red);
+	        slices1[5] = new PieChart(10, Color.DARK_GRAY);
+	        slices1[6] = new PieChart(15, Color.black);
 	        
-	        slices2[0] = new PieChart(25, Color.black);
-	        slices2[1] = new PieChart(35, Color.yellow);
-	        slices2[2] = new PieChart(25, Color.orange);
-	        slices2[3] = new PieChart(15, Color.red);
+	        
+	        slices2[0] = new PieChart(5, Color.blue);
+	        slices2[1] = new PieChart(10, Color.green);
+	        slices2[2] = new PieChart(15, Color.yellow);
+	        slices2[3] = new PieChart(20, Color.orange);
+	        slices2[4] = new PieChart(25, Color.red);
+	        slices2[5] = new PieChart(15, Color.DARK_GRAY);
+	        slices2[6] = new PieChart(10, Color.black);
 	        
 	    	JPanel dropDownPanel = new JPanel();
 	    	dropDownPanel.setLayout(new GridLayout(1,2,2,2));
-	    	JComboBox dropDown1 = new JComboBox(drop1Strings);
-	    	JComboBox dropDown2 = new JComboBox(drop2Strings);
+	    	
 	    	dropDownPanel.add(dropDown1);
 	    	dropDownPanel.add(dropDown2);
 	    	add(dropDownPanel, BorderLayout.NORTH);
-	    	add(stat1Display, BorderLayout.WEST);
-	    	//add(stat2Display, BorderLayout.EAST);
-	    	//this.paintStat1();
-	    	//setVisible(true);
+	    	//add(stat1Display, BorderLayout.WEST);
+	    	
+	    	
+	    	dropDown1.addItemListener(new ItemListener() {
+	    		public void itemStateChanged(ItemEvent e){
+	    			setGraph1(dropDown1.getSelectedIndex());
+	    			}
+	    		});
+	    	
+	    	dropDown2.addItemListener(new ItemListener() {
+	    		public void itemStateChanged(ItemEvent e){
+	    			setGraph2(dropDown2.getSelectedIndex());
+	    			}
+	    		});
+			
+	    	
 		}
+	    
+	    public void setGraph1(int index)
+    	{
+    		if(index == 0)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes1[i] = test1[i];
+    		}
+    		if(index == 1)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes1[i] = test2[i];
+    		}
+    		if(index == 2)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes1[i] = test3[i];
+    		}
+    		if(index == 3)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes1[i] = test4[i];
+    		}
+    	}
+	    
+	    public void setGraph2(int index)
+    	{
+	    	if(index == 0)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes2[i] = test1[i];
+    		}
+    		if(index == 1)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes2[i] = test2[i];
+    		}
+    		if(index == 2)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes2[i] = test3[i];
+    		}
+    		if(index == 3)
+    		{
+    			for (int i = 0; i < 7; i++)
+    				sliceSizes2[i] = test4[i];
+    		}
+    	}
 	    
 	    public void paintComponent( Graphics g2 )
 	    {
@@ -294,33 +371,66 @@ class StatPanel extends JPanel
 	    
 	    public void paintStat1( Graphics g2 )
 	    {
-	    	slices1[0] = new PieChart(25, Color.blue);
-	        slices1[1] = new PieChart(35, Color.green);
-	        slices1[2] = new PieChart(25, Color.black);
-	        slices1[3] = new PieChart(15, Color.darkGray);
+	    	slices1[0] = new PieChart(sliceSizes1[0], Color.blue);
+	        slices1[1] = new PieChart(sliceSizes1[1], Color.green);
+	        slices1[2] = new PieChart(sliceSizes1[2], Color.yellow);
+	        slices1[3] = new PieChart(sliceSizes1[3], Color.orange);
+	        slices1[4] = new PieChart(sliceSizes1[4], Color.red);
+	        slices1[5] = new PieChart(sliceSizes1[5], Color.DARK_GRAY);
+	        slices1[6] = new PieChart(sliceSizes1[6], Color.black);
 	        
 	        
 	        Rectangle r = new Rectangle();
 	        r.setBounds(100, 150, 400, 400);
 	        PieChart.drawPie(g2, r.getBounds(), slices1);
-
-	        //repaint();
+	        g2.setColor(Color.black);
+	        g2.drawString("dead", 580, 370);
+	        g2.drawString("flee", 580, 410);
+	        g2.drawString("search", 580, 450);
+	        g2.drawString("recover flag", 580, 490);
+	        g2.drawString("patrol", 580, 530);
+	        g2.drawString("gaurd", 580, 570);
+	        g2.drawString("flag carrier", 580, 610);
+	        g2.setColor(Color.BLUE);
+	        g2.fillRoundRect(550, 350, 20, 20, 10, 10);
+	        g2.setColor(Color.green);
+	        g2.fillRoundRect(550, 390, 20, 20, 10, 10);
+	        g2.setColor(Color.yellow);
+	        g2.fillRoundRect(550, 430, 20, 20, 10, 10);
+	        g2.setColor(Color.orange);
+	        g2.fillRoundRect(550, 470, 20, 20, 10, 10);
+	        g2.setColor(Color.RED);
+	        g2.fillRoundRect(550, 510, 20, 20, 10, 10);
+	        g2.setColor(Color.DARK_GRAY);
+	        g2.fillRoundRect(550, 550, 20, 20, 10, 10);
+	        g2.setColor(Color.black);
+	        g2.fillRoundRect(550, 590, 20, 20, 10, 10);
+	        repaint();
 	        //setVisible(true);
-	        stat1Display.paint(g2);
+	        //stat1Display.paint(g2);
 	    }
 	
 	    public void paintStat2( Graphics g2 )
 	    {
-	    	PieChart[] slices = new PieChart[4];
-	        slices2[0] = new PieChart(25, Color.red);
-	        slices2[1] = new PieChart(35, Color.green);
-	        slices2[2] = new PieChart(25, Color.pink);
-	        slices2[3] = new PieChart(15, Color.blue);
+	    	//PieChart[] slices = new PieChart[7];
+	    	slices2[0] = new PieChart(sliceSizes2[0], Color.blue);
+	        slices2[1] = new PieChart(sliceSizes2[1], Color.green);
+	        slices2[2] = new PieChart(sliceSizes2[2], Color.yellow);
+	        slices2[3] = new PieChart(sliceSizes2[3], Color.orange);
+	        slices2[4] = new PieChart(sliceSizes2[4], Color.red);
+	        slices2[5] = new PieChart(sliceSizes2[5], Color.DARK_GRAY);
+	        slices2[6] = new PieChart(sliceSizes2[6], Color.black);
 	        Rectangle r = new Rectangle();
 	        r.setBounds(750, 150, 400, 400);
 	        PieChart.drawPie(g2, r.getBounds(), slices2);
-
+	        repaint();
 	        //stat2Display.paint(g2);
+	    }
+	    
+	    public void paintLegend(Graphics g2)
+	    {
+	    	Rectangle r1 = new Rectangle(450, 300, 20, 20);
+	    	
 	    }
 }
 
