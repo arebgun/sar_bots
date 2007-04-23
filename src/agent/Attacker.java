@@ -1,7 +1,6 @@
 package agent;
 import baseobject.*;
 import config.ConfigBobject;
-import sim.Simulator;
 import statistics.Statistics;
 
 public class Attacker extends Agent
@@ -51,24 +50,28 @@ public class Attacker extends Agent
     		soundRadius = initialSoundRadius;
     	
 		
-		if (agent_state == state.DEAD)
+    	if (agent_state == Agent.state.DEAD)
 			plan.Dead(this);
-		if (agent_state == state.FLAG_CARRIER)
+		else if (agent_state == Agent.state.FLAG_CARRIER)
 			plan.FlagCarrier(this);
-		if (agent_state == state.GUARD)
-			plan.Guard(this);
-		if (agent_state == state.ATTACKING)
+		else if (agent_state == Agent.state.ATTACKING)
 			plan.Attacking(this);
-		if (agent_state == state.FLEE)
+		else if (agent_state == Agent.state.FLEE)
 			plan.Flee(this);
-		if (agent_state == state.HIDE)
+		else if (agent_state == Agent.state.HIDE)
 			plan.Hide(this);
-		if (agent_state == state.SEARCH)
+		else if (agent_state == Agent.state.SEARCH)
 			plan.Search(this);
-		if (agent_state == state.RECOVER_FLAG)
+		else if (agent_state == Agent.state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
-		if(agent_state == state.CLEANUP)
+		else if (agent_state == Agent.state.PATROL)
+			plan.Patrol(this);
+		else if (agent_state == Agent.state.CLEANUP)
 			plan.CleanUp(this);
+		else if (agent_state == Agent.state.FADE)
+			plan.Fade(this);
+		else if (agent_state == Agent.state.WAIT)
+			plan.Wait(this);
 
 		
 		//new turn starts from this point on, so reset beingShot to false
