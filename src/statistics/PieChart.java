@@ -18,7 +18,7 @@ public class PieChart extends JComponent {
 
 
 // slices is an array of values that represent the size of each slice.
-public static void drawPie(Graphics2D g, Rectangle area, PieChart[] slices) {
+public static void drawPie(Graphics g, Rectangle area, PieChart[] slices) {
     // Get total value of all slices
     double total = 0.0D;
     for (int i=0; i<slices.length; i++) {
