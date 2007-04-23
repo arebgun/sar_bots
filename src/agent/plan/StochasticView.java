@@ -84,7 +84,7 @@ public class StochasticView extends PlanModule
     		if (a.getTeamID() != b.getTeamID() && b.isMobile())
     		{
     			shoot = true;
-    			b.decrementHealth(1);
+    			b.decrementHealth(b, 1);
     		}
     	}    
     	if (shoot)
@@ -216,10 +216,16 @@ public class StochasticView extends PlanModule
     {
     	
     }
-    
  
     public void Patrol(Agent a)
     {
     	
     } 
+    
+    public void Fade(Agent a)
+    {
+    }
+    public void Wait(Agent a)
+    {
+    }
 }
