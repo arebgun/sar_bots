@@ -181,4 +181,10 @@ public class Stochastic extends PlanModule
     {
     	
     } 
+    public void Fade(Agent a)
+    {
+    }
+    public void Wait(Agent a)
+    {
+    }
 }
