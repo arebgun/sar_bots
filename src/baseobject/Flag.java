@@ -107,7 +107,7 @@ public class Flag extends Bobject implements Runnable{
 	
 	public void flagDropped()
 	{
-		owner = 0;
+		owner = -1;
 		isOwned = false;
 		updateBoard(Simulator.teamBoards.get(teamID));
 		System.out.println("Dropped the Flag <Flag> " + objectID);

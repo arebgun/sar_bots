@@ -59,6 +59,8 @@ public abstract class Agent extends Bobject implements Runnable
 	protected int fadeInTransparency;
 	protected boolean fadeIn;
 	protected int currentFadeInRadius;
+	protected state previousState;
+	protected int flagID = -1;
 	
     /**
      * Used to identify an agent thread. This becomes thread name.
@@ -75,7 +77,6 @@ public abstract class Agent extends Bobject implements Runnable
      * Agent's current speed. Currently not used.
      */
     protected double velocity = 0;
-    protected Flag myFlag;
     protected boolean hasFlag = false;
     
     /**
@@ -151,8 +152,7 @@ public abstract class Agent extends Bobject implements Runnable
     	currentFadeInRadius = 0;
     	boundingShape = Bobject.shapes.CIRCLE;
     	isAlive = true;
-    	myFlag = null;
-    }
+}
 
    
 
@@ -172,7 +172,10 @@ public abstract class Agent extends Bobject implements Runnable
     {
         this.sleepTime = sleepTime;
     }
-    
+    public int getFlagID()
+    {
+    	return flagID;
+    }
     public int getTeamID()
     {
     	return teamID;
@@ -235,11 +238,7 @@ public abstract class Agent extends Bobject implements Runnable
     	return beingShot;
     }
     
-    public Flag getMyFlag()
-    {
-    	return myFlag;
-    }
-    
+      
     public boolean isMobile()
     {
     	return (myType == agentType.AGENT);
@@ -343,8 +342,9 @@ public abstract class Agent extends Bobject implements Runnable
     	{
     		agent_state = state.DEAD;
     		System.out.println("Agent is Dead");
-    		if(Simulator.oneDied(a.getTeamID()))
-    				Simulator.weWon(color, "WIN BY SLAUGHTER");
+    		Statistics.incStateDead(a.getObjectID());
+        	if(Simulator.oneDied(a.getTeamID()))
+    			Simulator.weWon(color, "WIN BY SLAUGHTER");
     	}
     }
     
@@ -410,7 +410,6 @@ public abstract class Agent extends Bobject implements Runnable
         agent_state = plan.getInitialState();
         moveRadius = initialSoundRadius;
         fadeInRadius = config.getFadeInRadius();
-        stop();
     }
 
     /**
@@ -529,6 +528,8 @@ public abstract class Agent extends Bobject implements Runnable
     	    	shotCounter = 5;
     		}
     	}
+    	if (shotCounter == 5)
+    		Statistics.incShotsTaken(objectID);
     }
 
     public void shootID(int ID)
@@ -545,6 +546,8 @@ public abstract class Agent extends Bobject implements Runnable
     			shotCounter = 5;
     		}
     	}
+    	if (shotCounter == 5)
+    		Statistics.incShotsTaken(objectID);
      }
     
     //gets the arctangent between this agent and the goal
@@ -703,25 +706,32 @@ public abstract class Agent extends Bobject implements Runnable
     		/*Our Agent is dead and we need to fade if cleanup is called*/
     		if(fadeIn)
     		{
-			    int newTransparency = fadeInTransparency + 255/ fadeInRadius;
-			    if (newTransparency <= 255)
+    			fadeInTransparency = fadeInTransparency + 255/ fadeInRadius;
+			    if (fadeInTransparency <= 255)
 			    {
-			    	g2.setColor(new Color(255,255,255,newTransparency));
+			    	g2.setColor(new Color(255,255,255,fadeInTransparency));
 			    	g2.fill(new Ellipse2D.Float((float)initialLocation.getX() - fadeInRadius/2,
 			    								(float)initialLocation.getY() - fadeInRadius/2,
 			    								fadeInRadius, fadeInRadius));
 			    }
 			    else
+			    {
 			    	setFadeIn(false);
+			    	fadeInTransparency = 0;
+			    }
     			
     		}
     	}
     }
     public void start( boolean oneStep )
     {
-        if ( agentThread == null ) { agentThread = new Thread( this, idString ); }
-        this.oneStep = oneStep;
-        agentThread.start();
+        if ( agentThread == null ) 
+        { 
+        	agentThread = new Thread( this, idString );
+        }
+        	agentThread.start();
+        	this.oneStep = false;
+      
     }
 
     /**

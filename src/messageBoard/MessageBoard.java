@@ -9,27 +9,28 @@ public class MessageBoard {
 	/* private members*/
 	
 	/*Single Variables*/
-	private static AgentLocation opponentFlagLocation;
-	private static boolean opponentFlagSeen;
-	private static int whoOwnsFlag;
-	private static boolean flagAtHome;
-	private static AgentLocation ourFlagLocation;
-	private static AgentLocation ourBaseLocation;
-	private static int teamSize;
-	private static boolean ourFlagOwned;
+	private AgentLocation opponentFlagLocation;
+	private boolean opponentFlagSeen;
+	private int whoOwnsFlag;
+	private boolean flagAtHome;
+	private AgentLocation ourFlagLocation;
+	private AgentLocation ourBaseLocation;
+	private int teamSize;
+	private boolean ourFlagOwned;
 	
 	/*Multi-Variable*/
-	private static ArrayList<Integer> myId;
-	private static ArrayList<AgentLocation> myLocation;
-	private static ArrayList<Boolean> needHelp;
-	private static ArrayList<Boolean> isAlive;
-	private static ArrayList<Integer> currentHitPoints;
-	private static ArrayList<Agent.state> currentState;
-	private static ArrayList<Agent> agentsSeen;
-	private static int seenCounters[];
-	private static ArrayList<Agent> agentsHeard;
-	private static int heardCounters[];
-	private static ArrayList<Boolean> ourTeamFlagSeen;
+	private ArrayList<Integer> myId;
+	private ArrayList<AgentLocation> myLocation;
+	private ArrayList<Boolean> needHelp;
+	private ArrayList<Boolean> isAlive;
+	private ArrayList<Integer> currentHitPoints;
+	private ArrayList<Agent.state> currentState;
+	private ArrayList<Agent> agentsSeen;
+	private int seenCounters[];
+	private ArrayList<Agent> agentsHeard;
+	private int heardCounters[];
+	private ArrayList<Boolean> ourTeamFlagSeen;
+	private ArrayList<Boolean> teamFadeIn;
 	
 	public MessageBoard()
 	{
@@ -54,6 +55,7 @@ public class MessageBoard {
 		seenCounters = new int[100];
 		heardCounters = new int[100];
 		ourTeamFlagSeen = new ArrayList<Boolean>();
+		teamFadeIn = new ArrayList<Boolean>();
 	}
 	
 	/*Initialization Function*/
@@ -71,6 +73,7 @@ public class MessageBoard {
 			agentsSeen.add(null);
 			agentsHeard.add(null);
 			ourTeamFlagSeen.add(false);
+			teamFadeIn.add(false);
 		}
 		for(int i = 0; i < 100; i++)
 		{
@@ -90,6 +93,17 @@ public class MessageBoard {
 		ourFlagLocation = null;
 		
 		/*Multi-Variable*/
+		myId.clear();
+		myLocation.clear();
+		needHelp.clear();
+		isAlive.clear();
+		currentHitPoints.clear();
+		currentState.clear();
+		agentsSeen.clear();
+		agentsHeard.clear();
+		ourTeamFlagSeen.clear();
+		teamFadeIn.clear();
+		
 		initialize(teamSize);
 	}
 	
@@ -179,6 +193,17 @@ public class MessageBoard {
 	public AgentLocation getBaseLocation()
 	{
 		return ourBaseLocation;
+	}
+	
+	public boolean getAllFadeIn()
+	{
+		Iterator<Boolean> b = teamFadeIn.iterator();
+		while (b.hasNext())
+		{
+			if (!(b.next()))
+				return false;
+		}
+		return true;
 	}
 	
 	/*Mutators*/
@@ -306,5 +331,9 @@ public class MessageBoard {
 				}
 			}
 		}
+	}
+	public void setIAmFaded(int id)
+	{
+		teamFadeIn.set(id, true);
 	}
 }

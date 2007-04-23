@@ -228,10 +228,7 @@ public class Defensive extends PlanModule
     		
 			Flag ourFlag = getFlagSeen(a);
 			if (ourFlag == null)
-			{
-				System.out.println("flag was moved before i could get it's location");
 				return;
-			}
 			ourFlagLoc = ourFlag.getLocation();
 			double dist = Math.hypot(a.getLocation().getX() - ourFlagLoc.getX(),
 					 a.getLocation().getY() - ourFlagLoc.getY());

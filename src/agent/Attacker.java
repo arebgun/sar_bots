@@ -2,10 +2,11 @@ package agent;
 import baseobject.*;
 import config.ConfigBobject;
 import statistics.Statistics;
+import sim.Simulator;
+import messageBoard.MessageBoard;
 
 public class Attacker extends Agent
 {
-	private int flagID = -1;
 	public Attacker(ConfigBobject config) throws Exception
 	{
 		super (config);
@@ -24,7 +25,6 @@ public class Attacker extends Agent
 			flagID = f.getObjectID();
 			System.out.println("Picked up the flag <Agent> " + objectID);
 			hasFlag = true;
-			myFlag = f;
 			moveRadius = moveRadius / 2;
 			Statistics.incFlagsPickedUp(objectID);
 		}
@@ -34,8 +34,10 @@ public class Attacker extends Agent
 
 	public void dropFlag()
 	{
-		myFlag.flagDropped();
-		myFlag = null;
+		Flag f = (Flag)Simulator.worldObjects.get(flagID);
+		f.flagDropped();
+		MessageBoard mb = Simulator.teamBoards.get(teamID);
+		mb.setWhoOwnsFlag(-1);
 		flagID = -1;
 		hasFlag = false;
 		moveRadius = initialSoundRadius;
@@ -64,6 +66,8 @@ public class Attacker extends Agent
 			plan.Search(this);
 		else if (agent_state == Agent.state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
+		else if (agent_state == Agent.state.GUARD)
+			plan.Guard(this);
 		else if (agent_state == Agent.state.PATROL)
 			plan.Patrol(this);
 		else if (agent_state == Agent.state.CLEANUP)

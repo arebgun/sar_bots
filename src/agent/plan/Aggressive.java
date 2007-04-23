@@ -12,7 +12,7 @@ import statistics.Statistics;
 public class Aggressive extends PlanModule
 {
 	private static Random rand = null;
-    private agent.Agent.state agentState = agent.Agent.state.SEARCH;
+    private Agent.state agentState = Agent.state.SEARCH;
 	public Aggressive(ConfigBobject config)
 	{
 		super(config);
@@ -44,11 +44,6 @@ public class Aggressive extends PlanModule
     		a.dropFlag();
     	a.setIsAlive(false);
     	
-    	Simulator.oneDied(a.getTeamID());
-    	Statistics.incStateDead(a.getObjectID());
-    	int blah = Statistics.getDamageDone(a.getObjectID());
-    	
-    	System.out.println("Agent : " + a.getObjectID() + " did : " + blah + " damage before he died");
     	a.sendMessage(false, false, holder, false, holder);
     	agentState = Agent.state.HIDE;
     	a.setAgentState(agentState);
@@ -69,7 +64,7 @@ public class Aggressive extends PlanModule
     	if (atBase(a))
     	{
     		Simulator.weWon(a.getColor(), "FLAG CAPTURED!!");
-    		Flag f = a.getMyFlag();
+    		Flag f = (Flag)Simulator.worldObjects.get(a.getFlagID());
     		f.setCaptured(true);
     		Statistics.incFlagsCaptured(a.getTeamID());
     		Statistics.incFlagsScored(a.getObjectID());
@@ -92,6 +87,7 @@ public class Aggressive extends PlanModule
     	AgentLocation ourFlagLoc = null;
     	int flagOwner = mb.getWhoOwnsFlag();
     	a.checkSensors();
+    	
     	if (flagOwner < 1)
     	{
     		agentState = Agent.state.SEARCH;
@@ -213,9 +209,9 @@ public class Aggressive extends PlanModule
     		}
     	}
     	
-     	if (mb.getWhoOwnsFlag() > 0)
+    	if (mb.getWhoOwnsFlag() > 0)
     	{
-     		agentState = Agent.state.GUARD;
+			agentState = Agent.state.GUARD;
     		a.setAgentState(agentState);
     		a.update();
     		return;
@@ -226,11 +222,8 @@ public class Aggressive extends PlanModule
     	{
     		Flag f = getFlagSeen(a);
     		if (f == null)
-			{
-				System.out.println("Attacker : flag was moved before i could get it's location");
-				return;
-			}
-    		double dist = Math.hypot((a.getLocation().getX() - f.getLocation().getX()), 
+    			return;
+			double dist = Math.hypot((a.getLocation().getX() - f.getLocation().getX()), 
     				(a.getLocation().getY() - f.getLocation().getY()));
     		if ((a.getBoundingRadius() + f.getBoundingRadius()) >= dist)
     		{

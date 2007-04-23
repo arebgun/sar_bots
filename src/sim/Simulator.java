@@ -52,6 +52,7 @@ public class Simulator
     public static ArrayList<Integer> currentNumberOnTeam;
     public static String winText = null;
     public static Color winColor;
+    private static ArrayList<Boolean> allFaded;
     
     /**
      * The driver method of the simulation which instructs all of the components to initialize, update, and produce
@@ -88,6 +89,7 @@ public class Simulator
         teamBoards = new ArrayList<MessageBoard>(); 
         numberOnTeam = new ArrayList<Integer>();
         currentNumberOnTeam = new ArrayList<Integer>();
+        allFaded = new ArrayList<Boolean>();
         for(int i = 0; i <= numberOfTeams; i++)
         {
         	numberOnTeam.add(0);
@@ -95,10 +97,12 @@ public class Simulator
         	if(i == 0)
         	{
         		teamBoards.add(null);
+        		allFaded.add(true);
         	} 
         	else
         	{
         		teamBoards.add(new MessageBoard());
+        		allFaded.add(false);
         	}
         }
 		//numberOnTeam.ensureCapacity(numberOfTeams);
@@ -143,9 +147,9 @@ public class Simulator
         for(int i = 1; i <= numberOfTeams; i++)
         {
         	teamBoards.get(i).initialize(numberOnTeam.get(i));
+        	currentNumberOnTeam.set(i, numberOnTeam.get(i));
         }
         /*Set the decrementing current numbers*/
-        currentNumberOnTeam = numberOnTeam;
         
         stats = Statistics.getStatisticsInstance();
     }
@@ -238,7 +242,16 @@ public class Simulator
     		o.cleanup();
     	}
     }
-    
+    public static void addFaded(int teamID)
+    {
+    	allFaded.set(teamID, true);
+    	boolean good = true;
+    	Iterator<Boolean> b = allFaded.iterator();
+    	while (b.hasNext() && good)
+    		good = b.next();
+    //	if (good)
+    //		GUI.resetClick();
+    }
     public static void weWon(Color teamColor, String tempText)
     {
     	winText = tempText;
@@ -252,19 +265,18 @@ public class Simulator
     public static void reset()
     {
         time = 0;
-        
-        /* reset the current number on teams*/
-        currentNumberOnTeam = numberOnTeam;
-        
-        /*reset the message boards*/
+        System.out.println("Reset the world");
+        /*reset the message boards and current number on team*/
         for(int i = 1; i <= numberOfTeams; i++)
         {
         	teamBoards.get(i).reset();
+        	currentNumberOnTeam.set(i, numberOnTeam.get(i));
+        	allFaded.set(i, false);
         }
 
         for(Bobject obj : worldObjects)
         {
-            obj.reset();
+        	obj.reset();
         }
 
         Environment.reset();
@@ -272,13 +284,15 @@ public class Simulator
         winText = null;
     }
     
-    public static void oneDied(int teamID)
+    public static boolean oneDied(int teamID)
     {
     	int temp = currentNumberOnTeam.get(teamID);
-    	System.out.println("used to have " + temp);
+    	System.out.println("Team " + teamID + "used to have " + temp);
     	temp--;
     	currentNumberOnTeam.set(teamID, temp);
-    	System.out.println("Team " + teamID + " lost a bot, they have " + currentNumberOnTeam.get(teamID) + " bots.");
+    	if (currentNumberOnTeam.get(teamID) <= 0)
+    		return true;
+    	return false;
     }
     
     public static boolean areTheyDeadYet(int teamID)

@@ -45,6 +45,8 @@ public class Defender extends Agent
 			plan.Search(this);
 		else if (agent_state == Agent.state.RECOVER_FLAG)
 			plan.RecoverFlag(this);
+		else if (agent_state == Agent.state.GUARD)
+			plan.Guard(this);
 		else if (agent_state == Agent.state.PATROL)
 			plan.Patrol(this);
 		else if (agent_state == Agent.state.CLEANUP)

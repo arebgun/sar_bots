@@ -33,9 +33,9 @@ sensorSightName=agent.sensor.Cone
 sensorHearingName=agent.sensor.Circle
 
 #bot attributes
-health=50
+health=5
 boundingRadius=5
-threshold=20
+threshold=0
 objectColor=255,255,0,255
 fadeInRadius=30
 
