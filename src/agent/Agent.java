@@ -51,7 +51,7 @@ public abstract class Agent extends Bobject implements Runnable
 	public enum agentType {BASE, AGENT};
 	protected agentType myType;
 	///AGENT STATES//////////////////
-	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, CLEANUP, SEARCH, GUARD, RECOVER_FLAG, PATROL};
+	public enum state {DEAD, FLAG_CARRIER, ATTACKING, FLEE, HIDE, CLEANUP, SEARCH, GUARD, RECOVER_FLAG, PATROL, FADE, WAIT};
 	protected state agent_state;
 	//call planner
 	public abstract void update();
@@ -176,6 +176,10 @@ public abstract class Agent extends Bobject implements Runnable
     public int getTeamID()
     {
     	return teamID;
+    }
+    public int getMsgID()
+    {
+    	return msgID;
     }
     public int getThreshold()
     {
@@ -324,7 +328,7 @@ public abstract class Agent extends Bobject implements Runnable
     {
     	return obstaclesSeen.size();
     }
-    public void decrementHealth(int d)
+    public void decrementHealth(Agent a, int d)
     {
     	if(isAlive)
     	{
@@ -339,6 +343,8 @@ public abstract class Agent extends Bobject implements Runnable
     	{
     		agent_state = state.DEAD;
     		System.out.println("Agent is Dead");
+    		if(Simulator.oneDied(a.getTeamID()))
+    				Simulator.weWon(color, "WIN BY SLAUGHTER");
     	}
     }
     
@@ -517,7 +523,7 @@ public abstract class Agent extends Bobject implements Runnable
     		Agent a = ag.next();
     		if (a.getIsAlive() && a.getTeamID() != teamID)
     		{
-    			a.decrementHealth(damage);
+    			a.decrementHealth(a, damage);
     			Statistics.incDamageDone(objectID, damage);
     			Statistics.incEnemiesHit(objectID);
     	    	shotCounter = 5;
@@ -533,7 +539,7 @@ public abstract class Agent extends Bobject implements Runnable
     		Agent a = ag.next();
     		if (a.getObjectID() == ID && a.getIsAlive())
     		{
-    			a.decrementHealth(damage);
+    			a.decrementHealth(a, damage);
     			Statistics.incDamageDone(objectID, damage);
     			Statistics.incEnemiesHit(objectID);
     			shotCounter = 5;
@@ -651,7 +657,7 @@ public abstract class Agent extends Bobject implements Runnable
     
     public void draw (Graphics2D g2, boolean sight, boolean hearing)
     {
-    	if (isAlive)
+    	if (isAlive && !fadeIn)
     	{
     		g2.setColor(this.color);
     		g2.fill(new Ellipse2D.Float((float)location.getX() - (float)boundingRadius,
@@ -697,15 +703,17 @@ public abstract class Agent extends Bobject implements Runnable
     		/*Our Agent is dead and we need to fade if cleanup is called*/
     		if(fadeIn)
     		{
-    			int step = 3;
-    			if(currentFadeInRadius + step <= fadeInRadius)
-    			{
-        			System.out.println("Fading In");
-    				int newTransparency = fadeInTransparency + 255/ (fadeInRadius / step);
-    				g2.setColor(new Color(255,255,255,newTransparency));
-    				g2.fill(new Ellipse2D.Float((float)initialLocation.getX(), (float)initialLocation.getY(), fadeInRadius, fadeInRadius));
-    				currentFadeInRadius += step;
-    			}
+			    int newTransparency = fadeInTransparency + 255/ fadeInRadius;
+			    if (newTransparency <= 255)
+			    {
+			    	g2.setColor(new Color(255,255,255,newTransparency));
+			    	g2.fill(new Ellipse2D.Float((float)initialLocation.getX() - fadeInRadius/2,
+			    								(float)initialLocation.getY() - fadeInRadius/2,
+			    								fadeInRadius, fadeInRadius));
+			    }
+			    else
+			    	setFadeIn(false);
+    			
     		}
     	}
     }
@@ -753,8 +761,12 @@ public abstract class Agent extends Bobject implements Runnable
         }
     }
     
-    public void fadeIn()
+    public boolean getFadeIn()
     {
-    	fadeIn = true;
+    	return fadeIn;
+    }
+    public void setFadeIn(boolean temp)
+    {
+    	fadeIn = temp;
     }
 }
