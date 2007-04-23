@@ -66,6 +66,8 @@ public abstract class PlanModule
     public abstract void RecoverFlag(Agent a);
     public abstract void CleanUp(Agent a);
     public abstract void Patrol(Agent a);
+    public abstract void Fade(Agent a);
+    public abstract void Wait(Agent a);
     
     public abstract agent.Agent.state getAgentState();
     public void setPatrolLocation(AgentLocation newLoc)
