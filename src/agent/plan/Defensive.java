@@ -50,7 +50,8 @@ public class Defensive extends PlanModule
     	int blah = Statistics.getDamageDone(a.getObjectID());
     	System.out.println("Agent : " + a.getObjectID() + " did : " + blah + " damage before he died");
     	a.sendMessage(false, false, holder, false, holder);
-    	a.stop();
+    	agentState = Agent.state.HIDE;
+    	a.setAgentState(agentState);
     	   		
     }
     public void FlagCarrier(Agent a)
@@ -328,7 +329,45 @@ public class Defensive extends PlanModule
     
     public void CleanUp(Agent a)
     {
+    	/*There are two conditions, if the agent is dead or alive*/
+		if(!a.getIsAlive())
+		{
+			a.reset();
+			a.setFadeIn(true);
+			agentState = Agent.state.FADE;
+			a.setAgentState(agentState);
+		}
+		else
+		{
+			if(!a.closeToGoal(a.getMoveRadius(), a.getInitialLocation()))
+			{
+				double initHeading = a.arctangentToGoal(a.getInitialLocation());
+				moveAgent(a, a.getLocation().getTheta(), initHeading);
+			}
+			else
+			{
+				a.setLocation(a.getInitialLocation());
+				agentState = Agent.state.WAIT;
+				a.setAgentState(agentState);
+			}
+		}
+    }
+    public void Fade(Agent a)
+    {
+    	if(!a.getFadeIn())
+    	{
+    		agentState = Agent.state.WAIT;
+    		a.setAgentState(agentState);
+    	}
+    }
+    public void Wait(Agent a)
+    {
+    	MessageBoard mb = Simulator.teamBoards.get(a.getTeamID());
+    	mb.setIAmFaded(a.getMsgID());
+    	agentState = Agent.state.HIDE;
+    	a.setAgentState(agentState);
+    	if (mb.getAllFadeIn())
+    		Simulator.addFaded(a.getTeamID());
     	
     }
-
 }
