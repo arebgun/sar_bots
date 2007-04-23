@@ -182,7 +182,7 @@ public class Aggressive extends PlanModule
     
     public void Hide(Agent a)
     {
-    	
+    	Statistics.incStateHide(a.getObjectID());
     }
     public void Search(Agent a)
     {
@@ -404,7 +404,7 @@ public class Aggressive extends PlanModule
     }
     public void Patrol(Agent a)
     {
-    	
+    	Statistics.incStatePatrol(a.getObjectID());
     } 
     public void Fade(Agent a)
     {

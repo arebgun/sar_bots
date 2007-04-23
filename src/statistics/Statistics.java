@@ -23,6 +23,7 @@ public class Statistics
 	private static ArrayList<Integer> stateFlee = null;
 	private static ArrayList<Integer> stateRecoverFlag = null;
 	private static ArrayList<Integer> stateHide = null;
+	private static ArrayList<Integer> statePatrol = null;
 	
 	//team statistics
 	private static ArrayList<Integer> flagsCaptured = null;
@@ -62,6 +63,7 @@ public class Statistics
 		stateRecoverFlag = new ArrayList<Integer>();
 		stateHide = new ArrayList<Integer>();
 		flagsCaptured = new ArrayList<Integer>();
+		statePatrol = new ArrayList<Integer>();
 		
 		//individual statistics
 		for(int i = 0; i < totalWorldObjects; i++)
@@ -79,6 +81,7 @@ public class Statistics
 			stateFlee.add(0);
 			stateRecoverFlag.add(0);
 			stateHide.add(0);
+			statePatrol.add(0);
 		}
 		
 		//team statistics
@@ -145,6 +148,10 @@ public class Statistics
 	{
 		flagsCaptured.set(teamID, (flagsCaptured.get(teamID)+1));
 	}
+	public static void incStatePatrol(int id)
+	{
+		statePatrol.set(id, statePatrol.get(id)+1);
+	}
 	
 	//gets
 	public static int getShotsTaken(int id)
@@ -202,5 +209,9 @@ public class Statistics
 	public static int getFlagsCaptured(int id)
 	{
 		return flagsCaptured.get(id);
+	}
+	public static int getStatePatrol(int id)
+	{
+		return statePatrol.get(id);
 	}
 }

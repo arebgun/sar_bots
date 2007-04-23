@@ -249,29 +249,20 @@ class GraphicsComponent extends JComponent
 
 class StatPanel extends JPanel
 {
-                //private final static GraphicsComponent stat1Display = new GraphicsComponent();
-                //private final static GraphicsComponent stat2Display = new GraphicsComponent();
-                private static String[] drop1Strings = new String[60];
-            //private static String[] drop2Strings = { "Team1", "Team2", "Seeker1", "Seeker2", "Defender1", "Defender2" };
-
-           // private static JPanel dropDownP1 = new JPanel();
-            //private static JPanel dropDownP2 = new JPanel();
-
+               
+	private static String[] drop1Strings = new String[60];
+           
        
-            private static JComboBox dropDown1 = new JComboBox();
-            private static JComboBox dropDown2 = new JComboBox();
-       
-            private static PieChart[] slices1 = new PieChart[7];
+        private static JComboBox dropDown1 = new JComboBox();
+        private static JComboBox dropDown2 = new JComboBox();
+   
+        private static PieChart[] slices1 = new PieChart[7];
         private static PieChart[] slices2 = new PieChart[7];
        
         private static int[] IDarray = new int[60];
        
         private static int[] sliceSizes1 = new int[7];
         private static int[] sliceSizes2 = new int[7];
-        private static int[] test1 = {10, 10, 10, 10, 10, 10, 40};
-        private static int[] test2 = {10, 30, 5, 10, 10, 10, 15};
-        private static int[] test3 = {5, 10, 10, 5, 10, 40, 20};
-        private static int[] test4 = {5, 5, 20, 10, 10, 45, 5};
        
             StatPanel()
                 {
@@ -282,7 +273,7 @@ class StatPanel extends JPanel
                 slices1[2] = new PieChart(15, Color.yellow);
                 slices1[3] = new PieChart(20, Color.orange);
                 slices1[4] = new PieChart(25, Color.red);
-                slices1[5] = new PieChart(10, Color.DARK_GRAY);
+                slices1[5] = new PieChart(10, Color.pink);
                 slices1[6] = new PieChart(15, Color.black);
        
        
@@ -291,7 +282,7 @@ class StatPanel extends JPanel
                 slices2[2] = new PieChart(15, Color.yellow);
                 slices2[3] = new PieChart(20, Color.orange);
                 slices2[4] = new PieChart(25, Color.red);
-                slices2[5] = new PieChart(15, Color.DARK_GRAY);
+                slices2[5] = new PieChart(15, Color.pink);
                 slices2[6] = new PieChart(10, Color.black);
        
                 JPanel dropDownPanel = new JPanel();
@@ -302,9 +293,7 @@ class StatPanel extends JPanel
                 dropDownPanel.add(dropDown1);
                 dropDownPanel.add(dropDown2);
                 add(dropDownPanel, BorderLayout.NORTH);
-                //add(stat1Display, BorderLayout.WEST);
-               
-               
+                
                 dropDown1.addItemListener(new ItemListener() {
                         public void itemStateChanged(ItemEvent e){
                                 setGraph1(dropDown1.getSelectedIndex());
@@ -383,65 +372,50 @@ class StatPanel extends JPanel
                 int carrier = Statistics.getStateFlagCarrier(currentID);
                 //int patrol = Statistics.getS
                
-                System.out.println(flee + " " + search + " " + guard + " " +
-dead + " " + hide + " " + recover + " " + carrier);
+                System.out.println(flee + " " + search + " " + guard + " " + dead + " " + hide + " " + recover + " " + carrier);
                
                 int total = flee + search + guard + dead + hide + recover + carrier;
                 if (total == 0)
                         total = 100;
-                sliceSizes1[0] = (int)(100*((dead+hide)/total));
-                sliceSizes1[1] = (int)(100*(flee/total));
-                sliceSizes1[2] = (int)(100*(guard/total));
-                sliceSizes1[3] = (int)(100*(search/total));
-                sliceSizes1[4] = (int)(100*(recover/total));
-                sliceSizes1[5] = (int)(100*(carrier/total));
+                sliceSizes1[0] = (int)(100*((double)(dead+hide)/total));
+                sliceSizes1[1] = (int)(100*((double)flee/total));
+                sliceSizes1[2] = (int)(100*((double)guard/total));
+                sliceSizes1[3] = (int)(100*((double)search/total));
+                sliceSizes1[4] = (int)(100*((double)recover/total));
+                sliceSizes1[5] = (int)(100*((double)carrier/total));
                 sliceSizes1[6] = 0;
+                for (int i = 0; i < 7; i++)
+                	System.out.print(sliceSizes1[i]);
+                System.out.println("total: " + total);
                
-                //sliceSizes1[0] =
-                /*if(index == 0)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes1[i] = test1[i];
-                }
-                if(index == 1)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes1[i] = test2[i];
-                }
-                if(index == 2)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes1[i] = test3[i];
-                }
-                if(index == 3)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes1[i] = test4[i];
-                }*/
         }
        
             public void setGraph2(int index)
         {
-                if(index == 0)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes2[i] = test1[i];
-                }
-                if(index == 1)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes2[i] = test2[i];
-                }
-                if(index == 2)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes2[i] = test3[i];
-                }
-                if(index == 3)
-                {
-                        for (int i = 0; i < 7; i++)
-                                sliceSizes2[i] = test4[i];
-                }
+            	int currentID = IDarray[index];
+                System.out.println("currentID: " + currentID);
+                System.out.println("search: " + Statistics.getStateSearch(currentID));
+                int flee = Statistics.getFlee(currentID);
+                int search = Statistics.getStateSearch(currentID);
+                int guard = Statistics.getStateGuard(currentID);
+                int dead = Statistics.getStateDead(currentID);
+                int hide = Statistics.getStateHide(currentID);
+                int recover = Statistics.getRecoverFlag(currentID);
+                int carrier = Statistics.getStateFlagCarrier(currentID);
+               // int patrol = Statistics.getstate
+               
+                System.out.println(flee + " " + search + " " + guard + " " + dead + " " + hide + " " + recover + " " + carrier);
+               
+                int total = flee + search + guard + dead + hide + recover + carrier;
+                if (total == 0)
+                        total = 100;
+                sliceSizes2[0] = (int)(100*((double)(dead+hide)/total));
+                sliceSizes2[1] = (int)(100*((double)flee/total));
+                sliceSizes2[2] = (int)(100*((double)guard/total));
+                sliceSizes2[3] = (int)(100*((double)search/total));
+                sliceSizes2[4] = (int)(100*((double)recover/total));
+                sliceSizes2[5] = (int)(100*((double)carrier/total));
+                sliceSizes2[6] = 0;//(int)(100*(patrol/total));
         }
        
             public void paintComponent( Graphics g2 )
@@ -458,7 +432,7 @@ dead + " " + hide + " " + recover + " " + carrier);
                 slices1[2] = new PieChart(sliceSizes1[2], Color.yellow);
                 slices1[3] = new PieChart(sliceSizes1[3], Color.orange);
                 slices1[4] = new PieChart(sliceSizes1[4], Color.red);
-                slices1[5] = new PieChart(sliceSizes1[5], Color.DARK_GRAY);
+                slices1[5] = new PieChart(sliceSizes1[5], Color.pink);
                 slices1[6] = new PieChart(sliceSizes1[6], Color.black);
        
        
@@ -468,11 +442,11 @@ dead + " " + hide + " " + recover + " " + carrier);
                 g2.setColor(Color.black);
                 g2.drawString("dead", 580, 370);
                 g2.drawString("flee", 580, 410);
-                g2.drawString("search", 580, 450);
-                g2.drawString("recover flag", 580, 490);
-                g2.drawString("patrol", 580, 530);
-                g2.drawString("gaurd", 580, 570);
-                g2.drawString("flag carrier", 580, 610);
+                g2.drawString("guard", 580, 450);
+                g2.drawString("search", 580, 490);
+                g2.drawString("recover flag", 580, 530);
+                g2.drawString("flag carrier", 580, 570);
+                g2.drawString("patrol", 580, 610);
                 g2.setColor(Color.BLUE);
                 g2.fillRoundRect(550, 350, 20, 20, 10, 10);
                 g2.setColor(Color.green);
@@ -483,7 +457,7 @@ dead + " " + hide + " " + recover + " " + carrier);
                 g2.fillRoundRect(550, 470, 20, 20, 10, 10);
                 g2.setColor(Color.RED);
                 g2.fillRoundRect(550, 510, 20, 20, 10, 10);
-                g2.setColor(Color.DARK_GRAY);
+                g2.setColor(Color.pink);
                 g2.fillRoundRect(550, 550, 20, 20, 10, 10);
                 g2.setColor(Color.black);
                 g2.fillRoundRect(550, 590, 20, 20, 10, 10);
@@ -500,7 +474,7 @@ dead + " " + hide + " " + recover + " " + carrier);
                 slices2[2] = new PieChart(sliceSizes2[2], Color.yellow);
                 slices2[3] = new PieChart(sliceSizes2[3], Color.orange);
                 slices2[4] = new PieChart(sliceSizes2[4], Color.red);
-                slices2[5] = new PieChart(sliceSizes2[5], Color.DARK_GRAY);
+                slices2[5] = new PieChart(sliceSizes2[5], Color.pink);
                 slices2[6] = new PieChart(sliceSizes2[6], Color.black);
                 Rectangle r = new Rectangle();
                 r.setBounds(750, 150, 400, 400);
@@ -588,17 +562,13 @@ class RescueArea extends SimDrawPanel
     {
         try
         {
-            Image texture = new ImageIcon(
-ClassLoader.getSystemClassLoader().getResource( fileName ).getPath()
-).getImage();
+            Image texture = new ImageIcon(ClassLoader.getSystemClassLoader().getResource( fileName ).getPath()).getImage();
             int width     = texture.getWidth( this );
             int height    = texture.getHeight( this );
 
-            BufferedImage bi = new BufferedImage( width, height,
-BufferedImage.TYPE_INT_RGB );
+            BufferedImage bi = new BufferedImage( width, height,BufferedImage.TYPE_INT_RGB );
             bi.createGraphics().drawImage( texture, 0, 0, this );
-            return new TexturePaint( bi, Environment.getTextureAnchor(
-divisor ) );
+            return new TexturePaint( bi, Environment.getTextureAnchor(divisor ) );
         }
         catch ( Exception e )
         {

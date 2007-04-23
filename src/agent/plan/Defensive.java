@@ -56,9 +56,11 @@ public class Defensive extends PlanModule
     }
     public void FlagCarrier(Agent a)
     {    	
+    	Statistics.incStateFlagCarrier(a.getObjectID());
     }
     public void Guard(Agent a)
     {
+    	Statistics.incStateGuard(a.getObjectID());
     }
     public void Attacking(Agent a)
     {    	
@@ -130,7 +132,7 @@ public class Defensive extends PlanModule
     
     public void Hide(Agent a)
     {
-    	
+    	Statistics.incStateHide(a.getObjectID());
     }
     public void Search(Agent a)
     {
@@ -318,7 +320,7 @@ public class Defensive extends PlanModule
     	if (iSeeOurFlag)
     		ourFlagLoc = ourFlagLoc(a);
     	
-    	Statistics.incStateRecoverFlag(a.getObjectID());
+    	Statistics.incStatePatrol(a.getObjectID());
     	//now send all your info to the messageboard
     	a.sendMessage(false, oppFlagSeen, oppFlagLoc, iSeeOurFlag, ourFlagLoc);
     	
